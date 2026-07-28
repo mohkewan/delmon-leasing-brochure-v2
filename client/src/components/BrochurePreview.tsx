@@ -1,7 +1,7 @@
 import type { ProjectData } from "@/pages/Home";
 
 // ===== DELMON INVESTMENT — LEASING BROCHURE PREVIEW =====
-// Design: Navy #1A2E5A | Gold #C9A84C | White | Cairo font
+// Design: Navy #1a3a5c | Gold #949437 | White | Cairo font
 // Structure: Cover → Project Details → Units Table → Contact
 // RTL, A4 (794×1123px), print-ready
 
@@ -10,8 +10,8 @@ interface Props {
 }
 
 const LOGO = "/manus-storage/delmon_logo_19a2386c.png";
-const NAVY = "#1A2E5A";
-const GOLD = "#C9A84C";
+const NAVY = "#1a3a5c";
+const GOLD = "#949437";
 const GOLD_LIGHT = "#F5EDD3";
 const GRAY_BG = "#F4F6FB";
 const BORDER = "#DDE2EF";

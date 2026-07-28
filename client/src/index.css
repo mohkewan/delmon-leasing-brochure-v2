@@ -44,50 +44,57 @@
 
 :root {
   /* Delmon Investment Brand Colors */
-  /* Primary: Deep Navy Blue #1A2E5A | Gold #C9A84C */
-  --delmon-navy: #1A2E5A;
-  --delmon-navy-light: #243a72;
-  --delmon-gold: #C9A84C;
-  --delmon-gold-light: #e0c06a;
+  /* ===== DELMON OFFICIAL BRAND IDENTITY =====
+     Deep GOLD: #949437 (RGB 148,148,55) — اللون الذهبي الرسمي
+     Cyan Blue: #8fa9dc (RGB 143,169,220) — الأزرق الفيروزي
+     Background: #F0F0F0 — خلفية رمادية فاتحة
+     Dark Text: #2C2C2C
+  ============================================ */
+  --delmon-gold: #949437;
+  --delmon-gold-light: #b8b85c;
+  --delmon-gold-pale: #e8e8c0;
+  --delmon-cyan: #8fa9dc;
+  --delmon-cyan-dark: #5b7fb8;
+  --delmon-cyan-pale: #dce8f5;
+  --delmon-bg: #F0F0F0;
   --delmon-white: #FFFFFF;
-  --delmon-gray-light: #F5F6FA;
-  --delmon-gray: #E8EAF0;
-  --delmon-text-dark: #1A2E5A;
-  --delmon-text-muted: #6B7280;
+  --delmon-dark: #2C2C2C;
+  --delmon-mid: #555555;
+  --delmon-border: #D0D0D0;
 
-  --primary: oklch(0.28 0.12 260);
+  --primary: oklch(0.55 0.09 100);
   --primary-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.28 0.12 260);
+  --sidebar-primary: oklch(0.55 0.09 100);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --chart-1: oklch(0.72 0.14 75);
-  --chart-2: oklch(0.55 0.12 260);
-  --chart-3: oklch(0.40 0.10 260);
-  --chart-4: oklch(0.28 0.12 260);
-  --chart-5: oklch(0.20 0.08 260);
+  --chart-1: oklch(0.55 0.09 100);
+  --chart-2: oklch(0.65 0.07 240);
+  --chart-3: oklch(0.70 0.09 100);
+  --chart-4: oklch(0.50 0.07 240);
+  --chart-5: oklch(0.25 0.02 100);
   --radius: 0.5rem;
-  --background: oklch(0.97 0.005 260);
-  --foreground: oklch(0.18 0.08 260);
+  --background: oklch(0.95 0 0);
+  --foreground: oklch(0.18 0.01 100);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.08 260);
+  --card-foreground: oklch(0.18 0.01 100);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.08 260);
-  --secondary: oklch(0.94 0.01 260);
-  --secondary-foreground: oklch(0.28 0.12 260);
-  --muted: oklch(0.94 0.01 260);
-  --muted-foreground: oklch(0.50 0.04 260);
-  --accent: oklch(0.72 0.14 75);
-  --accent-foreground: oklch(0.18 0.08 260);
+  --popover-foreground: oklch(0.18 0.01 100);
+  --secondary: oklch(0.93 0.01 100);
+  --secondary-foreground: oklch(0.35 0.05 100);
+  --muted: oklch(0.93 0 0);
+  --muted-foreground: oklch(0.50 0.01 100);
+  --accent: oklch(0.80 0.05 240);
+  --accent-foreground: oklch(0.18 0.05 240);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.88 0.02 260);
-  --input: oklch(0.92 0.01 260);
-  --ring: oklch(0.28 0.12 260);
-  --sidebar: oklch(0.18 0.10 260);
-  --sidebar-foreground: oklch(0.95 0.02 260);
-  --sidebar-accent: oklch(0.25 0.10 260);
-  --sidebar-accent-foreground: oklch(0.95 0.02 260);
-  --sidebar-border: oklch(0.28 0.08 260);
-  --sidebar-ring: oklch(0.72 0.14 75);
+  --border: oklch(0.85 0 0);
+  --input: oklch(0.90 0 0);
+  --ring: oklch(0.55 0.09 100);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.18 0.01 100);
+  --sidebar-accent: oklch(0.93 0 0);
+  --sidebar-accent-foreground: oklch(0.18 0.01 100);
+  --sidebar-border: oklch(0.85 0 0);
+  --sidebar-ring: oklch(0.55 0.09 100);
 }
 
 .dark {

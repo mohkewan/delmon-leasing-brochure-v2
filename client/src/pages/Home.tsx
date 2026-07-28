@@ -10,7 +10,7 @@ import BrochurePreview from "@/components/BrochurePreview";
 import { generateBrochurePDF } from "@/lib/pdfGenerator";
 
 // ===== DELMON INVESTMENT BRAND IDENTITY =====
-// Primary: Navy #1A2E5A | Gold: #C9A84C | Font: Cairo
+// Primary: Deep GOLD #949437 | Cyan: #8fa9dc | Background: #F0F0F0 | Font: Cairo
 // Layout: RTL sidebar form + live preview panel
 
 export type UnitType = "مكتب" | "معرض" | "محل تجاري" | "مستودع" | "وحدة سكنية" | "فندق" | "أخرى";
@@ -187,33 +187,33 @@ export default function Home() {
   const unitsWithArea = projectData.units.filter((u) => u.area).length;
 
   return (
-    <div className="min-h-screen bg-[#EBEEf6]" dir="rtl">
+    <div className="min-h-screen bg-[#F0F0F0]" dir="rtl">
       {/* ===== HEADER ===== */}
-      <header className="bg-[#1A2E5A] shadow-xl sticky top-0 z-50 border-b-2 border-[#C9A84C]/50">
+      <header className="bg-white shadow-md sticky top-0 z-50 border-b-2 border-[#949437]/40">
         <div className="max-w-7xl mx-auto px-5 flex items-stretch justify-between">
           {/* Brand lockup */}
           <div className="flex items-center gap-4 py-3">
             <img
-              src="/manus-storage/delmon_logo_19a2386c.png"
+              src="/manus-storage/delmon_logo_official_81df30cc.png"
               alt="دلمون للاستثمار"
               className="h-11 w-auto object-contain"
             />
             <div className="border-r border-white/25 pr-4 mr-1">
               <div
-                className="text-white font-black text-lg leading-tight tracking-wide"
+                className="text-[#2C2C2C] font-black text-lg leading-tight tracking-wide"
                 style={{ fontFamily: "'Noto Kufi Arabic', 'Cairo', sans-serif" }}
               >
                 شركة دلمون للاستثمار
               </div>
-              <div className="text-[#C9A84C] text-[10px] font-semibold tracking-[0.14em] uppercase">
+              <div className="text-[#949437] text-[10px] font-semibold tracking-[0.14em] uppercase">
                 DELMON INVESTMENT COMPANY
               </div>
             </div>
           </div>
           {/* Center system label */}
           <div className="hidden md:flex items-center">
-            <div className="border border-white/15 rounded-md px-4 py-1.5 bg-white/5">
-              <span className="text-white/75 text-sm font-medium">نظام بروشور التأجير</span>
+              <div className="border border-[#949437]/30 rounded-md px-4 py-1.5 bg-[#949437]/5">
+                <span className="text-[#555555] text-sm font-medium">نظام بروشور التأجير</span>
             </div>
           </div>
           {/* Actions */}
@@ -222,7 +222,7 @@ export default function Home() {
               onClick={() => setShowPreview(true)}
               variant="outline"
               size="sm"
-              className="border-white/30 text-white/80 hover:border-[#C9A84C] hover:text-[#C9A84C] bg-transparent transition-all"
+              className="border-[#8fa9dc]/60 text-[#555555] hover:border-[#949437] hover:text-[#949437] bg-transparent transition-all"
             >
               <Eye className="w-4 h-4 ml-1" />
               معاينة
@@ -231,7 +231,7 @@ export default function Home() {
               onClick={handleExportPDF}
               disabled={isGenerating}
               size="sm"
-              className="bg-[#C9A84C] hover:bg-[#dbb85a] text-[#1A2E5A] font-bold transition-all shadow-md"
+              className="bg-[#949437] hover:bg-[#7a7a2e] text-white font-bold transition-all shadow-md"
             >
               {isGenerating ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <FileDown className="w-4 h-4 ml-1" />}
               {isGenerating ? exportStep : "تصدير PDF"}
@@ -250,14 +250,14 @@ export default function Home() {
             { label: "المشروع المحدد", value: projectData.projectName || "—", icon: Building2 },
             { label: "اكتمال البيانات", value: `${completionPct}%`, icon: LayoutList },
           ].map((stat, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-[#E8EAF0] flex items-center gap-3 relative overflow-hidden">
-              <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#C9A84C] rounded-r-xl" />
-              <div className="w-10 h-10 rounded-lg bg-[#1A2E5A] flex items-center justify-center flex-shrink-0">
-                <stat.icon className="w-5 h-5 text-[#C9A84C]" />
+            <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-[#D0D0D0] flex items-center gap-3 relative overflow-hidden">
+              <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#949437] rounded-r-xl" />
+              <div className="w-10 h-10 rounded-lg bg-[#949437]/10 border border-[#949437]/20 flex items-center justify-center flex-shrink-0">
+                <stat.icon className="w-5 h-5 text-[#949437]" />
               </div>
               <div className="min-w-0">
                 <div className="text-[11px] text-gray-500 font-medium">{stat.label}</div>
-                <div className="font-black text-[#1A2E5A] text-base truncate">{stat.value}</div>
+                <div className="font-black text-[#2C2C2C] text-base truncate">{stat.value}</div>
               </div>
             </div>
           ))}
@@ -265,9 +265,9 @@ export default function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* ===== FORM PANEL ===== */}
-          <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-[#E8EAF0] overflow-hidden">
+          <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-[#D0D0D0] overflow-hidden">
             {/* Tabs */}
-            <div className="flex border-b-2 border-[#E8EAF0] bg-[#F8F9FD]">
+            <div className="flex border-b-2 border-[#D0D0D0] bg-[#F8F9FD]">
               {[
                 { id: "project", label: "بيانات المشروع" },
                 { id: "units", label: `الوحدات (${projectData.units.length})` },
@@ -278,8 +278,8 @@ export default function Home() {
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
                   className={`flex-1 py-3 text-sm font-semibold transition-all ${
                     activeTab === tab.id
-                      ? "text-[#1A2E5A] border-b-2 border-[#C9A84C] bg-white font-bold"
-                      : "text-gray-400 hover:text-[#1A2E5A] hover:bg-white/60"
+                      ? "text-[#2C2C2C] border-b-2 border-[#949437] bg-white font-bold"
+                      : "text-gray-400 hover:text-[#2C2C2C] hover:bg-white/60"
                   }`}
                 >
                   {tab.label}
@@ -292,9 +292,9 @@ export default function Home() {
               {activeTab === "project" && (
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">اختر المشروع</Label>
+                    <Label className="text-[#2C2C2C] font-semibold mb-1 block">اختر المشروع</Label>
                     <Select value={selectedProjectId} onValueChange={handleProjectSelect}>
-                      <SelectTrigger className="border-[#E8EAF0] focus:border-[#1A2E5A]">
+                      <SelectTrigger className="border-[#D0D0D0] focus:border-[#949437]">
                         <SelectValue placeholder="اختر مشروعاً من قائمة دلمون..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -309,103 +309,103 @@ export default function Home() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">اسم المشروع *</Label>
+                      <Label className="text-[#2C2C2C] font-semibold mb-1 block">اسم المشروع *</Label>
                       <Input
                         value={projectData.projectName}
                         onChange={(e) => updateProject("projectName", e.target.value)}
                         placeholder="مثال: بارك فيو"
-                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                        className="border-[#D0D0D0] focus:border-[#949437]"
                       />
                     </div>
                     <div>
-                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">نوع المشروع</Label>
+                      <Label className="text-[#2C2C2C] font-semibold mb-1 block">نوع المشروع</Label>
                       <Input
                         value={projectData.projectType}
                         onChange={(e) => updateProject("projectType", e.target.value)}
                         placeholder="مثال: مول تجاري"
-                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                        className="border-[#D0D0D0] focus:border-[#949437]"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">المدينة</Label>
+                      <Label className="text-[#2C2C2C] font-semibold mb-1 block">المدينة</Label>
                       <Input
                         value={projectData.city}
                         onChange={(e) => updateProject("city", e.target.value)}
                         placeholder="مثال: جازان"
-                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                        className="border-[#D0D0D0] focus:border-[#949437]"
                       />
                     </div>
                     <div>
-                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">الحي / الموقع</Label>
+                      <Label className="text-[#2C2C2C] font-semibold mb-1 block">الحي / الموقع</Label>
                       <Input
                         value={projectData.district}
                         onChange={(e) => updateProject("district", e.target.value)}
                         placeholder="مثال: حي الروابي"
-                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                        className="border-[#D0D0D0] focus:border-[#949437]"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">إجمالي المساحة (م²)</Label>
+                      <Label className="text-[#2C2C2C] font-semibold mb-1 block">إجمالي المساحة (م²)</Label>
                       <Input
                         value={projectData.totalArea}
                         onChange={(e) => updateProject("totalArea", e.target.value)}
                         placeholder="مثال: 5000"
-                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                        className="border-[#D0D0D0] focus:border-[#949437]"
                       />
                     </div>
                     <div>
-                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">عدد الطوابق</Label>
+                      <Label className="text-[#2C2C2C] font-semibold mb-1 block">عدد الطوابق</Label>
                       <Input
                         value={projectData.floors}
                         onChange={(e) => updateProject("floors", e.target.value)}
                         placeholder="مثال: 5"
-                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                        className="border-[#D0D0D0] focus:border-[#949437]"
                       />
                     </div>
                     <div>
-                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">سنة الإنجاز</Label>
+                      <Label className="text-[#2C2C2C] font-semibold mb-1 block">سنة الإنجاز</Label>
                       <Input
                         value={projectData.completionYear}
                         onChange={(e) => updateProject("completionYear", e.target.value)}
                         placeholder="مثال: 2024"
-                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                        className="border-[#D0D0D0] focus:border-[#949437]"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">وصف المشروع</Label>
+                    <Label className="text-[#2C2C2C] font-semibold mb-1 block">وصف المشروع</Label>
                     <Textarea
                       value={projectData.description}
                       onChange={(e) => updateProject("description", e.target.value)}
                       placeholder="وصف مختصر عن المشروع وموقعه ومميزاته..."
                       rows={3}
-                      className="border-[#E8EAF0] focus:border-[#1A2E5A] resize-none"
+                      className="border-[#D0D0D0] focus:border-[#949437] resize-none"
                     />
                   </div>
 
                   <div>
-                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">المرافق والخدمات</Label>
+                    <Label className="text-[#2C2C2C] font-semibold mb-1 block">المرافق والخدمات</Label>
                     <Textarea
                       value={projectData.amenities}
                       onChange={(e) => updateProject("amenities", e.target.value)}
                       placeholder="مثال: مواقف سيارات، أمن 24 ساعة، مصاعد، تكييف مركزي..."
                       rows={2}
-                      className="border-[#E8EAF0] focus:border-[#1A2E5A] resize-none"
+                      className="border-[#D0D0D0] focus:border-[#949437] resize-none"
                     />
                   </div>
 
                   <div>
-                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">صورة المشروع (اختياري)</Label>
+                    <Label className="text-[#2C2C2C] font-semibold mb-1 block">صورة المشروع (اختياري)</Label>
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className="border-2 border-dashed border-[#C9A84C]/40 rounded-xl p-4 text-center cursor-pointer hover:border-[#C9A84C] hover:bg-[#C9A84C]/5 transition-all"
+                      className="border-2 border-dashed border-[#949437]/40 rounded-xl p-4 text-center cursor-pointer hover:border-[#949437] hover:bg-[#949437]/5 transition-all"
                     >
                       {projectData.projectImage ? (
                         <img
@@ -435,7 +435,7 @@ export default function Home() {
               {activeTab === "units" && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-[#1A2E5A]">الوحدات الشاغرة ({projectData.units.length})</h3>
+                    <h3 className="font-bold text-[#2C2C2C]">الوحدات الشاغرة ({projectData.units.length})</h3>
                     <Button
                       onClick={addUnit}
                       size="sm"
@@ -449,10 +449,10 @@ export default function Home() {
                   {projectData.units.map((unit, idx) => (
                     <div
                       key={unit.id}
-                      className="border border-[#E8EAF0] rounded-xl p-4 bg-[#F8F9FD] relative"
+                      className="border border-[#D0D0D0] rounded-xl p-4 bg-[#F8F9FD] relative"
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-bold text-[#1A2E5A] bg-[#1A2E5A]/10 px-3 py-1 rounded-full">
+                        <span className="text-sm font-bold text-[#2C2C2C] bg-[#1A2E5A]/10 px-3 py-1 rounded-full">
                           وحدة {idx + 1}
                         </span>
                         {projectData.units.length > 1 && (
@@ -472,7 +472,7 @@ export default function Home() {
                             value={unit.unitNumber}
                             onChange={(e) => updateUnit(unit.id, "unitNumber", e.target.value)}
                             placeholder="مثال: A-101"
-                            className="h-8 text-sm border-[#E8EAF0]"
+                            className="h-8 text-sm border-[#D0D0D0]"
                           />
                         </div>
                         <div>
@@ -481,7 +481,7 @@ export default function Home() {
                             value={unit.floor}
                             onChange={(e) => updateUnit(unit.id, "floor", e.target.value)}
                             placeholder="مثال: الأول"
-                            className="h-8 text-sm border-[#E8EAF0]"
+                            className="h-8 text-sm border-[#D0D0D0]"
                           />
                         </div>
                         <div>
@@ -491,7 +491,7 @@ export default function Home() {
                             onChange={(e) => updateUnit(unit.id, "area", e.target.value)}
                             placeholder="مثال: 150"
                             type="number"
-                            className="h-8 text-sm border-[#E8EAF0]"
+                            className="h-8 text-sm border-[#D0D0D0]"
                           />
                         </div>
                         <div>
@@ -500,7 +500,7 @@ export default function Home() {
                             value={unit.unitType}
                             onValueChange={(v) => updateUnit(unit.id, "unitType", v)}
                           >
-                            <SelectTrigger className="h-8 text-sm border-[#E8EAF0]">
+                            <SelectTrigger className="h-8 text-sm border-[#D0D0D0]">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -517,7 +517,7 @@ export default function Home() {
                             onChange={(e) => updateUnit(unit.id, "monthlyRent", e.target.value)}
                             placeholder="مثال: 5000"
                             type="number"
-                            className="h-8 text-sm border-[#E8EAF0]"
+                            className="h-8 text-sm border-[#D0D0D0]"
                           />
                         </div>
                         <div>
@@ -527,7 +527,7 @@ export default function Home() {
                             onChange={(e) => updateUnit(unit.id, "pricePerMeter", e.target.value)}
                             placeholder="مثال: 100"
                             type="number"
-                            className="h-8 text-sm border-[#E8EAF0]"
+                            className="h-8 text-sm border-[#D0D0D0]"
                           />
                         </div>
                       </div>
@@ -537,7 +537,7 @@ export default function Home() {
                           value={unit.features}
                           onChange={(e) => updateUnit(unit.id, "features", e.target.value)}
                           placeholder="مثال: واجهة زجاجية، تكييف مركزي، مدخل مستقل"
-                          className="h-8 text-sm border-[#E8EAF0]"
+                          className="h-8 text-sm border-[#D0D0D0]"
                         />
                       </div>
                     </div>
@@ -546,7 +546,7 @@ export default function Home() {
                   <Button
                     onClick={addUnit}
                     variant="outline"
-                    className="w-full border-dashed border-[#C9A84C]/50 text-[#1A2E5A] hover:bg-[#C9A84C]/5"
+                    className="w-full border-dashed border-[#949437]/50 text-[#2C2C2C] hover:bg-[#949437]/5"
                   >
                     <Plus className="w-4 h-4 ml-1" />
                     إضافة وحدة جديدة
@@ -558,44 +558,44 @@ export default function Home() {
               {activeTab === "contact" && (
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">
+                    <Label className="text-[#2C2C2C] font-semibold mb-1 block">
                       <Phone className="w-4 h-4 inline ml-1" />
                       اسم المسؤول / القسم
                     </Label>
                     <Input
                       value={projectData.contactName}
                       onChange={(e) => updateProject("contactName", e.target.value)}
-                      className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      className="border-[#D0D0D0] focus:border-[#949437]"
                     />
                   </div>
                   <div>
-                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">
+                    <Label className="text-[#2C2C2C] font-semibold mb-1 block">
                       <Phone className="w-4 h-4 inline ml-1" />
                       رقم الهاتف
                     </Label>
                     <Input
                       value={projectData.contactPhone}
                       onChange={(e) => updateProject("contactPhone", e.target.value)}
-                      className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      className="border-[#D0D0D0] focus:border-[#949437]"
                       dir="ltr"
                     />
                   </div>
                   <div>
-                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">
+                    <Label className="text-[#2C2C2C] font-semibold mb-1 block">
                       <Mail className="w-4 h-4 inline ml-1" />
                       البريد الإلكتروني
                     </Label>
                     <Input
                       value={projectData.contactEmail}
                       onChange={(e) => updateProject("contactEmail", e.target.value)}
-                      className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      className="border-[#D0D0D0] focus:border-[#949437]"
                       dir="ltr"
                     />
                   </div>
                   <div className="bg-[#1A2E5A]/5 rounded-xl p-4 border border-[#1A2E5A]/10">
                     <div className="flex items-center gap-2 mb-2">
-                      <Globe className="w-4 h-4 text-[#1A2E5A]" />
-                      <span className="text-sm font-semibold text-[#1A2E5A]">معلومات الشركة الثابتة</span>
+                      <Globe className="w-4 h-4 text-[#2C2C2C]" />
+                      <span className="text-sm font-semibold text-[#2C2C2C]">معلومات الشركة الثابتة</span>
                     </div>
                     <div className="text-sm text-gray-600 space-y-1">
                       <div>الموقع: www.delmoninvest.com</div>
@@ -608,7 +608,7 @@ export default function Home() {
             </div>
 
             {/* Action Buttons */}
-            <div className="px-6 py-4 bg-[#F8F9FD] border-t border-[#E8EAF0] flex gap-3">
+            <div className="px-6 py-4 bg-[#F8F9FD] border-t border-[#D0D0D0] flex gap-3">
               <Button
                 onClick={handleExportPDF}
                 disabled={isGenerating}
@@ -626,7 +626,7 @@ export default function Home() {
               <Button
                 onClick={() => setShowPreview(true)}
                 variant="outline"
-                className="border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-[#1A2E5A]"
+                className="border-[#949437] text-[#949437] hover:bg-[#949437] hover:text-[#2C2C2C]"
               >
                 <Eye className="w-4 h-4 ml-1" />
                 معاينة
@@ -636,12 +636,12 @@ export default function Home() {
 
           {/* ===== MINI PREVIEW PANEL ===== */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-sm border border-[#E8EAF0] overflow-hidden sticky top-24 flex flex-col">
+            <div className="bg-white rounded-2xl shadow-sm border border-[#D0D0D0] overflow-hidden sticky top-24 flex flex-col">
               <div className="bg-[#1A2E5A] px-4 py-3 flex items-center justify-between">
                 <span className="text-white text-sm font-semibold">معاينة البروشور</span>
                 <button
                   onClick={() => setShowPreview(true)}
-                  className="text-[#C9A84C] text-xs hover:underline"
+                  className="text-[#949437] text-xs hover:underline"
                 >
                   عرض كامل
                 </button>
@@ -649,7 +649,7 @@ export default function Home() {
               {/* Progress bar */}
               <div className="h-1 bg-gray-100">
                 <div
-                  className="h-1 bg-[#C9A84C] transition-all duration-500"
+                  className="h-1 bg-[#949437] transition-all duration-500"
                   style={{ width: `${completionPct}%` }}
                 />
               </div>
@@ -662,11 +662,11 @@ export default function Home() {
                 </div>
               </div>
               {/* Units counter */}
-              <div className="px-4 py-2 border-t border-[#E8EAF0] bg-white flex justify-between items-center">
+              <div className="px-4 py-2 border-t border-[#D0D0D0] bg-white flex justify-between items-center">
                 <span className="text-xs text-gray-500">
                   {unitsWithArea}/{projectData.units.length} وحدة مكتملة البيانات
                 </span>
-                <span className="text-xs font-bold text-[#1A2E5A]">
+                <span className="text-xs font-bold text-[#2C2C2C]">
                   {totalArea > 0 ? `${totalArea.toLocaleString("ar-SA")} م²` : "أدخل المساحات"}
                 </span>
               </div>
@@ -689,7 +689,7 @@ export default function Home() {
                   onClick={handleExportPDF}
                   disabled={isGenerating}
                   size="sm"
-                  className="bg-[#C9A84C] hover:bg-[#e0c06a] text-[#1A2E5A] font-bold"
+                  className="bg-[#949437] hover:bg-[#e0c06a] text-[#2C2C2C] font-bold"
                 >
                   {isGenerating ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <FileDown className="w-4 h-4 ml-1" />}
                   {isGenerating ? exportStep : "تصدير PDF"}
