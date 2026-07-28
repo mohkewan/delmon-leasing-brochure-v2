@@ -4,8 +4,8 @@ import type { ProjectData } from "@/pages/Home";
 
 // ===== DELMON PDF GENERATOR =====
 // Strategy: renders a hidden off-screen clone of BrochurePreview,
-// captures each page with html2canvas at 2× scale, exports to A4 PDF.
-// Works regardless of whether the preview modal is open or closed.
+// captures each page with html2canvas at 3× scale, exports to A4 Landscape PDF.
+// Output: A4 Landscape (297×210mm) — matching the reference brochure format.
 
 export async function generateBrochurePDF(data: ProjectData): Promise<void> {
   // ── 1. Find or create the brochure container ──────────────────────────────
@@ -18,7 +18,7 @@ export async function generateBrochurePDF(data: ProjectData): Promise<void> {
     container.style.cssText = `
       position: fixed;
       top: 0; left: -9999px;
-      width: 794px;
+      width: 1123px;
       visibility: hidden;
       pointer-events: none;
       z-index: -1;
@@ -39,7 +39,7 @@ export async function generateBrochurePDF(data: ProjectData): Promise<void> {
   container.innerHTML = "";
   const clone = source.cloneNode(true) as HTMLElement;
   clone.style.cssText = `
-    width: 794px;
+    width: 1123px;
     font-family: 'Cairo', 'Noto Kufi Arabic', sans-serif;
     direction: rtl;
     background: #fff;
@@ -48,7 +48,7 @@ export async function generateBrochurePDF(data: ProjectData): Promise<void> {
 
   // ── 3. Wait for fonts & images to settle ─────────────────────────────────
   await document.fonts.ready;
-  await new Promise((r) => setTimeout(r, 300));
+  await new Promise((r) => setTimeout(r, 400));
 
   // ── 4. Capture each page ──────────────────────────────────────────────────
   const pages = clone.querySelectorAll<HTMLElement>(":scope > div");
@@ -57,34 +57,36 @@ export async function generateBrochurePDF(data: ProjectData): Promise<void> {
     throw new Error("لا توجد صفحات في البروشور");
   }
 
-  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const A4_W = 210;
-  const A4_H = 297;
+  // A4 Landscape: 297mm × 210mm
+  const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const A4_W = 297;
+  const A4_H = 210;
 
   for (let i = 0; i < pages.length; i++) {
     const page = pages[i] as HTMLElement;
 
     const canvas = await html2canvas(page, {
-      scale: 2.5,
+      scale: 3,
       useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
-      width: 794,
+      width: 1123,
       logging: false,
       imageTimeout: 10000,
     });
 
     const imgData = canvas.toDataURL("image/jpeg", 0.97);
-    const imgH = (canvas.height * A4_W) / canvas.width;
+    const imgH = (canvas.height / canvas.width) * A4_W;
 
     if (i > 0) pdf.addPage();
-    pdf.addImage(imgData, "JPEG", 0, 0, A4_W, Math.min(imgH, A4_H));
+    pdf.addImage(imgData, "JPEG", 0, 0, A4_W, Math.min(imgH, A4_H), undefined, "FAST");
   }
 
   // ── 5. Save & cleanup ─────────────────────────────────────────────────────
   const name = data.projectName || "بروشور-التأجير";
+  const city = data.city ? `-${data.city}` : "";
   const date = new Date().toISOString().split("T")[0];
-  pdf.save(`بروشور-${name}-${date}.pdf`);
+  pdf.save(`بروشور-دلمون-${name}${city}-${date}.pdf`);
 
   if (wasCreated) document.body.removeChild(container);
 }

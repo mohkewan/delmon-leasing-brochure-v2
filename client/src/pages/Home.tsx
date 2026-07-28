@@ -5,13 +5,30 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList } from "lucide-react";
+import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw } from "lucide-react";
 import BrochurePreview from "@/components/BrochurePreview";
 import { generateBrochurePDF } from "@/lib/pdfGenerator";
 
 // ===== DELMON INVESTMENT BRAND IDENTITY =====
 // Primary: Deep GOLD #949437 | Cyan: #8fa9dc | Background: #F0F0F0 | Font: Cairo
 // Layout: RTL sidebar form + live preview panel
+
+// ===== PROJECT IMAGES MAP =====
+// صور ثابتة لكل مشروع من مشاريع دلمون
+const PROJECT_IMAGES: Record<string, string> = {
+  "1": "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80", // بارك فيو - مول
+  "2": "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80", // دلمون مكتبي 2
+  "3": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80", // معارض جازان 1
+  "4": "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80", // رفالا الأولى
+  "5": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80", // فندق لؤلؤة جازان
+  "6": "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80", // دلمون مكتبي 1
+  "7": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80", // معارض جازان 2
+  "8": "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80", // رفالا الثانية
+  "9": "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80", // دلمون 3
+  "10": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80", // فندق جيزان
+};
+
+const STORAGE_KEY = "delmon_brochure_draft";
 
 export type UnitType = "مكتب" | "معرض" | "محل تجاري" | "مستودع" | "وحدة سكنية" | "فندق" | "أخرى";
 
@@ -25,6 +42,7 @@ export interface Unit {
   features: string;
   pricePerMeter?: string;
   monthlyRent?: string;
+  contractDuration?: string;
 }
 
 export interface ProjectData {
@@ -74,7 +92,12 @@ const emptyUnit = (): Unit => ({
 
 export default function Home() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
-  const [projectData, setProjectData] = useState<ProjectData>({
+  const [projectData, setProjectData] = useState<ProjectData>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
     projectName: "",
     projectType: "",
     city: "",
@@ -89,6 +112,7 @@ export default function Home() {
     contactEmail: "info@delmoninvest.com",
     projectImage: "",
     units: [emptyUnit()],
+    };
   });
   const [showPreview, setShowPreview] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -96,6 +120,14 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [exportStep, setExportStep] = useState<string>("");
   const [exportDone, setExportDone] = useState(false);
+  const [savedToast, setSavedToast] = useState(false);
+
+  // ── Auto-save to localStorage ──────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData));
+    } catch {}
+  }, [projectData]);
 
   const handleProjectSelect = (id: string) => {
     setSelectedProjectId(id);
@@ -106,10 +138,24 @@ export default function Home() {
         projectName: proj.name,
         projectType: proj.type,
         city: proj.city,
+        projectImage: PROJECT_IMAGES[id] || prev.projectImage,
       }));
     } else if (id === "custom") {
-      setProjectData((prev) => ({ ...prev, projectName: "", projectType: "", city: "" }));
+      setProjectData((prev) => ({ ...prev, projectName: "", projectType: "", city: "", projectImage: "" }));
     }
+  };
+
+  const handleClearDraft = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setProjectData({
+      projectName: "", projectType: "", city: "", district: "",
+      totalArea: "", floors: "", completionYear: "", description: "",
+      amenities: "", contactName: "قسم التأجير - دلمون للاستثمار",
+      contactPhone: "011-2080129", contactEmail: "info@delmoninvest.com",
+      projectImage: "", units: [emptyUnit()],
+    });
+    setSelectedProjectId("");
+    toast.success("تم مسح البيانات وبدء نموذج جديد");
   };
 
   const updateProject = useCallback((field: keyof ProjectData, value: string) => {
@@ -219,6 +265,15 @@ export default function Home() {
           {/* Actions */}
           <div className="flex items-center gap-2 py-3">
             <Button
+              onClick={handleClearDraft}
+              variant="outline"
+              size="sm"
+              className="border-red-200 text-red-400 hover:border-red-400 hover:text-red-600 bg-transparent transition-all hidden md:flex"
+            >
+              <RotateCcw className="w-4 h-4 ml-1" />
+              مسح
+            </Button>
+            <Button
               onClick={() => setShowPreview(true)}
               variant="outline"
               size="sm"
@@ -237,6 +292,11 @@ export default function Home() {
               {isGenerating ? exportStep : "تصدير PDF"}
             </Button>
           </div>
+        </div>
+        {/* Auto-save indicator */}
+        <div className="bg-[#949437]/5 border-t border-[#949437]/10 px-5 py-1 flex items-center gap-2">
+          <Save className="w-3 h-3 text-[#949437]" />
+          <span className="text-[10px] text-[#949437]/80">يتم حفظ بياناتك تلقائياً في المتصفح</span>
         </div>
       </header>
 
@@ -439,7 +499,7 @@ export default function Home() {
                     <Button
                       onClick={addUnit}
                       size="sm"
-                      className="bg-[#1A2E5A] hover:bg-[#243a72] text-white"
+                      className="bg-[#949437] hover:bg-[#7a7a2e] text-white"
                     >
                       <Plus className="w-4 h-4 ml-1" />
                       إضافة وحدة
@@ -452,7 +512,7 @@ export default function Home() {
                       className="border border-[#D0D0D0] rounded-xl p-4 bg-[#F8F9FD] relative"
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-bold text-[#2C2C2C] bg-[#1A2E5A]/10 px-3 py-1 rounded-full">
+                        <span className="text-sm font-bold text-[#2C2C2C] bg-[#949437]/10 px-3 py-1 rounded-full">
                           وحدة {idx + 1}
                         </span>
                         {projectData.units.length > 1 && (
@@ -521,16 +581,34 @@ export default function Home() {
                           />
                         </div>
                         <div>
-                          <Label className="text-xs text-gray-600 mb-1 block">السعر / م² (ريال)</Label>
-                          <Input
-                            value={unit.pricePerMeter}
-                            onChange={(e) => updateUnit(unit.id, "pricePerMeter", e.target.value)}
-                            placeholder="مثال: 100"
-                            type="number"
-                            className="h-8 text-sm border-[#D0D0D0]"
-                          />
-                        </div>
-                      </div>
+                         <Label className="text-xs text-gray-600 mb-1 block">السعر / م² (ريال)</Label>
+                         <Input
+                           value={unit.pricePerMeter}
+                           onChange={(e) => updateUnit(unit.id, "pricePerMeter", e.target.value)}
+                           placeholder="مثال: 100"
+                           type="number"
+                           className="h-8 text-sm border-[#D0D0D0]"
+                         />
+                       </div>
+                       <div>
+                         <Label className="text-xs text-gray-600 mb-1 block">مدة العقد</Label>
+                         <Select
+                           value={(unit as any).contractDuration || ""}
+                           onValueChange={(v) => updateUnit(unit.id, "contractDuration" as any, v)}
+                         >
+                           <SelectTrigger className="h-8 text-sm border-[#D0D0D0]">
+                             <SelectValue placeholder="اختر المدة" />
+                           </SelectTrigger>
+                           <SelectContent>
+                             <SelectItem value="سنة">سنة</SelectItem>
+                             <SelectItem value="سنتان">سنتان</SelectItem>
+                             <SelectItem value="3 سنوات">3 سنوات</SelectItem>
+                             <SelectItem value="5 سنوات">5 سنوات</SelectItem>
+                             <SelectItem value="قابل للتفاوض">قابل للتفاوض</SelectItem>
+                           </SelectContent>
+                         </Select>
+                       </div>
+                     </div>
                       <div className="mt-3">
                         <Label className="text-xs text-gray-600 mb-1 block">مميزات الوحدة</Label>
                         <Input
@@ -592,7 +670,7 @@ export default function Home() {
                       dir="ltr"
                     />
                   </div>
-                  <div className="bg-[#1A2E5A]/5 rounded-xl p-4 border border-[#1A2E5A]/10">
+                  <div className="bg-[#949437]/5 rounded-xl p-4 border border-[#949437]/15">
                     <div className="flex items-center gap-2 mb-2">
                       <Globe className="w-4 h-4 text-[#2C2C2C]" />
                       <span className="text-sm font-semibold text-[#2C2C2C]">معلومات الشركة الثابتة</span>
@@ -612,7 +690,7 @@ export default function Home() {
               <Button
                 onClick={handleExportPDF}
                 disabled={isGenerating}
-                className="flex-1 bg-[#1A2E5A] hover:bg-[#243a72] text-white font-bold"
+                className="flex-1 bg-[#949437] hover:bg-[#7a7a2e] text-white font-bold"
               >
                 {isGenerating ? (
                   <Loader2 className="w-4 h-4 ml-2 animate-spin" />
@@ -637,11 +715,11 @@ export default function Home() {
           {/* ===== MINI PREVIEW PANEL ===== */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-sm border border-[#D0D0D0] overflow-hidden sticky top-24 flex flex-col">
-              <div className="bg-[#1A2E5A] px-4 py-3 flex items-center justify-between">
+              <div className="bg-[#949437] px-4 py-3 flex items-center justify-between">
                 <span className="text-white text-sm font-semibold">معاينة البروشور</span>
                 <button
                   onClick={() => setShowPreview(true)}
-                  className="text-[#949437] text-xs hover:underline"
+                  className="text-white/80 text-xs hover:text-white hover:underline"
                 >
                   عرض كامل
                 </button>
@@ -682,7 +760,7 @@ export default function Home() {
           onClick={(e) => e.target === e.currentTarget && setShowPreview(false)}
         >
           <div className="bg-white rounded-2xl shadow-2xl max-w-[860px] w-full mx-4 overflow-hidden">
-            <div className="bg-[#1A2E5A] px-6 py-4 flex items-center justify-between">
+            <div className="bg-[#949437] px-6 py-4 flex items-center justify-between">
               <span className="text-white font-bold">معاينة البروشور الكاملة</span>
               <div className="flex gap-2">
                 <Button
