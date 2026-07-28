@@ -1,155 +1,159 @@
 import type { ProjectData } from "@/pages/Home";
 
-// ===== DELMON INVESTMENT BROCHURE PREVIEW =====
-// Mirrors the PDF output exactly - Navy #1A2E5A, Gold #C9A84C, Cairo font
-// RTL layout, A4 proportions
+// ===== DELMON INVESTMENT — LEASING BROCHURE PREVIEW =====
+// Design: Navy #1A2E5A | Gold #C9A84C | White | Cairo font
+// Structure: Cover → Project Details → Units Table → Contact
+// RTL, A4 (794×1123px), print-ready
 
 interface Props {
   data: ProjectData;
 }
 
-const LOGO_URL = "/manus-storage/delmon_logo_19a2386c.png";
-const DELMON_NAVY = "#1A2E5A";
-const DELMON_GOLD = "#C9A84C";
+const LOGO = "/manus-storage/delmon_logo_19a2386c.png";
+const NAVY = "#1A2E5A";
+const GOLD = "#C9A84C";
+const GOLD_LIGHT = "#F5EDD3";
+const GRAY_BG = "#F4F6FB";
+const BORDER = "#DDE2EF";
 
 export default function BrochurePreview({ data }: Props) {
-  const totalArea = data.units.reduce((sum, u) => sum + (parseFloat(u.area) || 0), 0);
-  const today = new Date().toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" });
+  const totalArea = data.units.reduce((s, u) => s + (parseFloat(u.area) || 0), 0);
+  const today = new Date().toLocaleDateString("ar-SA", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <div
       id="brochure-content"
       dir="rtl"
-      style={{
-        fontFamily: "'Cairo', 'Noto Kufi Arabic', sans-serif",
-        width: "794px",
-        background: "#fff",
-        color: DELMON_NAVY,
-      }}
+      style={{ fontFamily: "'Cairo','Noto Kufi Arabic',sans-serif", background: "#fff", width: 794 }}
     >
-      {/* ===== PAGE 1: COVER ===== */}
+      {/* ══════════════════════════════════════════════
+          PAGE 1 — COVER
+      ══════════════════════════════════════════════ */}
       <div
         style={{
-          width: "794px",
-          minHeight: "1123px",
-          background: DELMON_NAVY,
-          position: "relative",
-          overflow: "hidden",
+          width: 794,
+          minHeight: 1123,
+          background: NAVY,
           display: "flex",
           flexDirection: "column",
+          position: "relative",
+          overflow: "hidden",
+          pageBreakAfter: "always",
         }}
       >
-        {/* Background pattern */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `radial-gradient(circle at 20% 80%, rgba(201,168,76,0.15) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, rgba(201,168,76,0.10) 0%, transparent 50%)`,
-          }}
-        />
-        {/* Diagonal accent */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "300px",
-            background: "linear-gradient(135deg, transparent 60%, rgba(201,168,76,0.12) 100%)",
-          }}
-        />
+        {/* Decorative arcs */}
+        <svg
+          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }}
+          viewBox="0 0 794 1123"
+          preserveAspectRatio="none"
+        >
+          <circle cx="760" cy="80" r="200" fill="none" stroke={GOLD} strokeWidth="1" opacity="0.15" />
+          <circle cx="760" cy="80" r="280" fill="none" stroke={GOLD} strokeWidth="0.5" opacity="0.10" />
+          <circle cx="40" cy="1050" r="180" fill="none" stroke={GOLD} strokeWidth="1" opacity="0.12" />
+          <path d="M0 900 Q200 820 400 900 T794 820 L794 1123 L0 1123 Z" fill={GOLD} opacity="0.06" />
+        </svg>
 
-        {/* Header */}
+        {/* ── Top bar ── */}
         <div
           style={{
-            padding: "40px 48px 0",
+            padding: "28px 48px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            borderBottom: `1px solid rgba(201,168,76,0.25)`,
             position: "relative",
             zIndex: 2,
           }}
         >
-          <img src={LOGO_URL} alt="دلمون" style={{ height: "70px", objectFit: "contain" }} />
-          <div style={{ textAlign: "left", color: "rgba(255,255,255,0.6)", fontSize: "11px" }}>
-            <div>DELMON INVESTMENT COMPANY</div>
-            <div>www.delmoninvest.com</div>
+          <img src={LOGO} alt="دلمون" style={{ height: 60, objectFit: "contain" }} />
+          <div style={{ textAlign: "left" }}>
+            <div style={{ color: GOLD, fontSize: 11, fontWeight: 700, letterSpacing: 1.5 }}>
+              DELMON INVESTMENT COMPANY
+            </div>
+            <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 10, marginTop: 2 }}>
+              www.delmoninvest.com
+            </div>
           </div>
         </div>
 
-        {/* Project image */}
-        {data.projectImage && (
-          <div
-            style={{
-              margin: "32px 48px 0",
-              borderRadius: "16px",
-              overflow: "hidden",
-              height: "320px",
-              position: "relative",
-              zIndex: 2,
-            }}
-          >
-            <img
-              src={data.projectImage}
-              alt={data.projectName}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background: "linear-gradient(to bottom, transparent 50%, rgba(26,46,90,0.7) 100%)",
-              }}
-            />
-          </div>
-        )}
-
-        {/* Main content */}
+        {/* ── Project image ── */}
         <div
           style={{
-            flex: 1,
-            padding: "40px 48px",
+            margin: "28px 48px 0",
+            borderRadius: 16,
+            overflow: "hidden",
+            height: data.projectImage ? 360 : 200,
             position: "relative",
             zIndex: 2,
+            background: data.projectImage ? "transparent" : "rgba(255,255,255,0.05)",
+            border: data.projectImage ? "none" : `2px dashed rgba(201,168,76,0.3)`,
             display: "flex",
-            flexDirection: "column",
+            alignItems: "center",
             justifyContent: "center",
           }}
         >
-          {/* Label */}
+          {data.projectImage ? (
+            <>
+              <img
+                src={data.projectImage}
+                alt={data.projectName}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(to bottom, transparent 40%, rgba(26,46,90,0.85) 100%)",
+                }}
+              />
+            </>
+          ) : (
+            <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, textAlign: "center" }}>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>🏢</div>
+              أضف صورة المشروع
+            </div>
+          )}
+        </div>
+
+        {/* ── Main headline ── */}
+        <div style={{ padding: "32px 48px 0", position: "relative", zIndex: 2 }}>
+          {/* Badge */}
           <div
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: "8px",
-              background: DELMON_GOLD,
-              color: DELMON_NAVY,
-              padding: "6px 16px",
-              borderRadius: "20px",
-              fontSize: "12px",
-              fontWeight: "700",
-              marginBottom: "20px",
-              width: "fit-content",
+              gap: 8,
+              background: GOLD,
+              color: NAVY,
+              padding: "5px 18px",
+              borderRadius: 20,
+              fontSize: 12,
+              fontWeight: 800,
+              marginBottom: 20,
             }}
           >
-            وحدات شاغرة للتأجير
+            ● وحدات شاغرة للتأجير
           </div>
 
           <h1
             style={{
               color: "#fff",
-              fontSize: "42px",
-              fontWeight: "900",
-              lineHeight: "1.3",
-              margin: "0 0 8px",
+              fontSize: 48,
+              fontWeight: 900,
+              lineHeight: 1.25,
+              margin: "0 0 6px",
             }}
           >
             {data.projectName || "اسم المشروع"}
           </h1>
 
           {data.projectType && (
-            <div style={{ color: DELMON_GOLD, fontSize: "18px", fontWeight: "600", marginBottom: "16px" }}>
+            <div style={{ color: GOLD, fontSize: 20, fontWeight: 700, marginBottom: 14 }}>
               {data.projectType}
             </div>
           )}
@@ -159,48 +163,87 @@ export default function BrochurePreview({ data }: Props) {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "8px",
-                color: "rgba(255,255,255,0.8)",
-                fontSize: "15px",
-                marginBottom: "32px",
+                gap: 8,
+                color: "rgba(255,255,255,0.75)",
+                fontSize: 15,
+                marginBottom: 28,
               }}
             >
-              <span>📍</span>
-              <span>{[data.district, data.city].filter(Boolean).join(" - ")}</span>
+              <span style={{ color: GOLD }}>📍</span>
+              {[data.district, data.city].filter(Boolean).join(" — ")}
             </div>
           )}
 
-          {/* Stats row */}
-          <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+          {/* Stats */}
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 36 }}>
             {[
-              { label: "عدد الوحدات", value: data.units.length.toString() },
-              { label: "إجمالي المساحة", value: `${totalArea.toLocaleString("ar-SA")} م²` },
-              ...(data.floors ? [{ label: "عدد الطوابق", value: data.floors }] : []),
-              ...(data.completionYear ? [{ label: "سنة الإنجاز", value: data.completionYear }] : []),
+              { v: String(data.units.length), l: "وحدة شاغرة" },
+              { v: `${totalArea.toLocaleString("ar-SA")} م²`, l: "إجمالي المساحة" },
+              ...(data.floors ? [{ v: data.floors, l: "طابق" }] : []),
+              ...(data.completionYear ? [{ v: data.completionYear, l: "سنة الإنجاز" }] : []),
             ].map((s, i) => (
               <div
                 key={i}
                 style={{
-                  background: "rgba(255,255,255,0.08)",
-                  border: `1px solid rgba(201,168,76,0.3)`,
-                  borderRadius: "12px",
-                  padding: "12px 20px",
+                  background: "rgba(255,255,255,0.07)",
+                  border: `1px solid rgba(201,168,76,0.35)`,
+                  borderRadius: 12,
+                  padding: "14px 22px",
                   textAlign: "center",
-                  minWidth: "100px",
+                  minWidth: 110,
                 }}
               >
-                <div style={{ color: DELMON_GOLD, fontSize: "22px", fontWeight: "800" }}>{s.value}</div>
-                <div style={{ color: "rgba(255,255,255,0.7)", fontSize: "11px", marginTop: "2px" }}>{s.label}</div>
+                <div style={{ color: GOLD, fontSize: 26, fontWeight: 900 }}>{s.v}</div>
+                <div style={{ color: "rgba(255,255,255,0.65)", fontSize: 11, marginTop: 3 }}>{s.l}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Footer */}
+        {/* ── Feature icons row ── */}
+        {data.amenities && (
+          <div
+            style={{
+              margin: "0 48px",
+              padding: "20px 24px",
+              background: "rgba(255,255,255,0.05)",
+              borderRadius: 12,
+              border: `1px solid rgba(201,168,76,0.2)`,
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 12,
+              position: "relative",
+              zIndex: 2,
+            }}
+          >
+            {data.amenities
+              .split(/[,،]/)
+              .slice(0, 6)
+              .map((item, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    color: "rgba(255,255,255,0.8)",
+                    fontSize: 12,
+                    fontWeight: 600,
+                  }}
+                >
+                  <span style={{ color: GOLD, fontSize: 14 }}>✓</span>
+                  {item.trim()}
+                </div>
+              ))}
+          </div>
+        )}
+
+        {/* ── Footer ── */}
+        <div style={{ flex: 1 }} />
         <div
           style={{
-            borderTop: `1px solid rgba(201,168,76,0.3)`,
             padding: "16px 48px",
+            borderTop: `1px solid rgba(201,168,76,0.25)`,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -208,118 +251,145 @@ export default function BrochurePreview({ data }: Props) {
             zIndex: 2,
           }}
         >
-          <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "11px" }}>{today}</span>
-          <span style={{ color: DELMON_GOLD, fontSize: "11px", fontWeight: "600" }}>
-            شركة دلمون للاستثمار | DELMON INVESTMENT COMPANY
-          </span>
+          <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 10 }}>{today}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 10 }}>📞 {data.contactPhone || "011-2080129"}</span>
+            <span style={{ color: GOLD, fontSize: 10, fontWeight: 700 }}>
+              شركة دلمون للاستثمار
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* ===== PAGE 2: PROJECT DETAILS ===== */}
+      {/* ══════════════════════════════════════════════
+          PAGE 2 — PROJECT DETAILS
+      ══════════════════════════════════════════════ */}
       <div
         style={{
-          width: "794px",
-          minHeight: "1123px",
+          width: 794,
+          minHeight: 1123,
           background: "#fff",
-          padding: "0",
-          pageBreakBefore: "always",
+          display: "flex",
+          flexDirection: "column",
+          pageBreakAfter: "always",
+          position: "relative",
         }}
       >
-        {/* Page header */}
-        <PageHeader projectName={data.projectName} />
+        <PageHeader name={data.projectName} />
 
-        <div style={{ padding: "32px 48px" }}>
+        <div style={{ padding: "36px 48px", flex: 1 }}>
+          {/* Section: About */}
           <SectionTitle title="نبذة عن المشروع" />
 
-          {data.description && (
-            <p
+          {data.description ? (
+            <div
               style={{
+                background: GRAY_BG,
+                borderRadius: 12,
+                padding: "18px 22px",
+                borderRight: `5px solid ${GOLD}`,
                 color: "#374151",
-                fontSize: "14px",
-                lineHeight: "2",
-                marginBottom: "28px",
-                background: "#F8F9FD",
-                padding: "16px 20px",
-                borderRadius: "10px",
-                borderRight: `4px solid ${DELMON_GOLD}`,
+                fontSize: 14,
+                lineHeight: 2.1,
+                marginBottom: 32,
               }}
             >
               {data.description}
-            </p>
+            </div>
+          ) : (
+            <div
+              style={{
+                background: GRAY_BG,
+                borderRadius: 12,
+                padding: "18px 22px",
+                borderRight: `5px solid ${GOLD}`,
+                color: "#9CA3AF",
+                fontSize: 13,
+                marginBottom: 32,
+              }}
+            >
+              يرجى إضافة وصف للمشروع من نموذج الإدخال
+            </div>
           )}
 
-          {/* Project specs grid */}
+          {/* Section: Specs */}
+          <SectionTitle title="مواصفات المشروع" />
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "16px",
-              marginBottom: "28px",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: 14,
+              marginBottom: 32,
             }}
           >
             {[
-              { label: "اسم المشروع", value: data.projectName },
-              { label: "نوع المشروع", value: data.projectType },
-              { label: "المدينة", value: data.city },
-              { label: "الحي / الموقع", value: data.district },
-              { label: "إجمالي المساحة", value: data.totalArea ? `${parseFloat(data.totalArea).toLocaleString("ar-SA")} م²` : "" },
-              { label: "عدد الطوابق", value: data.floors },
-              { label: "سنة الإنجاز", value: data.completionYear },
-              { label: "عدد الوحدات الشاغرة", value: data.units.length.toString() },
+              { icon: "🏢", label: "اسم المشروع", value: data.projectName },
+              { icon: "📋", label: "نوع المشروع", value: data.projectType },
+              { icon: "📍", label: "المدينة", value: data.city },
+              { icon: "🗺️", label: "الحي / الموقع", value: data.district },
+              {
+                icon: "📐",
+                label: "إجمالي المساحة",
+                value: data.totalArea
+                  ? `${parseFloat(data.totalArea).toLocaleString("ar-SA")} م²`
+                  : "",
+              },
+              { icon: "🏗️", label: "عدد الطوابق", value: data.floors },
+              { icon: "📅", label: "سنة الإنجاز", value: data.completionYear },
+              { icon: "🔑", label: "الوحدات الشاغرة", value: String(data.units.length) },
+              {
+                icon: "📏",
+                label: "إجمالي مساحة الشاغر",
+                value: totalArea > 0 ? `${totalArea.toLocaleString("ar-SA")} م²` : "",
+              },
             ]
-              .filter((item) => item.value)
+              .filter((x) => x.value)
               .map((item, i) => (
                 <div
                   key={i}
                   style={{
-                    background: "#F8F9FD",
-                    borderRadius: "10px",
-                    padding: "14px 18px",
-                    border: "1px solid #E8EAF0",
+                    background: GRAY_BG,
+                    borderRadius: 10,
+                    padding: "14px 16px",
+                    border: `1px solid ${BORDER}`,
                   }}
                 >
-                  <div style={{ color: "#9CA3AF", fontSize: "11px", marginBottom: "4px" }}>{item.label}</div>
-                  <div style={{ color: DELMON_NAVY, fontWeight: "700", fontSize: "14px" }}>{item.value}</div>
+                  <div style={{ fontSize: 10, color: "#9CA3AF", marginBottom: 4 }}>
+                    {item.icon} {item.label}
+                  </div>
+                  <div style={{ color: NAVY, fontWeight: 800, fontSize: 14 }}>{item.value}</div>
                 </div>
               ))}
           </div>
 
+          {/* Section: Amenities */}
           {data.amenities && (
             <>
-              <SectionTitle title="المرافق والخدمات" />
+              <SectionTitle title="المرافق والخدمات المتاحة" />
               <div
                 style={{
-                  background: "#F8F9FD",
-                  borderRadius: "10px",
-                  padding: "16px 20px",
-                  border: "1px solid #E8EAF0",
-                  marginBottom: "28px",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 10,
+                  marginBottom: 32,
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "10px",
-                  }}
-                >
-                  {data.amenities.split(/[,،]/).map((item, i) => (
-                    <span
-                      key={i}
-                      style={{
-                        background: `${DELMON_NAVY}10`,
-                        color: DELMON_NAVY,
-                        padding: "5px 14px",
-                        borderRadius: "20px",
-                        fontSize: "12px",
-                        fontWeight: "600",
-                        border: `1px solid ${DELMON_NAVY}20`,
-                      }}
-                    >
-                      ✓ {item.trim()}
-                    </span>
-                  ))}
-                </div>
+                {data.amenities.split(/[,،]/).map((item, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      background: GOLD_LIGHT,
+                      color: NAVY,
+                      padding: "6px 16px",
+                      borderRadius: 20,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      border: `1px solid ${GOLD}55`,
+                    }}
+                  >
+                    ✓ {item.trim()}
+                  </span>
+                ))}
               </div>
             </>
           )}
@@ -328,147 +398,278 @@ export default function BrochurePreview({ data }: Props) {
         <PageFooter />
       </div>
 
-      {/* ===== PAGE 3: UNITS TABLE ===== */}
+      {/* ══════════════════════════════════════════════
+          PAGE 3 — VACANT UNITS TABLE
+      ══════════════════════════════════════════════ */}
       <div
         style={{
-          width: "794px",
-          minHeight: "1123px",
+          width: 794,
+          minHeight: 1123,
           background: "#fff",
-          pageBreakBefore: "always",
+          display: "flex",
+          flexDirection: "column",
+          pageBreakAfter: "always",
+          position: "relative",
         }}
       >
-        <PageHeader projectName={data.projectName} />
+        <PageHeader name={data.projectName} />
 
-        <div style={{ padding: "32px 48px" }}>
-          <SectionTitle title="جدول الوحدات الشاغرة" />
+        <div style={{ padding: "36px 48px", flex: 1 }}>
+          {/* Title */}
+          <div style={{ marginBottom: 28 }}>
+            <SectionTitle title={`الوحدات الشاغرة — ${data.projectName || "المشروع"}`} />
+            <p style={{ color: "#6B7280", fontSize: 13, margin: 0 }}>
+              إجمالي {data.units.length} وحدة شاغرة بمساحة إجمالية{" "}
+              {totalArea.toLocaleString("ar-SA")} م²
+            </p>
+          </div>
 
           {/* Table */}
           <table
             style={{
               width: "100%",
               borderCollapse: "collapse",
-              fontSize: "13px",
-              marginBottom: "28px",
+              fontSize: 12.5,
+              marginBottom: 28,
+              border: `2px solid ${NAVY}`,
             }}
           >
             <thead>
-              <tr style={{ background: DELMON_NAVY }}>
-                {["#", "رقم الوحدة", "الطابق", "النوع", "المساحة (م²)", "الإيجار الشهري", "السعر/م²", "المميزات"].map(
-                  (h, i) => (
-                    <th
-                      key={i}
-                      style={{
-                        color: "#fff",
-                        padding: "12px 10px",
-                        textAlign: "right",
-                        fontWeight: "700",
-                        fontSize: "12px",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {h}
-                    </th>
-                  )
-                )}
+              <tr>
+                {[
+                  "#",
+                  "رقم الوحدة",
+                  "الطابق",
+                  "النوع",
+                  "المساحة (م²)",
+                  "مدة العقد",
+                  "الإيجار السنوي (ر.س)",
+                  "السعر / م²",
+                  "ملاحظات",
+                ].map((h, i) => (
+                  <th
+                    key={i}
+                    style={{
+                      background: NAVY,
+                      color: "#fff",
+                      padding: "12px 8px",
+                      textAlign: "center",
+                      fontWeight: 700,
+                      fontSize: 11,
+                      borderLeft: i > 0 ? `1px solid rgba(255,255,255,0.15)` : "none",
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {data.units.map((unit, idx) => (
-                <tr
-                  key={unit.id}
-                  style={{
-                    background: idx % 2 === 0 ? "#F8F9FD" : "#fff",
-                    borderBottom: "1px solid #E8EAF0",
-                  }}
-                >
-                  <td style={{ padding: "11px 10px", color: DELMON_GOLD, fontWeight: "700", textAlign: "center" }}>
-                    {idx + 1}
-                  </td>
-                  <td style={{ padding: "11px 10px", fontWeight: "600", color: DELMON_NAVY }}>
-                    {unit.unitNumber || `وحدة ${idx + 1}`}
-                  </td>
-                  <td style={{ padding: "11px 10px", color: "#374151" }}>{unit.floor || "—"}</td>
-                  <td style={{ padding: "11px 10px" }}>
-                    <span
+              {data.units.map((unit, idx) => {
+                const annualRent = unit.monthlyRent
+                  ? (parseFloat(unit.monthlyRent) * 12).toLocaleString("ar-SA")
+                  : "—";
+                return (
+                  <tr
+                    key={unit.id}
+                    style={{
+                      background: idx % 2 === 0 ? GRAY_BG : "#fff",
+                      borderBottom: `1px solid ${BORDER}`,
+                    }}
+                  >
+                    <td
                       style={{
-                        background: `${DELMON_NAVY}15`,
-                        color: DELMON_NAVY,
-                        padding: "3px 10px",
-                        borderRadius: "12px",
-                        fontSize: "11px",
-                        fontWeight: "600",
+                        padding: "11px 8px",
+                        textAlign: "center",
+                        color: GOLD,
+                        fontWeight: 800,
+                        fontSize: 13,
+                        border: `1px solid ${BORDER}`,
                       }}
                     >
-                      {unit.unitType}
-                    </span>
-                  </td>
-                  <td style={{ padding: "11px 10px", fontWeight: "700", color: DELMON_NAVY, textAlign: "center" }}>
-                    {unit.area ? parseFloat(unit.area).toLocaleString("ar-SA") : "—"}
-                  </td>
-                  <td style={{ padding: "11px 10px", color: "#059669", fontWeight: "600", textAlign: "center" }}>
-                    {unit.monthlyRent
-                      ? `${parseFloat(unit.monthlyRent).toLocaleString("ar-SA")} ر.س`
-                      : "—"}
-                  </td>
-                  <td style={{ padding: "11px 10px", color: "#374151", textAlign: "center" }}>
-                    {unit.pricePerMeter
-                      ? `${parseFloat(unit.pricePerMeter).toLocaleString("ar-SA")} ر.س`
-                      : "—"}
-                  </td>
-                  <td style={{ padding: "11px 10px", color: "#6B7280", fontSize: "11px" }}>
-                    {unit.features || "—"}
-                  </td>
-                </tr>
-              ))}
+                      {idx + 1}
+                    </td>
+                    <td
+                      style={{
+                        padding: "11px 8px",
+                        textAlign: "center",
+                        fontWeight: 700,
+                        color: NAVY,
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    >
+                      {unit.unitNumber || `وحدة ${idx + 1}`}
+                    </td>
+                    <td
+                      style={{
+                        padding: "11px 8px",
+                        textAlign: "center",
+                        color: "#374151",
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    >
+                      {unit.floor || "—"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "11px 8px",
+                        textAlign: "center",
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    >
+                      <span
+                        style={{
+                          background: `${NAVY}15`,
+                          color: NAVY,
+                          padding: "3px 10px",
+                          borderRadius: 12,
+                          fontSize: 11,
+                          fontWeight: 700,
+                        }}
+                      >
+                        {unit.unitType}
+                      </span>
+                    </td>
+                    <td
+                      style={{
+                        padding: "11px 8px",
+                        textAlign: "center",
+                        fontWeight: 800,
+                        color: NAVY,
+                        fontSize: 13,
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    >
+                      {unit.area
+                        ? parseFloat(unit.area).toLocaleString("ar-SA")
+                        : "—"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "11px 8px",
+                        textAlign: "center",
+                        color: "#374151",
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    >
+                      5 سنوات
+                    </td>
+                    <td
+                      style={{
+                        padding: "11px 8px",
+                        textAlign: "center",
+                        color: "#059669",
+                        fontWeight: 700,
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    >
+                      {annualRent}
+                    </td>
+                    <td
+                      style={{
+                        padding: "11px 8px",
+                        textAlign: "center",
+                        color: "#374151",
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    >
+                      {unit.pricePerMeter
+                        ? `${parseFloat(unit.pricePerMeter).toLocaleString("ar-SA")}`
+                        : "—"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "11px 8px",
+                        color: "#6B7280",
+                        fontSize: 11,
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    >
+                      {unit.features || "—"}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
-            {/* Totals row */}
             <tfoot>
-              <tr style={{ background: `${DELMON_GOLD}20`, borderTop: `2px solid ${DELMON_GOLD}` }}>
-                <td colSpan={4} style={{ padding: "12px 10px", fontWeight: "800", color: DELMON_NAVY }}>
+              <tr
+                style={{
+                  background: `${GOLD}22`,
+                  borderTop: `2px solid ${GOLD}`,
+                }}
+              >
+                <td
+                  colSpan={4}
+                  style={{
+                    padding: "13px 8px",
+                    fontWeight: 900,
+                    color: NAVY,
+                    fontSize: 13,
+                    border: `1px solid ${BORDER}`,
+                  }}
+                >
                   الإجمالي
                 </td>
                 <td
                   style={{
-                    padding: "12px 10px",
-                    fontWeight: "800",
-                    color: DELMON_NAVY,
+                    padding: "13px 8px",
                     textAlign: "center",
+                    fontWeight: 900,
+                    color: NAVY,
+                    fontSize: 14,
+                    border: `1px solid ${BORDER}`,
                   }}
                 >
                   {totalArea.toLocaleString("ar-SA")} م²
                 </td>
-                <td colSpan={3} />
+                <td colSpan={4} style={{ border: `1px solid ${BORDER}` }} />
               </tr>
             </tfoot>
           </table>
 
           {/* Summary cards */}
-          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 16 }}>
             {[
-              { label: "إجمالي الوحدات", value: data.units.length.toString(), color: DELMON_NAVY },
-              { label: "إجمالي المساحة", value: `${totalArea.toLocaleString("ar-SA")} م²`, color: DELMON_NAVY },
+              { label: "إجمالي الوحدات الشاغرة", value: String(data.units.length), sub: "وحدة" },
+              {
+                label: "إجمالي المساحة الشاغرة",
+                value: totalArea.toLocaleString("ar-SA"),
+                sub: "م²",
+              },
               {
                 label: "متوسط مساحة الوحدة",
                 value: data.units.length
-                  ? `${Math.round(totalArea / data.units.length).toLocaleString("ar-SA")} م²`
+                  ? Math.round(totalArea / data.units.length).toLocaleString("ar-SA")
                   : "—",
-                color: DELMON_NAVY,
+                sub: "م²",
               },
-            ].map((card, i) => (
+            ].map((c, i) => (
               <div
                 key={i}
                 style={{
-                  flex: "1",
-                  minWidth: "160px",
-                  background: `${DELMON_NAVY}08`,
-                  border: `1px solid ${DELMON_NAVY}20`,
-                  borderRadius: "12px",
-                  padding: "16px 20px",
+                  flex: 1,
+                  background: GRAY_BG,
+                  border: `1px solid ${BORDER}`,
+                  borderTop: `4px solid ${i === 0 ? NAVY : GOLD}`,
+                  borderRadius: 12,
+                  padding: "18px 20px",
                   textAlign: "center",
                 }}
               >
-                <div style={{ fontSize: "24px", fontWeight: "900", color: card.color }}>{card.value}</div>
-                <div style={{ fontSize: "12px", color: "#6B7280", marginTop: "4px" }}>{card.label}</div>
+                <div
+                  style={{
+                    fontSize: 28,
+                    fontWeight: 900,
+                    color: i === 0 ? NAVY : GOLD,
+                    lineHeight: 1,
+                  }}
+                >
+                  {c.value}
+                  <span style={{ fontSize: 13, fontWeight: 600, marginRight: 4, color: "#6B7280" }}>
+                    {c.sub}
+                  </span>
+                </div>
+                <div style={{ fontSize: 11, color: "#6B7280", marginTop: 6 }}>{c.label}</div>
               </div>
             ))}
           </div>
@@ -477,35 +678,39 @@ export default function BrochurePreview({ data }: Props) {
         <PageFooter />
       </div>
 
-      {/* ===== PAGE 4: CONTACT ===== */}
+      {/* ══════════════════════════════════════════════
+          PAGE 4 — CONTACT
+      ══════════════════════════════════════════════ */}
       <div
         style={{
-          width: "794px",
-          minHeight: "600px",
-          background: DELMON_NAVY,
-          pageBreakBefore: "always",
+          width: 794,
+          minHeight: 700,
+          background: NAVY,
+          display: "flex",
+          flexDirection: "column",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `radial-gradient(circle at 80% 20%, rgba(201,168,76,0.15) 0%, transparent 50%)`,
-          }}
-        />
+        <svg
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}
+          viewBox="0 0 794 700"
+          preserveAspectRatio="none"
+        >
+          <circle cx="700" cy="100" r="250" fill="none" stroke={GOLD} strokeWidth="1" opacity="0.12" />
+          <circle cx="100" cy="600" r="200" fill="none" stroke={GOLD} strokeWidth="0.5" opacity="0.10" />
+        </svg>
 
-        <div style={{ padding: "60px 48px", position: "relative", zIndex: 2 }}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <img src={LOGO_URL} alt="دلمون" style={{ height: "80px", objectFit: "contain", marginBottom: "16px" }} />
-            <h2 style={{ color: "#fff", fontSize: "28px", fontWeight: "800", margin: "0 0 8px" }}>
-              تواصل معنا
-            </h2>
-            <div style={{ color: DELMON_GOLD, fontSize: "14px" }}>نحن هنا لمساعدتك في اختيار الوحدة المناسبة</div>
-          </div>
+        <div style={{ padding: "56px 48px", position: "relative", zIndex: 2, textAlign: "center" }}>
+          <img src={LOGO} alt="دلمون" style={{ height: 72, objectFit: "contain", marginBottom: 20 }} />
+          <h2 style={{ color: "#fff", fontSize: 30, fontWeight: 900, margin: "0 0 8px" }}>
+            للاستفسار والحجز
+          </h2>
+          <p style={{ color: GOLD, fontSize: 14, margin: "0 0 48px" }}>
+            فريقنا جاهز لمساعدتك في اختيار الوحدة المناسبة لنشاطك التجاري
+          </p>
 
-          <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap" }}>
             {[
               { icon: "👤", label: "المسؤول", value: data.contactName },
               { icon: "📞", label: "الهاتف", value: data.contactPhone },
@@ -513,37 +718,38 @@ export default function BrochurePreview({ data }: Props) {
               { icon: "🌐", label: "الموقع الإلكتروني", value: "www.delmoninvest.com" },
             ]
               .filter((c) => c.value)
-              .map((contact, i) => (
+              .map((c, i) => (
                 <div
                   key={i}
                   style={{
-                    background: "rgba(255,255,255,0.08)",
-                    border: `1px solid rgba(201,168,76,0.3)`,
-                    borderRadius: "16px",
-                    padding: "20px 28px",
+                    background: "rgba(255,255,255,0.07)",
+                    border: `1px solid rgba(201,168,76,0.35)`,
+                    borderRadius: 16,
+                    padding: "22px 30px",
+                    minWidth: 160,
                     textAlign: "center",
-                    minWidth: "160px",
                   }}
                 >
-                  <div style={{ fontSize: "28px", marginBottom: "8px" }}>{contact.icon}</div>
-                  <div style={{ color: DELMON_GOLD, fontSize: "11px", marginBottom: "6px" }}>{contact.label}</div>
-                  <div style={{ color: "#fff", fontWeight: "600", fontSize: "13px" }}>{contact.value}</div>
+                  <div style={{ fontSize: 30, marginBottom: 10 }}>{c.icon}</div>
+                  <div style={{ color: GOLD, fontSize: 11, marginBottom: 6, fontWeight: 700 }}>
+                    {c.label}
+                  </div>
+                  <div style={{ color: "#fff", fontWeight: 600, fontSize: 13 }}>{c.value}</div>
                 </div>
               ))}
           </div>
 
           <div
             style={{
-              marginTop: "48px",
-              textAlign: "center",
-              borderTop: `1px solid rgba(201,168,76,0.3)`,
-              paddingTop: "24px",
+              marginTop: 48,
+              padding: "20px 0 0",
+              borderTop: `1px solid rgba(201,168,76,0.25)`,
             }}
           >
-            <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "11px" }}>
-              المقر الرئيسي: الرياض - حي الروابي | هاتف: 011-2080129
+            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>
+              المقر الرئيسي: الرياض — حي الروابي | هاتف: 011-2080129
             </div>
-            <div style={{ color: DELMON_GOLD, fontSize: "12px", marginTop: "8px", fontWeight: "600" }}>
+            <div style={{ color: GOLD, fontSize: 12, marginTop: 8, fontWeight: 700 }}>
               شركة دلمون للاستثمار — DELMON INVESTMENT COMPANY
             </div>
           </div>
@@ -553,25 +759,27 @@ export default function BrochurePreview({ data }: Props) {
   );
 }
 
-// ===== REUSABLE COMPONENTS =====
+/* ─── Shared sub-components ─── */
 
-function PageHeader({ projectName }: { projectName: string }) {
+function PageHeader({ name }: { name: string }) {
   return (
     <div
       style={{
-        background: DELMON_NAVY,
-        padding: "16px 48px",
+        background: NAVY,
+        padding: "14px 48px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
       }}
     >
-      <img src={LOGO_URL} alt="دلمون" style={{ height: "40px", objectFit: "contain" }} />
+      <img src={LOGO} alt="دلمون" style={{ height: 38, objectFit: "contain" }} />
       <div style={{ textAlign: "center" }}>
-        <div style={{ color: "#fff", fontWeight: "700", fontSize: "14px" }}>{projectName || "بروشور التأجير"}</div>
-        <div style={{ color: DELMON_GOLD, fontSize: "10px" }}>وحدات شاغرة للتأجير</div>
+        <div style={{ color: "#fff", fontWeight: 700, fontSize: 13 }}>
+          {name || "بروشور التأجير"}
+        </div>
+        <div style={{ color: GOLD, fontSize: 10 }}>وحدات شاغرة للتأجير</div>
       </div>
-      <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "10px", textAlign: "left" }}>
+      <div style={{ textAlign: "left", color: "rgba(255,255,255,0.45)", fontSize: 10 }}>
         <div>www.delmoninvest.com</div>
         <div>011-2080129</div>
       </div>
@@ -583,21 +791,17 @@ function PageFooter() {
   return (
     <div
       style={{
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        background: DELMON_NAVY,
+        background: NAVY,
         padding: "12px 48px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
       }}
     >
-      <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "10px" }}>
+      <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 10 }}>
         شركة دلمون للاستثمار | جميع الحقوق محفوظة
       </span>
-      <span style={{ color: DELMON_GOLD, fontSize: "10px", fontWeight: "600" }}>
+      <span style={{ color: GOLD, fontSize: 10, fontWeight: 700 }}>
         www.delmoninvest.com
       </span>
     </div>
@@ -606,33 +810,17 @@ function PageFooter() {
 
 function SectionTitle({ title }: { title: string }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "12px",
-        marginBottom: "20px",
-      }}
-    >
+    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18 }}>
       <div
         style={{
-          width: "4px",
-          height: "28px",
-          background: DELMON_GOLD,
-          borderRadius: "2px",
+          width: 5,
+          height: 26,
+          background: GOLD,
+          borderRadius: 3,
           flexShrink: 0,
         }}
       />
-      <h2
-        style={{
-          color: DELMON_NAVY,
-          fontSize: "18px",
-          fontWeight: "800",
-          margin: 0,
-        }}
-      >
-        {title}
-      </h2>
+      <h2 style={{ color: NAVY, fontSize: 17, fontWeight: 900, margin: 0 }}>{title}</h2>
     </div>
   );
 }

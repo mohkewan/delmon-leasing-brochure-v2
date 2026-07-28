@@ -1,11 +1,11 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe } from "lucide-react";
+import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList } from "lucide-react";
 import BrochurePreview from "@/components/BrochurePreview";
 import { generateBrochurePDF } from "@/lib/pdfGenerator";
 
@@ -94,6 +94,8 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState<"project" | "units" | "contact">("project");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [exportStep, setExportStep] = useState<string>("");
+  const [exportDone, setExportDone] = useState(false);
 
   const handleProjectSelect = (id: string) => {
     setSelectedProjectId(id);
@@ -153,12 +155,20 @@ export default function Home() {
       return;
     }
     setIsGenerating(true);
+    setExportDone(false);
+    setExportStep("جاري تجهيز البروشور...");
     try {
+      await new Promise((r) => setTimeout(r, 200));
+      setExportStep("جاري معالجة الصفحات...");
       await generateBrochurePDF(projectData);
-      toast.success("تم تصدير البروشور بنجاح!");
+      setExportStep("تم بنجاح!");
+      setExportDone(true);
+      toast.success("✅ تم تصدير البروشور بنجاح!");
+      setTimeout(() => { setExportDone(false); setExportStep(""); }, 3000);
     } catch (err) {
       toast.error("حدث خطأ أثناء التصدير، يرجى المحاولة مرة أخرى");
       console.error(err);
+      setExportStep("");
     } finally {
       setIsGenerating(false);
     }
@@ -166,30 +176,53 @@ export default function Home() {
 
   const totalArea = projectData.units.reduce((sum, u) => sum + (parseFloat(u.area) || 0), 0);
 
+  // Completion percentage for progress indicator
+  const filledFields = [
+    projectData.projectName,
+    projectData.projectType,
+    projectData.city,
+    projectData.description,
+  ].filter(Boolean).length;
+  const completionPct = Math.round((filledFields / 4) * 100);
+  const unitsWithArea = projectData.units.filter((u) => u.area).length;
+
   return (
-    <div className="min-h-screen bg-[#F0F3FA] font-[Cairo,sans-serif]" dir="rtl">
+    <div className="min-h-screen bg-[#EBEEf6]" dir="rtl">
       {/* ===== HEADER ===== */}
-      <header className="bg-[#1A2E5A] shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <header className="bg-[#1A2E5A] shadow-xl sticky top-0 z-50 border-b-2 border-[#C9A84C]/50">
+        <div className="max-w-7xl mx-auto px-5 flex items-stretch justify-between">
+          {/* Brand lockup */}
+          <div className="flex items-center gap-4 py-3">
             <img
               src="/manus-storage/delmon_logo_19a2386c.png"
               alt="دلمون للاستثمار"
-              className="h-12 w-auto object-contain"
+              className="h-11 w-auto object-contain"
             />
-            <div>
-              <div className="text-white font-bold text-lg leading-tight">شركة دلمون للاستثمار</div>
-              <div className="text-[#C9A84C] text-xs font-medium">DELMON INVESTMENT COMPANY</div>
+            <div className="border-r border-white/25 pr-4 mr-1">
+              <div
+                className="text-white font-black text-lg leading-tight tracking-wide"
+                style={{ fontFamily: "'Noto Kufi Arabic', 'Cairo', sans-serif" }}
+              >
+                شركة دلمون للاستثمار
+              </div>
+              <div className="text-[#C9A84C] text-[10px] font-semibold tracking-[0.14em] uppercase">
+                DELMON INVESTMENT COMPANY
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-white/70 text-sm hidden md:block">نظام بروشور التأجير</span>
-            <div className="w-px h-6 bg-white/20 hidden md:block" />
+          {/* Center system label */}
+          <div className="hidden md:flex items-center">
+            <div className="border border-white/15 rounded-md px-4 py-1.5 bg-white/5">
+              <span className="text-white/75 text-sm font-medium">نظام بروشور التأجير</span>
+            </div>
+          </div>
+          {/* Actions */}
+          <div className="flex items-center gap-2 py-3">
             <Button
               onClick={() => setShowPreview(true)}
               variant="outline"
               size="sm"
-              className="border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-[#1A2E5A] transition-all"
+              className="border-white/30 text-white/80 hover:border-[#C9A84C] hover:text-[#C9A84C] bg-transparent transition-all"
             >
               <Eye className="w-4 h-4 ml-1" />
               معاينة
@@ -198,10 +231,10 @@ export default function Home() {
               onClick={handleExportPDF}
               disabled={isGenerating}
               size="sm"
-              className="bg-[#C9A84C] hover:bg-[#e0c06a] text-[#1A2E5A] font-bold transition-all"
+              className="bg-[#C9A84C] hover:bg-[#dbb85a] text-[#1A2E5A] font-bold transition-all shadow-md"
             >
-              <FileDown className="w-4 h-4 ml-1" />
-              {isGenerating ? "جاري التصدير..." : "تصدير PDF"}
+              {isGenerating ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <FileDown className="w-4 h-4 ml-1" />}
+              {isGenerating ? exportStep : "تصدير PDF"}
             </Button>
           </div>
         </div>
@@ -209,19 +242,22 @@ export default function Home() {
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* ===== STATS BAR ===== */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        {/* ===== STATS BAR ===== */}
+        <div className="grid grid-cols-4 gap-4 mb-6">
           {[
-            { label: "إجمالي الوحدات", value: projectData.units.length, icon: Building2 },
+            { label: "إجمالي الوحدات", value: String(projectData.units.length), icon: Building2 },
             { label: "إجمالي المساحة", value: `${totalArea.toLocaleString("ar-SA")} م²`, icon: MapPin },
-            { label: "المشروع", value: projectData.projectName || "—", icon: Building2 },
+            { label: "المشروع المحدد", value: projectData.projectName || "—", icon: Building2 },
+            { label: "اكتمال البيانات", value: `${completionPct}%`, icon: LayoutList },
           ].map((stat, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-[#E8EAF0] flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#1A2E5A]/10 flex items-center justify-center flex-shrink-0">
-                <stat.icon className="w-5 h-5 text-[#1A2E5A]" />
+            <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-[#E8EAF0] flex items-center gap-3 relative overflow-hidden">
+              <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#C9A84C] rounded-r-xl" />
+              <div className="w-10 h-10 rounded-lg bg-[#1A2E5A] flex items-center justify-center flex-shrink-0">
+                <stat.icon className="w-5 h-5 text-[#C9A84C]" />
               </div>
-              <div>
-                <div className="text-xs text-gray-500">{stat.label}</div>
-                <div className="font-bold text-[#1A2E5A] text-sm truncate max-w-[150px]">{stat.value}</div>
+              <div className="min-w-0">
+                <div className="text-[11px] text-gray-500 font-medium">{stat.label}</div>
+                <div className="font-black text-[#1A2E5A] text-base truncate">{stat.value}</div>
               </div>
             </div>
           ))}
@@ -231,7 +267,7 @@ export default function Home() {
           {/* ===== FORM PANEL ===== */}
           <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-[#E8EAF0] overflow-hidden">
             {/* Tabs */}
-            <div className="flex border-b border-[#E8EAF0]">
+            <div className="flex border-b-2 border-[#E8EAF0] bg-[#F8F9FD]">
               {[
                 { id: "project", label: "بيانات المشروع" },
                 { id: "units", label: `الوحدات (${projectData.units.length})` },
@@ -242,8 +278,8 @@ export default function Home() {
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
                   className={`flex-1 py-3 text-sm font-semibold transition-all ${
                     activeTab === tab.id
-                      ? "text-[#1A2E5A] border-b-2 border-[#C9A84C] bg-[#F0F3FA]"
-                      : "text-gray-500 hover:text-[#1A2E5A]"
+                      ? "text-[#1A2E5A] border-b-2 border-[#C9A84C] bg-white font-bold"
+                      : "text-gray-400 hover:text-[#1A2E5A] hover:bg-white/60"
                   }`}
                 >
                   {tab.label}
@@ -578,8 +614,14 @@ export default function Home() {
                 disabled={isGenerating}
                 className="flex-1 bg-[#1A2E5A] hover:bg-[#243a72] text-white font-bold"
               >
-                <FileDown className="w-4 h-4 ml-2" />
-                {isGenerating ? "جاري التصدير..." : "تصدير البروشور PDF"}
+                {isGenerating ? (
+                  <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                ) : exportDone ? (
+                  <CheckCircle2 className="w-4 h-4 ml-2 text-green-400" />
+                ) : (
+                  <FileDown className="w-4 h-4 ml-2" />
+                )}
+                {isGenerating ? exportStep : exportDone ? "تم التصدير!" : "تصدير البروشور PDF"}
               </Button>
               <Button
                 onClick={() => setShowPreview(true)}
@@ -594,7 +636,7 @@ export default function Home() {
 
           {/* ===== MINI PREVIEW PANEL ===== */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-sm border border-[#E8EAF0] overflow-hidden sticky top-24">
+            <div className="bg-white rounded-2xl shadow-sm border border-[#E8EAF0] overflow-hidden sticky top-24 flex flex-col">
               <div className="bg-[#1A2E5A] px-4 py-3 flex items-center justify-between">
                 <span className="text-white text-sm font-semibold">معاينة البروشور</span>
                 <button
@@ -604,13 +646,29 @@ export default function Home() {
                   عرض كامل
                 </button>
               </div>
-              <div className="p-3 bg-gray-100 overflow-hidden" style={{ maxHeight: "calc(100vh - 220px)" }}>
+              {/* Progress bar */}
+              <div className="h-1 bg-gray-100">
+                <div
+                  className="h-1 bg-[#C9A84C] transition-all duration-500"
+                  style={{ width: `${completionPct}%` }}
+                />
+              </div>
+              <div className="p-3 bg-[#F0F3FA] overflow-hidden" style={{ maxHeight: "calc(100vh - 230px)" }}>
                 <div
                   className="origin-top-right scale-[0.45] w-[222%] pointer-events-none"
                   style={{ transformOrigin: "top right" }}
                 >
                   <BrochurePreview data={projectData} />
                 </div>
+              </div>
+              {/* Units counter */}
+              <div className="px-4 py-2 border-t border-[#E8EAF0] bg-white flex justify-between items-center">
+                <span className="text-xs text-gray-500">
+                  {unitsWithArea}/{projectData.units.length} وحدة مكتملة البيانات
+                </span>
+                <span className="text-xs font-bold text-[#1A2E5A]">
+                  {totalArea > 0 ? `${totalArea.toLocaleString("ar-SA")} م²` : "أدخل المساحات"}
+                </span>
               </div>
             </div>
           </div>
@@ -623,7 +681,7 @@ export default function Home() {
           className="fixed inset-0 bg-black/70 z-50 flex items-start justify-center overflow-y-auto py-8"
           onClick={(e) => e.target === e.currentTarget && setShowPreview(false)}
         >
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full mx-4 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-[860px] w-full mx-4 overflow-hidden">
             <div className="bg-[#1A2E5A] px-6 py-4 flex items-center justify-between">
               <span className="text-white font-bold">معاينة البروشور الكاملة</span>
               <div className="flex gap-2">
@@ -633,8 +691,8 @@ export default function Home() {
                   size="sm"
                   className="bg-[#C9A84C] hover:bg-[#e0c06a] text-[#1A2E5A] font-bold"
                 >
-                  <FileDown className="w-4 h-4 ml-1" />
-                  {isGenerating ? "جاري التصدير..." : "تصدير PDF"}
+                  {isGenerating ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <FileDown className="w-4 h-4 ml-1" />}
+                  {isGenerating ? exportStep : "تصدير PDF"}
                 </Button>
                 <button
                   onClick={() => setShowPreview(false)}
@@ -644,9 +702,11 @@ export default function Home() {
                 </button>
               </div>
             </div>
-            <div className="overflow-y-auto max-h-[80vh]">
+            <div className="overflow-y-auto max-h-[82vh] bg-gray-100 p-4">
+              <div className="shadow-xl">
               <BrochurePreview data={projectData} />
             </div>
+          </div>
           </div>
         </div>
       )}
