@@ -1,25 +1,655 @@
+import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe } from "lucide-react";
+import BrochurePreview from "@/components/BrochurePreview";
+import { generateBrochurePDF } from "@/lib/pdfGenerator";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Best Practices, Design Guide and Common Pitfalls
- */
+// ===== DELMON INVESTMENT BRAND IDENTITY =====
+// Primary: Navy #1A2E5A | Gold: #C9A84C | Font: Cairo
+// Layout: RTL sidebar form + live preview panel
+
+export type UnitType = "مكتب" | "معرض" | "محل تجاري" | "مستودع" | "وحدة سكنية" | "فندق" | "أخرى";
+
+export interface Unit {
+  id: string;
+  unitNumber: string;
+  floor: string;
+  area: string;
+  unitType: UnitType;
+  description: string;
+  features: string;
+  pricePerMeter?: string;
+  monthlyRent?: string;
+}
+
+export interface ProjectData {
+  projectName: string;
+  projectType: string;
+  city: string;
+  district: string;
+  totalArea: string;
+  floors: string;
+  completionYear: string;
+  description: string;
+  amenities: string;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
+  projectImage?: string;
+  units: Unit[];
+}
+
+const PROJECTS = [
+  { id: "1", name: "بارك فيو - محايل عسير", type: "مول تجاري", city: "محايل عسير" },
+  { id: "2", name: "دلمون مكتبي 2", type: "مبنى مكتبي", city: "جازان" },
+  { id: "3", name: "معارض جازان 1", type: "معارض", city: "جازان" },
+  { id: "4", name: "رفالا الأولى", type: "سترب مول", city: "أبها" },
+  { id: "5", name: "فندق لؤلؤة جازان", type: "فندق", city: "جازان" },
+  { id: "6", name: "دلمون مكتبي 1", type: "مبنى مكتبي", city: "جازان" },
+  { id: "7", name: "معارض جازان 2", type: "معارض", city: "جازان" },
+  { id: "8", name: "رفالا الثانية", type: "سترب مول", city: "خميس مشيط" },
+  { id: "9", name: "دلمون 3", type: "مبنى مكتبي", city: "الرياض" },
+  { id: "10", name: "فندق جيزان", type: "فندق", city: "جازان" },
+  { id: "custom", name: "مشروع آخر (إدخال يدوي)", type: "", city: "" },
+];
+
+const UNIT_TYPES: UnitType[] = ["مكتب", "معرض", "محل تجاري", "مستودع", "وحدة سكنية", "فندق", "أخرى"];
+
+const emptyUnit = (): Unit => ({
+  id: crypto.randomUUID(),
+  unitNumber: "",
+  floor: "",
+  area: "",
+  unitType: "مكتب",
+  description: "",
+  features: "",
+  pricePerMeter: "",
+  monthlyRent: "",
+});
+
 export default function Home() {
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+  const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+  const [projectData, setProjectData] = useState<ProjectData>({
+    projectName: "",
+    projectType: "",
+    city: "",
+    district: "",
+    totalArea: "",
+    floors: "",
+    completionYear: "",
+    description: "",
+    amenities: "",
+    contactName: "قسم التأجير - دلمون للاستثمار",
+    contactPhone: "011-2080129",
+    contactEmail: "info@delmoninvest.com",
+    projectImage: "",
+    units: [emptyUnit()],
+  });
+  const [showPreview, setShowPreview] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [activeTab, setActiveTab] = useState<"project" | "units" | "contact">("project");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleProjectSelect = (id: string) => {
+    setSelectedProjectId(id);
+    const proj = PROJECTS.find((p) => p.id === id);
+    if (proj && id !== "custom") {
+      setProjectData((prev) => ({
+        ...prev,
+        projectName: proj.name,
+        projectType: proj.type,
+        city: proj.city,
+      }));
+    } else if (id === "custom") {
+      setProjectData((prev) => ({ ...prev, projectName: "", projectType: "", city: "" }));
+    }
+  };
+
+  const updateProject = useCallback((field: keyof ProjectData, value: string) => {
+    setProjectData((prev) => ({ ...prev, [field]: value }));
+  }, []);
+
+  const addUnit = () => {
+    setProjectData((prev) => ({ ...prev, units: [...prev.units, emptyUnit()] }));
+  };
+
+  const removeUnit = (id: string) => {
+    setProjectData((prev) => ({
+      ...prev,
+      units: prev.units.filter((u) => u.id !== id),
+    }));
+  };
+
+  const updateUnit = (id: string, field: keyof Unit, value: string) => {
+    setProjectData((prev) => ({
+      ...prev,
+      units: prev.units.map((u) => (u.id === id ? { ...u, [field]: value } : u)),
+    }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      updateProject("projectImage", ev.target?.result as string);
+      toast.success("تم رفع صورة المشروع بنجاح");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleExportPDF = async () => {
+    if (!projectData.projectName) {
+      toast.error("يرجى إدخال اسم المشروع أولاً");
+      return;
+    }
+    if (projectData.units.some((u) => !u.area)) {
+      toast.warning("يرجى إدخال مساحة جميع الوحدات");
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      await generateBrochurePDF(projectData);
+      toast.success("تم تصدير البروشور بنجاح!");
+    } catch (err) {
+      toast.error("حدث خطأ أثناء التصدير، يرجى المحاولة مرة أخرى");
+      console.error(err);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const totalArea = projectData.units.reduce((sum, u) => sum + (parseFloat(u.area) || 0), 0);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
+    <div className="min-h-screen bg-[#F0F3FA] font-[Cairo,sans-serif]" dir="rtl">
+      {/* ===== HEADER ===== */}
+      <header className="bg-[#1A2E5A] shadow-lg sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src="/manus-storage/delmon_logo_19a2386c.png"
+              alt="دلمون للاستثمار"
+              className="h-12 w-auto object-contain"
+            />
+            <div>
+              <div className="text-white font-bold text-lg leading-tight">شركة دلمون للاستثمار</div>
+              <div className="text-[#C9A84C] text-xs font-medium">DELMON INVESTMENT COMPANY</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-white/70 text-sm hidden md:block">نظام بروشور التأجير</span>
+            <div className="w-px h-6 bg-white/20 hidden md:block" />
+            <Button
+              onClick={() => setShowPreview(true)}
+              variant="outline"
+              size="sm"
+              className="border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-[#1A2E5A] transition-all"
+            >
+              <Eye className="w-4 h-4 ml-1" />
+              معاينة
+            </Button>
+            <Button
+              onClick={handleExportPDF}
+              disabled={isGenerating}
+              size="sm"
+              className="bg-[#C9A84C] hover:bg-[#e0c06a] text-[#1A2E5A] font-bold transition-all"
+            >
+              <FileDown className="w-4 h-4 ml-1" />
+              {isGenerating ? "جاري التصدير..." : "تصدير PDF"}
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* ===== STATS BAR ===== */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          {[
+            { label: "إجمالي الوحدات", value: projectData.units.length, icon: Building2 },
+            { label: "إجمالي المساحة", value: `${totalArea.toLocaleString("ar-SA")} م²`, icon: MapPin },
+            { label: "المشروع", value: projectData.projectName || "—", icon: Building2 },
+          ].map((stat, i) => (
+            <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-[#E8EAF0] flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#1A2E5A]/10 flex items-center justify-center flex-shrink-0">
+                <stat.icon className="w-5 h-5 text-[#1A2E5A]" />
+              </div>
+              <div>
+                <div className="text-xs text-gray-500">{stat.label}</div>
+                <div className="font-bold text-[#1A2E5A] text-sm truncate max-w-[150px]">{stat.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* ===== FORM PANEL ===== */}
+          <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-[#E8EAF0] overflow-hidden">
+            {/* Tabs */}
+            <div className="flex border-b border-[#E8EAF0]">
+              {[
+                { id: "project", label: "بيانات المشروع" },
+                { id: "units", label: `الوحدات (${projectData.units.length})` },
+                { id: "contact", label: "معلومات التواصل" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as typeof activeTab)}
+                  className={`flex-1 py-3 text-sm font-semibold transition-all ${
+                    activeTab === tab.id
+                      ? "text-[#1A2E5A] border-b-2 border-[#C9A84C] bg-[#F0F3FA]"
+                      : "text-gray-500 hover:text-[#1A2E5A]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="p-6">
+              {/* ---- PROJECT TAB ---- */}
+              {activeTab === "project" && (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">اختر المشروع</Label>
+                    <Select value={selectedProjectId} onValueChange={handleProjectSelect}>
+                      <SelectTrigger className="border-[#E8EAF0] focus:border-[#1A2E5A]">
+                        <SelectValue placeholder="اختر مشروعاً من قائمة دلمون..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PROJECTS.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">اسم المشروع *</Label>
+                      <Input
+                        value={projectData.projectName}
+                        onChange={(e) => updateProject("projectName", e.target.value)}
+                        placeholder="مثال: بارك فيو"
+                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">نوع المشروع</Label>
+                      <Input
+                        value={projectData.projectType}
+                        onChange={(e) => updateProject("projectType", e.target.value)}
+                        placeholder="مثال: مول تجاري"
+                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">المدينة</Label>
+                      <Input
+                        value={projectData.city}
+                        onChange={(e) => updateProject("city", e.target.value)}
+                        placeholder="مثال: جازان"
+                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">الحي / الموقع</Label>
+                      <Input
+                        value={projectData.district}
+                        onChange={(e) => updateProject("district", e.target.value)}
+                        placeholder="مثال: حي الروابي"
+                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">إجمالي المساحة (م²)</Label>
+                      <Input
+                        value={projectData.totalArea}
+                        onChange={(e) => updateProject("totalArea", e.target.value)}
+                        placeholder="مثال: 5000"
+                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">عدد الطوابق</Label>
+                      <Input
+                        value={projectData.floors}
+                        onChange={(e) => updateProject("floors", e.target.value)}
+                        placeholder="مثال: 5"
+                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-[#1A2E5A] font-semibold mb-1 block">سنة الإنجاز</Label>
+                      <Input
+                        value={projectData.completionYear}
+                        onChange={(e) => updateProject("completionYear", e.target.value)}
+                        placeholder="مثال: 2024"
+                        className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">وصف المشروع</Label>
+                    <Textarea
+                      value={projectData.description}
+                      onChange={(e) => updateProject("description", e.target.value)}
+                      placeholder="وصف مختصر عن المشروع وموقعه ومميزاته..."
+                      rows={3}
+                      className="border-[#E8EAF0] focus:border-[#1A2E5A] resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">المرافق والخدمات</Label>
+                    <Textarea
+                      value={projectData.amenities}
+                      onChange={(e) => updateProject("amenities", e.target.value)}
+                      placeholder="مثال: مواقف سيارات، أمن 24 ساعة، مصاعد، تكييف مركزي..."
+                      rows={2}
+                      className="border-[#E8EAF0] focus:border-[#1A2E5A] resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">صورة المشروع (اختياري)</Label>
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className="border-2 border-dashed border-[#C9A84C]/40 rounded-xl p-4 text-center cursor-pointer hover:border-[#C9A84C] hover:bg-[#C9A84C]/5 transition-all"
+                    >
+                      {projectData.projectImage ? (
+                        <img
+                          src={projectData.projectImage}
+                          alt="صورة المشروع"
+                          className="max-h-32 mx-auto rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div className="text-gray-400 text-sm">
+                          <div className="text-2xl mb-1">🖼️</div>
+                          انقر لرفع صورة المشروع
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* ---- UNITS TAB ---- */}
+              {activeTab === "units" && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-[#1A2E5A]">الوحدات الشاغرة ({projectData.units.length})</h3>
+                    <Button
+                      onClick={addUnit}
+                      size="sm"
+                      className="bg-[#1A2E5A] hover:bg-[#243a72] text-white"
+                    >
+                      <Plus className="w-4 h-4 ml-1" />
+                      إضافة وحدة
+                    </Button>
+                  </div>
+
+                  {projectData.units.map((unit, idx) => (
+                    <div
+                      key={unit.id}
+                      className="border border-[#E8EAF0] rounded-xl p-4 bg-[#F8F9FD] relative"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-bold text-[#1A2E5A] bg-[#1A2E5A]/10 px-3 py-1 rounded-full">
+                          وحدة {idx + 1}
+                        </span>
+                        {projectData.units.length > 1 && (
+                          <button
+                            onClick={() => removeUnit(unit.id)}
+                            className="text-red-400 hover:text-red-600 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label className="text-xs text-gray-600 mb-1 block">رقم الوحدة</Label>
+                          <Input
+                            value={unit.unitNumber}
+                            onChange={(e) => updateUnit(unit.id, "unitNumber", e.target.value)}
+                            placeholder="مثال: A-101"
+                            className="h-8 text-sm border-[#E8EAF0]"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-600 mb-1 block">الطابق</Label>
+                          <Input
+                            value={unit.floor}
+                            onChange={(e) => updateUnit(unit.id, "floor", e.target.value)}
+                            placeholder="مثال: الأول"
+                            className="h-8 text-sm border-[#E8EAF0]"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-600 mb-1 block">المساحة (م²) *</Label>
+                          <Input
+                            value={unit.area}
+                            onChange={(e) => updateUnit(unit.id, "area", e.target.value)}
+                            placeholder="مثال: 150"
+                            type="number"
+                            className="h-8 text-sm border-[#E8EAF0]"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-600 mb-1 block">نوع الوحدة</Label>
+                          <Select
+                            value={unit.unitType}
+                            onValueChange={(v) => updateUnit(unit.id, "unitType", v)}
+                          >
+                            <SelectTrigger className="h-8 text-sm border-[#E8EAF0]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {UNIT_TYPES.map((t) => (
+                                <SelectItem key={t} value={t}>{t}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-600 mb-1 block">الإيجار الشهري (ريال)</Label>
+                          <Input
+                            value={unit.monthlyRent}
+                            onChange={(e) => updateUnit(unit.id, "monthlyRent", e.target.value)}
+                            placeholder="مثال: 5000"
+                            type="number"
+                            className="h-8 text-sm border-[#E8EAF0]"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-600 mb-1 block">السعر / م² (ريال)</Label>
+                          <Input
+                            value={unit.pricePerMeter}
+                            onChange={(e) => updateUnit(unit.id, "pricePerMeter", e.target.value)}
+                            placeholder="مثال: 100"
+                            type="number"
+                            className="h-8 text-sm border-[#E8EAF0]"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-3">
+                        <Label className="text-xs text-gray-600 mb-1 block">مميزات الوحدة</Label>
+                        <Input
+                          value={unit.features}
+                          onChange={(e) => updateUnit(unit.id, "features", e.target.value)}
+                          placeholder="مثال: واجهة زجاجية، تكييف مركزي، مدخل مستقل"
+                          className="h-8 text-sm border-[#E8EAF0]"
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                  <Button
+                    onClick={addUnit}
+                    variant="outline"
+                    className="w-full border-dashed border-[#C9A84C]/50 text-[#1A2E5A] hover:bg-[#C9A84C]/5"
+                  >
+                    <Plus className="w-4 h-4 ml-1" />
+                    إضافة وحدة جديدة
+                  </Button>
+                </div>
+              )}
+
+              {/* ---- CONTACT TAB ---- */}
+              {activeTab === "contact" && (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">
+                      <Phone className="w-4 h-4 inline ml-1" />
+                      اسم المسؤول / القسم
+                    </Label>
+                    <Input
+                      value={projectData.contactName}
+                      onChange={(e) => updateProject("contactName", e.target.value)}
+                      className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">
+                      <Phone className="w-4 h-4 inline ml-1" />
+                      رقم الهاتف
+                    </Label>
+                    <Input
+                      value={projectData.contactPhone}
+                      onChange={(e) => updateProject("contactPhone", e.target.value)}
+                      className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      dir="ltr"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-[#1A2E5A] font-semibold mb-1 block">
+                      <Mail className="w-4 h-4 inline ml-1" />
+                      البريد الإلكتروني
+                    </Label>
+                    <Input
+                      value={projectData.contactEmail}
+                      onChange={(e) => updateProject("contactEmail", e.target.value)}
+                      className="border-[#E8EAF0] focus:border-[#1A2E5A]"
+                      dir="ltr"
+                    />
+                  </div>
+                  <div className="bg-[#1A2E5A]/5 rounded-xl p-4 border border-[#1A2E5A]/10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Globe className="w-4 h-4 text-[#1A2E5A]" />
+                      <span className="text-sm font-semibold text-[#1A2E5A]">معلومات الشركة الثابتة</span>
+                    </div>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <div>الموقع: www.delmoninvest.com</div>
+                      <div>المقر الرئيسي: الرياض - حي الروابي</div>
+                      <div>هاتف: 011-2080129</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="px-6 py-4 bg-[#F8F9FD] border-t border-[#E8EAF0] flex gap-3">
+              <Button
+                onClick={handleExportPDF}
+                disabled={isGenerating}
+                className="flex-1 bg-[#1A2E5A] hover:bg-[#243a72] text-white font-bold"
+              >
+                <FileDown className="w-4 h-4 ml-2" />
+                {isGenerating ? "جاري التصدير..." : "تصدير البروشور PDF"}
+              </Button>
+              <Button
+                onClick={() => setShowPreview(true)}
+                variant="outline"
+                className="border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-[#1A2E5A]"
+              >
+                <Eye className="w-4 h-4 ml-1" />
+                معاينة
+              </Button>
+            </div>
+          </div>
+
+          {/* ===== MINI PREVIEW PANEL ===== */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-sm border border-[#E8EAF0] overflow-hidden sticky top-24">
+              <div className="bg-[#1A2E5A] px-4 py-3 flex items-center justify-between">
+                <span className="text-white text-sm font-semibold">معاينة البروشور</span>
+                <button
+                  onClick={() => setShowPreview(true)}
+                  className="text-[#C9A84C] text-xs hover:underline"
+                >
+                  عرض كامل
+                </button>
+              </div>
+              <div className="p-3 bg-gray-100 overflow-hidden" style={{ maxHeight: "calc(100vh - 220px)" }}>
+                <div
+                  className="origin-top-right scale-[0.45] w-[222%] pointer-events-none"
+                  style={{ transformOrigin: "top right" }}
+                >
+                  <BrochurePreview data={projectData} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ===== FULL PREVIEW MODAL ===== */}
+      {showPreview && (
+        <div
+          className="fixed inset-0 bg-black/70 z-50 flex items-start justify-center overflow-y-auto py-8"
+          onClick={(e) => e.target === e.currentTarget && setShowPreview(false)}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full mx-4 overflow-hidden">
+            <div className="bg-[#1A2E5A] px-6 py-4 flex items-center justify-between">
+              <span className="text-white font-bold">معاينة البروشور الكاملة</span>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleExportPDF}
+                  disabled={isGenerating}
+                  size="sm"
+                  className="bg-[#C9A84C] hover:bg-[#e0c06a] text-[#1A2E5A] font-bold"
+                >
+                  <FileDown className="w-4 h-4 ml-1" />
+                  {isGenerating ? "جاري التصدير..." : "تصدير PDF"}
+                </Button>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="text-white/70 hover:text-white text-2xl leading-none px-2"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div className="overflow-y-auto max-h-[80vh]">
+              <BrochurePreview data={projectData} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
