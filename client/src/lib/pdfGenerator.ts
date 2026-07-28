@@ -66,7 +66,7 @@ export async function generateBrochurePDF(data: ProjectData): Promise<void> {
     const page = pages[i] as HTMLElement;
 
     const canvas = await html2canvas(page, {
-      scale: 3,
+      scale: 4,
       useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
@@ -75,7 +75,7 @@ export async function generateBrochurePDF(data: ProjectData): Promise<void> {
       imageTimeout: 10000,
     });
 
-    const imgData = canvas.toDataURL("image/jpeg", 0.97);
+    const imgData = canvas.toDataURL("image/jpeg", 0.99);
     const imgH = (canvas.height / canvas.width) * A4_W;
 
     if (i > 0) pdf.addPage();

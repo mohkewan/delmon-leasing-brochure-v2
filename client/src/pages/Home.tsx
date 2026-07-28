@@ -1,11 +1,15 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { startLogin } from "@/const";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
+import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw } from "lucide-react";
+import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw, Archive, LogOut, LogIn, User } from "lucide-react";
 import BrochurePreview from "@/components/BrochurePreview";
 import { generateBrochurePDF } from "@/lib/pdfGenerator";
 
@@ -91,6 +95,36 @@ const emptyUnit = (): Unit => ({
 });
 
 export default function Home() {
+  // The useAuth hook provides authentication state.
+  // To implement login/logout, call logout(), or start login from an event
+  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
+  // startLogin() during render (no href={startLogin()}) — it mints a one-time
+  // nonce cookie and must run only at the moment of navigation.
+  let { user, loading, error, isAuthenticated, logout } = useAuth();
+
+  const [, setLocation] = useLocation();
+  const saveBrochureMutation = trpc.brochures.save.useMutation({
+    onSuccess: () => {
+      toast.success("✅ تم حفظ البروشور في الأرشيف");
+    },
+    onError: () => {
+      toast.error("خطأ في الحفظ — تأكد من تسجيل الدخول");
+    },
+  });
+
+  const handleSaveToArchive = async () => {
+    if (!projectData.projectName) {
+      toast.error("يرجى إدخال اسم المشروع أولاً");
+      return;
+    }
+    saveBrochureMutation.mutate({
+      projectName: projectData.projectName,
+      projectType: projectData.projectType,
+      city: projectData.city,
+      data: projectData,
+    });
+  };
+
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [projectData, setProjectData] = useState<ProjectData>(() => {
     try {
@@ -264,6 +298,41 @@ export default function Home() {
           </div>
           {/* Actions */}
           <div className="flex items-center gap-2 py-3">
+            {/* User info / login */}
+            {isAuthenticated && user ? (
+              <div className="hidden md:flex items-center gap-2 border border-[#D0D0D0] rounded-lg px-3 py-1.5 bg-[#F8F9FD]">
+                <User className="w-4 h-4 text-[#949437]" />
+                <span className="text-xs text-[#2C2C2C] font-medium">{user.name || user.email || "مستخدم"}</span>
+                <button onClick={() => logout()} className="text-gray-400 hover:text-red-500 transition-colors mr-1">
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : !loading ? (
+              <Button onClick={() => startLogin()} variant="outline" size="sm"
+                className="border-[#949437]/50 text-[#949437] hover:bg-[#949437]/10 bg-transparent hidden md:flex">
+                <LogIn className="w-4 h-4 ml-1" />
+                تسجيل الدخول
+              </Button>
+            ) : null}
+            <Button
+              onClick={() => setLocation("/archive")}
+              variant="outline"
+              size="sm"
+              className="border-[#8fa9dc]/60 text-[#555555] hover:border-[#949437] hover:text-[#949437] bg-transparent transition-all hidden md:flex"
+            >
+              <Archive className="w-4 h-4 ml-1" />
+              الأرشيف
+            </Button>
+            <Button
+              onClick={handleSaveToArchive}
+              disabled={saveBrochureMutation.isPending || !isAuthenticated}
+              variant="outline"
+              size="sm"
+              className="border-green-400/60 text-green-600 hover:border-green-500 hover:bg-green-50 bg-transparent transition-all hidden md:flex"
+            >
+              {saveBrochureMutation.isPending ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <Save className="w-4 h-4 ml-1" />}
+              حفظ في الأرشيف
+            </Button>
             <Button
               onClick={handleClearDraft}
               variant="outline"
