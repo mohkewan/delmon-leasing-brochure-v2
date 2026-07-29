@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw, Archive, LogOut, LogIn, User, TableProperties } from "lucide-react";
+import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw, Archive, LogOut, LogIn, User, TableProperties, Download, MessageCircle } from "lucide-react";
 import BrochurePreview from "@/components/BrochurePreview";
 import { generateBrochurePDF } from "@/lib/pdfGenerator";
 
@@ -262,6 +262,57 @@ export default function Home() {
     toast.success("✅ تم تصدير ملف Excel بنجاح!");
   };
 
+  const handleExportJSON = () => {
+    if (!projectData.projectName) {
+      toast.error("يرجى إدخال اسم المشروع أولاً");
+      return;
+    }
+    const backup = {
+      exportedAt: new Date().toISOString(),
+      version: "1.0",
+      project: projectData,
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${projectData.projectName} - نسخة احتياطية.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("✅ تم تصدير النسخة الاحتياطية بنجاح!");
+  };
+
+  const handleWhatsApp = () => {
+    if (!projectData.projectName) {
+      toast.error("يرجى إدخال اسم المشروع أولاً");
+      return;
+    }
+    const unitsSummary = projectData.units
+      .slice(0, 5)
+      .map(u => `• وحدة ${u.unitNumber || "—"} | ${u.area} م² | ${u.unitType}${u.monthlyRent ? ` | ${u.monthlyRent} ريال/شهر` : ""}`)
+      .join("\n");
+    const moreUnits = projectData.units.length > 5 ? `\n... و${projectData.units.length - 5} وحدة أخرى` : "";
+    const msg = [
+      `🏢 *${projectData.projectName}*`,
+      projectData.projectType ? `📌 النوع: ${projectData.projectType}` : "",
+      projectData.city ? `📍 المدينة: ${projectData.city}${projectData.district ? ` — ${projectData.district}` : ""}` : "",
+      projectData.totalArea ? `📐 إجمالي المساحة: ${projectData.totalArea} م²` : "",
+      projectData.floors ? `🏗️ عدد الطوابق: ${projectData.floors}` : "",
+      "",
+      projectData.description ? `📝 ${projectData.description}` : "",
+      "",
+      projectData.units.length > 0 ? `*الوحدات المتاحة (${projectData.units.length}):*\n${unitsSummary}${moreUnits}` : "",
+      "",
+      projectData.amenities ? `✅ المرافق: ${projectData.amenities}` : "",
+      "",
+      projectData.contactName ? `👤 مسؤول التأجير: ${projectData.contactName}` : "",
+      projectData.contactPhone ? `📞 ${projectData.contactPhone}` : "",
+      projectData.contactEmail ? `✉️ ${projectData.contactEmail}` : "",
+    ].filter(Boolean).join("\n");
+    const encoded = encodeURIComponent(msg);
+    window.open(`https://wa.me/?text=${encoded}`, "_blank");
+  };
+
   const handleExportPDF = async () => {
     if (!projectData.projectName) {
       toast.error("يرجى إدخال اسم المشروع أولاً");
@@ -334,7 +385,7 @@ export default function Home() {
             </div>
           </div>
           {/* Actions */}
-          <div className="flex items-center gap-2 py-3">
+          <div className="flex items-center gap-1.5 py-3 overflow-x-auto max-w-full scrollbar-hide">
             {/* User info / login */}
             {isAuthenticated && user ? (
               <div className="hidden md:flex items-center gap-2 border border-[#D0D0D0] rounded-lg px-3 py-1.5 bg-[#F8F9FD]">
@@ -372,40 +423,13 @@ export default function Home() {
             </Button>
             <Button
               onClick={handleClearDraft}
-              variant="outline"
-              size="sm"
-              className="border-red-200 text-red-400 hover:border-red-400 hover:text-red-600 bg-transparent transition-all hidden md:flex"
-            >
-              <RotateCcw className="w-4 h-4 ml-1" />
-              مسح
-            </Button>
-            <Button
-              onClick={() => setShowPreview(true)}
-              variant="outline"
-              size="sm"
-              className="border-[#8fa9dc]/60 text-[#555555] hover:border-[#949437] hover:text-[#949437] bg-transparent transition-all"
-            >
-              <Eye className="w-4 h-4 ml-1" />
-              معاينة
-            </Button>
-            <Button
-              onClick={handleExportPDF}
-              disabled={isGenerating}
-              size="sm"
-              className="bg-[#949437] hover:bg-[#7a7a2e] text-white font-bold transition-all shadow-md"
-            >
-              {isGenerating ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <FileDown className="w-4 h-4 ml-1" />}
-              {isGenerating ? exportStep : "تصدير PDF"}
-            </Button>
-            <Button
-              onClick={handleExportExcel}
-              size="sm"
-              variant="outline"
-              className="border-[#2e7d32] text-[#2e7d32] hover:bg-[#2e7d32] hover:text-white font-bold transition-all"
-            >
-              <TableProperties className="w-4 h-4 ml-1" />
-              Excel
-            </Button>
+            variant="outline"
+            size="sm"
+            className="border-red-200 text-red-400 hover:border-red-400 hover:text-red-600 bg-transparent transition-all hidden md:flex"
+          >
+            <RotateCcw className="w-4 h-4 ml-1" />
+            مسح
+          </Button>
             {/* Desktop-only buttons */}
             <Button
               onClick={() => setShowPreview(true)}
@@ -433,6 +457,24 @@ export default function Home() {
             >
               <TableProperties className="w-4 h-4 ml-1" />
               Excel
+            </Button>
+            <Button
+              onClick={handleExportJSON}
+              size="sm"
+              variant="outline"
+              className="hidden md:flex border-[#5c6bc0] text-[#5c6bc0] hover:bg-[#5c6bc0] hover:text-white font-bold transition-all"
+            >
+              <Download className="w-4 h-4 ml-1" />
+              JSON
+            </Button>
+            <Button
+              onClick={handleWhatsApp}
+              size="sm"
+              variant="outline"
+              className="hidden md:flex border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white font-bold transition-all"
+            >
+              <MessageCircle className="w-4 h-4 ml-1" />
+              واتساب
             </Button>
             {/* Mobile: compact action buttons */}
             <div className="flex md:hidden items-center gap-1.5">
@@ -494,6 +536,14 @@ export default function Home() {
                 <DropdownMenuItem onClick={handleExportExcel}>
                   <TableProperties className="w-3.5 h-3.5 ml-1" />
                   تصدير Excel
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportJSON}>
+                  <Download className="w-3.5 h-3.5 ml-1" />
+                  نسخ احتياطي JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleWhatsApp}>
+                  <MessageCircle className="w-3.5 h-3.5 ml-1" />
+                  إرسال عبر واتساب
                 </DropdownMenuItem>
                 {isAuthenticated && user && (
                   <>
