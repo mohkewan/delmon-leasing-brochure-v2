@@ -16,7 +16,7 @@ import BrochurePreviewDark from "@/components/BrochurePreviewDark";
 import BrochurePreviewMagazine from "@/components/BrochurePreviewMagazine";
 import TemplateSelector from "@/components/TemplateSelector";
 import { BrochureTemplate } from "@/lib/brochureTypes";
-import { generateBrochurePDF } from "@/lib/pdfGenerator";
+// generateBrochurePDF removed; using server-side PDF via /api/generate-pdf
 
 // ===== DELMON INVESTMENT BRAND IDENTITY =====
 // Primary: Deep GOLD #949437 | Cyan: #8fa9dc | Background: #F0F0F0 | Font: Cairo
@@ -354,7 +354,29 @@ export default function Home() {
     try {
       await new Promise((r) => setTimeout(r, 200));
       setExportStep("جاري معالجة الصفحات...");
-      await generateBrochurePDF(projectData, selectedTemplate);
+      // Server-side PDF via Puppeteer (avoids CORS/html2canvas issues)
+      const response = await fetch("/api/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: projectData, template: selectedTemplate }),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        throw new Error((errBody as any).error || `HTTP ${response.status}`);
+      }
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const pName = projectData.projectName || "بروشور-دلمون";
+      const pCity = projectData.city ? `-${projectData.city}` : "";
+      const pDate = new Date().toISOString().split("T")[0];
+      a.href = blobUrl;
+      a.download = `بروشور-دلمون-${pName}${pCity}-${pDate}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
       setExportStep("تم بنجاح!");
       setExportDone(true);
       toast.success("✅ تم تصدير البروشور بنجاح!");
