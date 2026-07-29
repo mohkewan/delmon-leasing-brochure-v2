@@ -11,6 +11,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw, Archive, LogOut, LogIn, User, TableProperties, Download, MessageCircle } from "lucide-react";
 import BrochurePreview from "@/components/BrochurePreview";
+import BrochurePreviewModern from "@/components/BrochurePreviewModern";
+import BrochurePreviewDark from "@/components/BrochurePreviewDark";
+import BrochurePreviewMagazine from "@/components/BrochurePreviewMagazine";
+import TemplateSelector from "@/components/TemplateSelector";
+import { BrochureTemplate } from "@/lib/brochureTypes";
 import { generateBrochurePDF } from "@/lib/pdfGenerator";
 
 // ===== DELMON INVESTMENT BRAND IDENTITY =====
@@ -151,7 +156,28 @@ export default function Home() {
   const [showPreview, setShowPreview] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState<"project" | "units" | "contact">("project");
+  const [selectedTemplate, setSelectedTemplate] = useState<BrochureTemplate>(() => {
+    try {
+      const saved = localStorage.getItem("delmon_selected_template");
+      if (saved === "classic" || saved === "dark" || saved === "magazine") return saved;
+    } catch {}
+    return "classic";
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // persist template selection
+  const handleTemplateChange = (t: BrochureTemplate) => {
+    setSelectedTemplate(t);
+    try { localStorage.setItem("delmon_selected_template", t); } catch {}
+  };
+
+  // helper: render the correct preview component
+  const ActivePreview = selectedTemplate === "dark"
+    ? BrochurePreviewDark
+    : selectedTemplate === "magazine"
+    ? BrochurePreviewMagazine
+    : BrochurePreview;
+
   const [exportStep, setExportStep] = useState<string>("");
   const [exportDone, setExportDone] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
@@ -996,12 +1022,16 @@ export default function Home() {
                   style={{ width: `${completionPct}%` }}
                 />
               </div>
+              {/* Template Selector */}
+              <div className="px-4 py-3 border-b border-[#E8E8E4] bg-[#FAFAF8]">
+                <TemplateSelector selected={selectedTemplate} onChange={handleTemplateChange} />
+              </div>
               <div className="p-3 bg-[#F0F3FA] overflow-hidden" style={{ maxHeight: "calc(100vh - 230px)" }}>
                 <div
                   className="origin-top-right scale-[0.45] w-[222%] pointer-events-none"
                   style={{ transformOrigin: "top right" }}
                 >
-                  <BrochurePreview data={projectData} />
+                  <ActivePreview data={projectData} />
                 </div>
               </div>
               {/* Units counter */}
@@ -1045,9 +1075,9 @@ export default function Home() {
                 </button>
               </div>
             </div>
-            <div className="overflow-y-auto max-h-[82vh] bg-gray-100 p-4">
-              <div className="shadow-xl">
-              <BrochurePreview data={projectData} />
+              <div className="overflow-y-auto max-h-[82vh] bg-gray-100 p-4">
+                <div className="shadow-xl">
+              <ActivePreview data={projectData} />
             </div>
           </div>
           </div>
