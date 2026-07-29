@@ -615,22 +615,21 @@ export default function Home() {
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* ===== STATS BAR ===== */}
-        {/* ===== STATS BAR ===== */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
             { label: "إجمالي الوحدات", value: String(projectData.units.length), icon: Building2 },
             { label: "إجمالي المساحة", value: `${totalArea.toLocaleString("ar-SA")} م²`, icon: MapPin },
             { label: "المشروع المحدد", value: projectData.projectName || "—", icon: Building2 },
             { label: "اكتمال البيانات", value: `${completionPct}%`, icon: LayoutList },
           ].map((stat, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-[#D0D0D0] flex items-center gap-3 relative overflow-hidden">
+            <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-[#D0D0D0] flex items-center gap-3 relative overflow-hidden group hover:border-[#949437]/40 hover:shadow-md transition-all">
               <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#949437] rounded-r-xl" />
               <div className="w-10 h-10 rounded-lg bg-[#949437]/10 border border-[#949437]/20 flex items-center justify-center flex-shrink-0">
                 <stat.icon className="w-5 h-5 text-[#949437]" />
               </div>
               <div className="min-w-0">
                 <div className="text-[11px] text-gray-500 font-medium">{stat.label}</div>
-                <div className="font-black text-[#2C2C2C] text-base truncate">{stat.value}</div>
+                <div className="font-black text-[#2C2C2C] text-base truncate" title={stat.value}>{stat.value}</div>
               </div>
             </div>
           ))}
@@ -638,7 +637,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* ===== FORM PANEL ===== */}
-          <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-[#D0D0D0] overflow-hidden">
+          <div className="lg:col-span-3 order-2 lg:order-1 bg-white rounded-2xl shadow-sm border border-[#D0D0D0] overflow-hidden">
             {/* Tabs */}
             <div className="flex border-b-2 border-[#D0D0D0] bg-[#F8F9FD]">
               {[
@@ -649,10 +648,10 @@ export default function Home() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                  className={`flex-1 py-3 text-sm font-semibold transition-all ${
+                  className={`flex-1 py-3.5 text-sm font-semibold transition-all border-b-2 ${
                     activeTab === tab.id
-                      ? "text-[#2C2C2C] border-b-2 border-[#949437] bg-white font-bold"
-                      : "text-gray-400 hover:text-[#2C2C2C] hover:bg-white/60"
+                      ? "text-[#949437] border-[#949437] bg-white font-bold"
+                      : "text-gray-400 border-transparent hover:text-[#2C2C2C] hover:bg-white/60"
                   }`}
                 >
                   {tab.label}
@@ -1026,7 +1025,7 @@ export default function Home() {
           </div>
 
           {/* ===== MINI PREVIEW PANEL ===== */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-1 lg:order-2">
             <div className="bg-white rounded-2xl shadow-sm border border-[#D0D0D0] overflow-hidden sticky top-24 flex flex-col">
               <div className="bg-[#949437] px-4 py-3 flex items-center justify-between">
                 <span className="text-white text-sm font-semibold">معاينة البروشور</span>
@@ -1046,6 +1045,7 @@ export default function Home() {
               </div>
               {/* Template Selector */}
               <div className="px-4 py-3 border-b border-[#E8E8E4] bg-[#FAFAF8]">
+                <div className="text-[10px] text-gray-400 mb-2 font-medium">اختر قالب البروشور:</div>
                 <TemplateSelector selected={selectedTemplate} onChange={handleTemplateChange} />
               </div>
               <div className="p-3 bg-[#F0F3FA] overflow-hidden" style={{ maxHeight: "calc(100vh - 230px)" }}>
