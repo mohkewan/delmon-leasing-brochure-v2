@@ -26,7 +26,7 @@ interface ProjectData {
   description: string;
   amenities: string;
   contactName: string;
-  features?: string;
+  features?: string | string[];
   contactPhone: string;
   contactEmail: string;
   projectImage?: string;
@@ -319,7 +319,7 @@ function darkPage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l
               <div style="width:30px;height:2px;background:${GOLD}"></div>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
-              ${(data.features.split(",").filter(Boolean)).map((f: string) => `<span style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.4);color:${GOLD};font-size:8px;padding:3px 10px;border-radius:3px">✓ ${f.trim()}</span>`).join("")}
+              ${((Array.isArray(data.features) ? data.features : (data.features as string).split(",")).filter(Boolean)).map((f: string) => `<span style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.4);color:${GOLD};font-size:8px;padding:3px 10px;border-radius:3px">✓ ${f.trim()}</span>`).join("")}
             </div>
           </div>` : ""}
         </td>
@@ -536,7 +536,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
           <div style="border-radius:10px;overflow:hidden;height:180px;background:${panelBg};border:1px solid ${borderColor};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
             <div style="font-size:10px;font-weight:800;color:${textColor};text-align:center">مميزات المشروع</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 20px;width:100%">
-              ${(data.features ? data.features.split(",").slice(0,4) : ["موقع استراتيجي","تصميم عصري","خدمات متكاملة","إدارة احترافية"]).map((f: string) => `
+              ${(data.features ? (Array.isArray(data.features) ? data.features : (data.features as string).split(",")).slice(0,4) : ["موقع استراتيجي","تصميم عصري","خدمات متكاملة","إدارة احترافية"]).map((f: string) => `
               <div style="background:${isDark ? "rgba(201,168,76,0.1)" : GOLD + "15"};border-radius:6px;padding:8px;text-align:center;border:1px solid ${isDark ? "rgba(201,168,76,0.2)" : GOLD + "30"}">
                 <div style="font-size:9px;font-weight:700;color:${textColor}">${f.trim()}</div>
               </div>`).join("")}
@@ -1018,6 +1018,12 @@ function buildBrochureHTML(data: ProjectData, template: string): string {
 
   const imgSrc = data.projectImage ?? "";
 
+  // Normalize features: accept both string and string[]
+  const featuresStr: string | undefined = Array.isArray(data.features)
+    ? (data.features as string[]).join(",")
+    : (data.features as string | undefined);
+  const normalizedData = { ...data, features: featuresStr };
+
   const kpis = [
     { v: data.totalArea ? Number(data.totalArea.replace(/,/g, "")).toLocaleString("ar-SA") : "—", l: "المساحة م²" },
     { v: data.floors || "—", l: "الطوابق" },
@@ -1026,15 +1032,15 @@ function buildBrochureHTML(data: ProjectData, template: string): string {
   ];
 
   let p1: string;
-  if (template === "dark") p1 = darkPage1(data, amenitiesList, kpis, imgSrc);
-  else if (template === "magazine") p1 = magazinePage1(data, amenitiesList, kpis, imgSrc);
-  else p1 = classicPage1(data, amenitiesList, kpis, imgSrc);
+  if (template === "dark") p1 = darkPage1(normalizedData, amenitiesList, kpis, imgSrc);
+  else if (template === "magazine") p1 = magazinePage1(normalizedData, amenitiesList, kpis, imgSrc);
+  else p1 = classicPage1(normalizedData, amenitiesList, kpis, imgSrc);
 
-  const p2 = page2(data, template, amenitiesList);
-  const p3 = page3(data, template);
-  const p4 = page4(data, template);
+  const p2 = page2(normalizedData, template, amenitiesList);
+  const p3 = page3(normalizedData, template);
+  const p4 = page4(normalizedData, template);
   // Page 5: photo gallery — only when a project image is provided
-  const p5 = imgSrc ? page5(data, template, imgSrc) : "";
+  const p5 = imgSrc ? page5(normalizedData, template, imgSrc) : "";
 
   return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
