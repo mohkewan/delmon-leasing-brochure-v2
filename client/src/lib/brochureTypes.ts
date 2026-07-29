@@ -13,7 +13,7 @@ export interface Unit {
   pricePerMeter?: string;
   features: string;
   contractDuration?: string;
-  description?: string;
+  description: string;
 }
 
 export interface ProjectData {

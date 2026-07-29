@@ -354,7 +354,7 @@ export default function Home() {
     try {
       await new Promise((r) => setTimeout(r, 200));
       setExportStep("جاري معالجة الصفحات...");
-      await generateBrochurePDF(projectData);
+      await generateBrochurePDF(projectData, selectedTemplate);
       setExportStep("تم بنجاح!");
       setExportDone(true);
       toast.success("✅ تم تصدير البروشور بنجاح!");
