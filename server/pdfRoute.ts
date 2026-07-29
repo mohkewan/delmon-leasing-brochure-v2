@@ -161,49 +161,65 @@ function darkPage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l
   return `
   <div class="page" style="background:${DARK_BG}">
     ${logoHeader(DARK_PANEL, GOLD, "#f0f0f0", "#888", data.projectName)}
-    <div class="page-body">
-      <!-- Image half with overlay -->
-      <div style="width:48%;flex-shrink:0;overflow:hidden;position:relative">
-        ${imgBlock}
-        <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,168,76,0.15) 0%,transparent 60%)"></div>
-        <div style="position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(transparent,rgba(15,17,23,0.9))"></div>
-        <div style="position:absolute;bottom:12px;right:14px;left:14px">
-          <div style="font-size:9px;color:rgba(255,255,255,0.6);margin-bottom:5px;text-align:right">أبرز المرافق</div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
-            ${amenityTags(amenitiesList.slice(0,6), "rgba(201,168,76,0.25)", GOLD, "rgba(201,168,76,0.5)")}
+    <!-- Body: table layout for reliable height fill -->
+    <table style="width:1123px;height:682px;border-collapse:collapse;table-layout:fixed">
+      <tr>
+        <!-- Image half: 48% = 539px -->
+        <td style="width:539px;padding:0;overflow:hidden;vertical-align:top">
+          <div style="width:539px;height:682px;overflow:hidden;position:relative">
+            ${imgBlock}
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,168,76,0.15) 0%,transparent 60%)"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,rgba(15,17,23,0.95))"></div>
+            <div style="position:absolute;bottom:14px;right:14px;left:14px">
+              <div style="font-size:9px;color:rgba(255,255,255,0.6);margin-bottom:5px;text-align:right">أبرز المرافق</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
+                ${amenityTags(amenitiesList.slice(0,6), "rgba(201,168,76,0.25)", GOLD, "rgba(201,168,76,0.5)")}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <!-- Content half -->
-      <div style="flex:1;padding:20px 26px 10px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
-        <!-- Badge -->
-        <div style="display:flex;justify-content:flex-end">
-          <div style="background:${GOLD};color:#fff;font-size:8px;font-weight:800;padding:3px 12px;border-radius:2px;letter-spacing:0.5px">◆ وحدات شاغرة للتأجير</div>
-        </div>
-        <!-- Title -->
-        <div style="text-align:right">
-          <h1 style="font-size:46px;font-weight:900;color:#ffffff;line-height:1;margin:0 0 4px">${data.projectName}</h1>
-          <div style="font-size:14px;font-weight:700;color:${GOLD};margin-bottom:3px">${data.projectType}</div>
-          <div style="font-size:10px;color:#aaa">📍 ${data.city} — ${data.district}</div>
-        </div>
-        <!-- Description -->
-        <div style="background:${DARK_PANEL};border-radius:6px;padding:10px 14px;border-right:4px solid ${GOLD};font-size:9.5px;color:#ccc;line-height:1.7;text-align:right;flex-shrink:0">${data.description}</div>
-        <!-- Amenities -->
-        <div>
-          <div style="font-size:9px;font-weight:800;color:#e0e0e0;margin-bottom:6px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
-            <span>أبرز المرافق والخدمات</span>
-            <div style="width:30px;height:2px;background:${GOLD}"></div>
+        </td>
+        <!-- Content half -->
+        <td style="vertical-align:top;padding:22px 28px 14px;background:${DARK_BG}">
+          <!-- Badge -->
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+            <div style="background:${GOLD};color:#fff;font-size:8px;font-weight:800;padding:4px 14px;border-radius:2px;letter-spacing:0.5px">◆ وحدات شاغرة للتأجير</div>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
-            ${amenityTags(amenitiesList, "rgba(201,168,76,0.1)", GOLD, "rgba(201,168,76,0.35)")}
+          <!-- Title -->
+          <div style="text-align:right;margin-bottom:12px">
+            <h1 style="font-size:44px;font-weight:900;color:#ffffff;line-height:1;margin:0 0 4px">${data.projectName}</h1>
+            <div style="font-size:14px;font-weight:700;color:${GOLD};margin-bottom:4px">${data.projectType}</div>
+            <div style="font-size:10px;color:#aaa">📍 ${data.city} — ${data.district}</div>
           </div>
-        </div>
-        <!-- KPIs -->
-        <div style="display:flex;gap:6px;margin-top:auto">
-          ${kpiBar(kpis, DARK_PANEL, GOLD, "#777", GOLD)}
-        </div>
-      </div>
-    </div>
+          <!-- Description -->
+          <div style="background:${DARK_PANEL};border-radius:6px;padding:12px 16px;border-right:4px solid ${GOLD};font-size:10px;color:#ccc;line-height:1.8;text-align:right;margin-bottom:14px">${data.description}</div>
+          <!-- Amenities -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:9px;font-weight:800;color:#e0e0e0;margin-bottom:8px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>أبرز المرافق والخدمات</span>
+              <div style="width:30px;height:2px;background:${GOLD}"></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end">
+              ${amenityTags(amenitiesList, "rgba(201,168,76,0.1)", GOLD, "rgba(201,168,76,0.35)")}
+            </div>
+          </div>
+          <!-- KPIs -->
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            ${kpiBar(kpis, DARK_PANEL, GOLD, "#777", GOLD)}
+          </div>
+          <!-- Features highlight -->
+          ${data.features ? `
+          <div>
+            <div style="font-size:9px;font-weight:800;color:#e0e0e0;margin-bottom:6px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>مميزات المشروع</span>
+              <div style="width:30px;height:2px;background:${GOLD}"></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
+              ${(data.features.split(",").filter(Boolean)).map((f: string) => `<span style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.4);color:${GOLD};font-size:8px;padding:3px 10px;border-radius:3px">✓ ${f.trim()}</span>`).join("")}
+            </div>
+          </div>` : ""}
+        </td>
+      </tr>
+    </table>
     ${footer("01 / 04", DARK_PANEL, "#e0e0e0", GOLD)}
   </div>`;
 }
@@ -594,18 +610,66 @@ function page4(data: ProjectData, template: string) {
     return `
     <div class="page" style="background:${DARK_BG};position:relative">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(201,168,76,0.12) 0%,transparent 70%)"></div>
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;position:relative">
-        <img src="${LOGO}" style="height:60px;width:auto;filter:brightness(0.9)">
-        <div style="font-size:32px;font-weight:900;color:#fff;text-align:center;line-height:1.1">${data.projectName}</div>
-        <div style="font-size:12px;color:${GOLD};text-align:center">${data.projectType} | ${data.city}</div>
-        <div style="width:60px;height:2px;background:${GOLD}"></div>
-        <div style="background:${DARK_PANEL};border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:20px 40px;text-align:center;min-width:280px">
-          <div style="font-size:10px;color:#888;margin-bottom:8px">للتواصل والاستفسار</div>
-          <div style="font-size:22px;font-weight:900;color:${GOLD}">${data.contactPhone || "011-2080129"}</div>
-          <div style="font-size:10px;color:#aaa;margin-top:6px">${data.contactEmail || "info@delmoninvest.com"}</div>
-          <div style="font-size:9px;color:#666;margin-top:4px">delmoninvest.com</div>
-        </div>
-      </div>
+      <table style="width:1123px;height:738px;border-collapse:collapse;table-layout:fixed;position:relative">
+        <tr>
+          <td style="width:420px;vertical-align:middle;padding:40px 30px;text-align:center;background:${DARK_PANEL};border-left:2px solid rgba(201,168,76,0.3)">
+            <img src="${LOGO}" style="height:64px;width:auto;filter:brightness(0.9);margin-bottom:16px;display:block;margin-left:auto;margin-right:auto">
+            <div style="font-size:13px;font-weight:900;color:#fff;letter-spacing:1px;margin-bottom:4px">شركة دلمون للاستثمار</div>
+            <div style="font-size:8px;color:#888;letter-spacing:2px;margin-bottom:20px">DELMON INVESTMENT CO</div>
+            <div style="width:40px;height:1px;background:rgba(201,168,76,0.5);margin:0 auto 20px"></div>
+            <!-- Advantages grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+              ${[["📍","موقع مميز","على الشارع الرئيسي"],["🏢","إدارة احترافية","خبرة +15 سنة"],["🔒","أمن وحراسة","24/7"],["⚡","خدمات متكاملة","صيانة وتشغيل"]].map(([icon,title,sub]) => `
+              <div style="background:${DARK_BG};border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px 8px;text-align:center">
+                <div style="font-size:20px;margin-bottom:4px">${icon}</div>
+                <div style="font-size:9px;font-weight:800;color:#e0e0e0">${title}</div>
+                <div style="font-size:7px;color:#888;margin-top:2px">${sub}</div>
+              </div>`).join("")}
+            </div>
+            <div style="font-size:8px;color:#666">delmoninvest.com</div>
+          </td>
+          <td style="vertical-align:top;padding:36px 40px;background:${DARK_BG}">
+            <div style="text-align:right;margin-bottom:24px">
+              <div style="font-size:36px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:6px">${data.projectName}</div>
+              <div style="font-size:13px;color:${GOLD}">${data.projectType} | ${data.city}، ${data.district}</div>
+            </div>
+            <div style="width:50px;height:2px;background:${GOLD};margin-bottom:24px;margin-right:0;margin-left:auto"></div>
+            <!-- Contact card -->
+            <div style="background:${DARK_PANEL};border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:24px 28px;margin-bottom:20px;text-align:right">
+              <div style="font-size:9px;color:#888;margin-bottom:10px">للتواصل والاستفسار</div>
+              <div style="font-size:28px;font-weight:900;color:${GOLD};margin-bottom:8px">${data.contactPhone || "011-2080129"}</div>
+              <div style="font-size:10px;color:#aaa;margin-bottom:6px">${data.contactEmail || "info@delmoninvest.com"}</div>
+              <div style="width:100%;height:1px;background:rgba(255,255,255,0.08);margin:12px 0"></div>
+              <div style="display:flex;justify-content:flex-end;gap:16px">
+                <div style="text-align:right">
+                  <div style="font-size:8px;color:#666">ساعات العمل</div>
+                  <div style="font-size:10px;color:#ccc">الأحد — الخميس، 8 ص — 5 م</div>
+                </div>
+              </div>
+            </div>
+            <!-- Closing message -->
+            <div style="background:${GOLD};border-radius:10px;padding:16px 20px;text-align:right">
+              <div style="font-size:11px;font-weight:900;color:#fff;margin-bottom:6px">نسعد بخدمتكم</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.85);line-height:1.7">فريق التأجير في شركة دلمون للاستثمار يرحب بكم ويسعى لتقديم أفضل الحلول التجارية التي تلبي احتياجاتكم وتحقق أهدافكم.</div>
+            </div>
+            <!-- Projects strip -->
+            <div style="margin-top:14px;background:${DARK_PANEL};border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px 16px;text-align:right">
+              <div style="font-size:8px;font-weight:900;color:${GOLD};margin-bottom:8px;display:flex;align-items:center;justify-content:flex-end;gap:6px">
+                <span>مشاريعنا في المملكة</span>
+                <div style="width:16px;height:1px;background:${GOLD}"></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+                ${[["🏪","مولات تجارية","الرياض، جدة، جازان"],["🏢","مكاتب ومراكز أعمال","الرياض، الدمام"],["🏨","فنادق ومجمعات","جازان، أبها"]].map(([icon,title,loc]) => `
+                <div style="background:${DARK_BG};border-radius:6px;padding:8px;text-align:center">
+                  <div style="font-size:14px;margin-bottom:3px">${icon}</div>
+                  <div style="font-size:7.5px;font-weight:800;color:#e0e0e0">${title}</div>
+                  <div style="font-size:6.5px;color:#666;margin-top:2px">${loc}</div>
+                </div>`).join("")}
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
       ${footer("04 / 04", DARK_PANEL, "#e0e0e0", GOLD)}
     </div>`;
   }
@@ -614,29 +678,62 @@ function page4(data: ProjectData, template: string) {
     return `
     <div class="page" style="background:#1a1a1a;position:relative">
       <div style="height:8px;background:linear-gradient(90deg,${GOLD} 0%,#8B6914 50%,${GOLD} 100%);flex-shrink:0"></div>
-      <div class="page-body">
-        <!-- Left: gold panel -->
-        <div style="width:40%;background:${GOLD};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px">
-          <img src="${LOGO}" style="height:56px;width:auto;filter:brightness(0) invert(1)">
-          <div style="font-size:11px;font-weight:900;color:#fff;text-align:center;letter-spacing:1px">شركة دلمون للاستثمار</div>
-          <div style="font-size:8px;color:rgba(255,255,255,0.7);letter-spacing:2px">DELMON INVESTMENT CO</div>
-          <div style="width:40px;height:1px;background:rgba(255,255,255,0.4)"></div>
-          <div style="font-size:8px;color:rgba(255,255,255,0.7);text-align:center">delmoninvest.com</div>
-        </div>
-        <!-- Right: contact info -->
-        <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:16px;padding:30px 36px">
-          <div style="text-align:right">
-            <div style="font-size:28px;font-weight:900;color:#fff;line-height:1.1">${data.projectName}</div>
-            <div style="font-size:12px;color:${GOLD};margin-top:4px">${data.projectType} | ${data.city}، ${data.district}</div>
-          </div>
-          <div style="width:40px;height:2px;background:${GOLD}"></div>
-          <div style="text-align:right">
-            <div style="font-size:9px;color:#aaa;margin-bottom:6px">للتواصل والاستفسار</div>
-            <div style="font-size:24px;font-weight:900;color:#fff">${data.contactPhone || "011-2080129"}</div>
-            <div style="font-size:10px;color:#888;margin-top:4px">${data.contactEmail || "info@delmoninvest.com"}</div>
-          </div>
-        </div>
-      </div>
+      <table style="width:1123px;height:730px;border-collapse:collapse;table-layout:fixed">
+        <tr>
+          <!-- Left: gold brand panel -->
+          <td style="width:380px;vertical-align:middle;padding:36px 28px;background:${GOLD};text-align:center">
+            <img src="${LOGO}" style="height:60px;width:auto;filter:brightness(0) invert(1);margin-bottom:16px;display:block;margin-left:auto;margin-right:auto">
+            <div style="font-size:13px;font-weight:900;color:#fff;letter-spacing:1px;margin-bottom:4px">شركة دلمون للاستثمار</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:20px">DELMON INVESTMENT CO</div>
+            <div style="width:40px;height:1px;background:rgba(255,255,255,0.4);margin:0 auto 20px"></div>
+            <!-- Advantages grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+              ${[["📍","موقع مميز"],["🏢","إدارة احترافية"],["🔒","أمن وحراسة"],["⚡","خدمات متكاملة"]].map(([icon,title]) => `
+              <div style="background:rgba(0,0,0,0.15);border-radius:8px;padding:10px 8px;text-align:center">
+                <div style="font-size:18px;margin-bottom:4px">${icon}</div>
+                <div style="font-size:8px;font-weight:800;color:#fff">${title}</div>
+              </div>`).join("")}
+            </div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.6)">delmoninvest.com</div>
+          </td>
+          <!-- Right: project info + contact -->
+          <td style="vertical-align:top;padding:36px 40px;background:#1a1a1a">
+            <div style="text-align:right;margin-bottom:20px">
+              <div style="font-size:36px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:6px">${data.projectName}</div>
+              <div style="font-size:12px;color:${GOLD}">${data.projectType} | ${data.city}، ${data.district}</div>
+            </div>
+            <div style="width:50px;height:2px;background:${GOLD};margin-bottom:20px;margin-right:0;margin-left:auto"></div>
+            <!-- Contact card -->
+            <div style="background:#111;border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:20px 24px;margin-bottom:16px;text-align:right">
+              <div style="font-size:9px;color:#888;margin-bottom:8px">للتواصل والاستفسار</div>
+              <div style="font-size:28px;font-weight:900;color:${GOLD};margin-bottom:6px">${data.contactPhone || "011-2080129"}</div>
+              <div style="font-size:10px;color:#aaa;margin-bottom:6px">${data.contactEmail || "info@delmoninvest.com"}</div>
+              <div style="width:100%;height:1px;background:rgba(255,255,255,0.08);margin:10px 0"></div>
+              <div style="font-size:8px;color:#666">الأحد — الخميس، 8 ص — 5 م</div>
+            </div>
+            <!-- Closing message -->
+            <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:16px 20px;text-align:right">
+              <div style="font-size:11px;font-weight:900;color:${GOLD};margin-bottom:6px">نسعد بخدمتكم</div>
+              <div style="font-size:9px;color:#aaa;line-height:1.7">فريق التأجير في شركة دلمون للاستثمار يرحب بكم ويسعى لتقديم أفضل الحلول التجارية التي تلبي احتياجاتكم.</div>
+            </div>
+            <!-- Projects strip -->
+            <div style="margin-top:14px;background:#111;border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px 16px;text-align:right">
+              <div style="font-size:8px;font-weight:900;color:${GOLD};margin-bottom:8px;display:flex;align-items:center;justify-content:flex-end;gap:6px">
+                <span>مشاريعنا في المملكة</span>
+                <div style="width:16px;height:1px;background:${GOLD}"></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+                ${[["🏪","مولات تجارية","الرياض، جدة، جازان"],["🏢","مكاتب ومراكز أعمال","الرياض، الدمام"],["🏨","فنادق ومجمعات","جازان، أبها"]].map(([icon,title,loc]) => `
+                <div style="background:#1a1a1a;border-radius:6px;padding:8px;text-align:center">
+                  <div style="font-size:14px;margin-bottom:3px">${icon}</div>
+                  <div style="font-size:7.5px;font-weight:800;color:#e0e0e0">${title}</div>
+                  <div style="font-size:6.5px;color:#666;margin-top:2px">${loc}</div>
+                </div>`).join("")}
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
       ${footer("04 / 04", "#111", "#e0e0e0", GOLD)}
     </div>`;
   }
@@ -645,29 +742,72 @@ function page4(data: ProjectData, template: string) {
   return `
   <div class="page" style="background:#fff;position:relative">
     <div style="position:absolute;top:0;left:0;right:0;height:6px;background:${GOLD}"></div>
-    <div class="page-body">
-      <!-- Left: gold panel -->
-      <div style="width:38%;background:${GOLD};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px">
-        <img src="${LOGO}" style="height:56px;width:auto;filter:brightness(0) invert(1)">
-        <div style="font-size:11px;font-weight:900;color:#fff;text-align:center;letter-spacing:1px">شركة دلمون للاستثمار</div>
-        <div style="font-size:8px;color:rgba(255,255,255,0.7);letter-spacing:2px">DELMON INVESTMENT CO</div>
-        <div style="width:40px;height:1px;background:rgba(255,255,255,0.4)"></div>
-        <div style="font-size:8px;color:rgba(255,255,255,0.7);text-align:center">delmoninvest.com</div>
-      </div>
-      <!-- Right: contact info -->
-      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:16px;padding:30px 36px">
-        <div style="text-align:right">
-          <div style="font-size:28px;font-weight:900;color:#1a1a1a;line-height:1.1">${data.projectName}</div>
-          <div style="font-size:12px;color:${GOLD};margin-top:4px">${data.projectType} | ${data.city}، ${data.district}</div>
-        </div>
-        <div style="width:40px;height:2px;background:${GOLD}"></div>
-        <div style="text-align:right">
-          <div style="font-size:9px;color:#999;margin-bottom:6px">للتواصل والاستفسار</div>
-          <div style="font-size:24px;font-weight:900;color:#1a1a1a">${data.contactPhone || "011-2080129"}</div>
-          <div style="font-size:10px;color:#888;margin-top:4px">${data.contactEmail || "info@delmoninvest.com"}</div>
-        </div>
-      </div>
-    </div>
+    <table style="width:1123px;height:732px;border-collapse:collapse;table-layout:fixed">
+      <tr>
+        <!-- Left: gold brand panel -->
+        <td style="width:380px;vertical-align:middle;padding:36px 28px;background:${GOLD};text-align:center">
+          <img src="${LOGO}" style="height:60px;width:auto;filter:brightness(0) invert(1);margin-bottom:16px;display:block;margin-left:auto;margin-right:auto">
+          <div style="font-size:13px;font-weight:900;color:#fff;letter-spacing:1px;margin-bottom:4px">شركة دلمون للاستثمار</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:20px">DELMON INVESTMENT CO</div>
+          <div style="width:40px;height:1px;background:rgba(255,255,255,0.4);margin:0 auto 20px"></div>
+          <!-- Advantages grid -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+            ${[["📍","موقع مميز","على الشارع الرئيسي"],["🏢","إدارة احترافية","خبرة +15 سنة"],["🔒","أمن وحراسة","24/7"],["⚡","خدمات متكاملة","صيانة وتشغيل"]].map(([icon,title,sub]) => `
+            <div style="background:rgba(0,0,0,0.12);border-radius:8px;padding:10px 8px;text-align:center">
+              <div style="font-size:18px;margin-bottom:4px">${icon}</div>
+              <div style="font-size:8px;font-weight:800;color:#fff">${title}</div>
+              <div style="font-size:7px;color:rgba(255,255,255,0.7);margin-top:2px">${sub}</div>
+            </div>`).join("")}
+          </div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.6)">delmoninvest.com</div>
+        </td>
+        <!-- Right: project info + contact -->
+        <td style="vertical-align:top;padding:36px 40px;background:#fff">
+          <div style="text-align:right;margin-bottom:24px">
+            <div style="font-size:40px;font-weight:900;color:#1a1a1a;line-height:1.1;margin-bottom:8px">${data.projectName}</div>
+            <div style="font-size:14px;color:${GOLD}">${data.projectType} | ${data.city}، ${data.district}</div>
+          </div>
+          <div style="width:60px;height:3px;background:${GOLD};margin-bottom:24px;margin-right:0;margin-left:auto"></div>
+          <!-- Contact card -->
+          <div style="background:#F7F6F2;border:1px solid #E0DDD0;border-radius:14px;padding:24px 28px;margin-bottom:18px;text-align:right">
+            <div style="font-size:10px;color:#999;margin-bottom:10px">للتواصل والاستفسار</div>
+            <div style="font-size:32px;font-weight:900;color:#1a1a1a;margin-bottom:8px">${data.contactPhone || "011-2080129"}</div>
+            <div style="font-size:11px;color:#888;margin-bottom:8px">${data.contactEmail || "info@delmoninvest.com"}</div>
+            <div style="width:100%;height:1px;background:#E0DDD0;margin:12px 0"></div>
+            <div style="display:flex;justify-content:flex-end;gap:20px">
+              <div style="text-align:right">
+                <div style="font-size:8px;color:#bbb">الموقع الإلكتروني</div>
+                <div style="font-size:10px;color:#666">delmoninvest.com</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:8px;color:#bbb">ساعات العمل</div>
+                <div style="font-size:10px;color:#666">الأحد — الخميس، 8 ص — 5 م</div>
+              </div>
+            </div>
+          </div>
+          <!-- Closing message -->
+          <div style="background:${GOLD}15;border:1px solid ${GOLD}40;border-radius:12px;padding:18px 22px;margin-bottom:18px;text-align:right">
+            <div style="font-size:12px;font-weight:900;color:#2d2d2d;margin-bottom:8px">نسعد بخدمتكم</div>
+            <div style="font-size:10px;color:#666;line-height:1.8">فريق التأجير في شركة دلمون للاستثمار يرحب بكم ويسعى لتقديم أفضل الحلول التجارية التي تلبي احتياجاتكم وتحقق أهدافكم الاستثمارية.</div>
+          </div>
+          <!-- Projects strip -->
+          <div style="background:#F7F6F2;border:1px solid #E0DDD0;border-radius:12px;padding:14px 18px;text-align:right">
+            <div style="font-size:9px;font-weight:900;color:#2d2d2d;margin-bottom:10px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>مشاريعنا في المملكة</span>
+              <div style="width:20px;height:1px;background:${GOLD}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+              ${[["🏪","مولات تجارية","الرياض، جدة، جازان"],["🏢","مكاتب ومراكز أعمال","الرياض، الدمام"],["🏨","فنادق ومجمعات","جازان، أبها"]].map(([icon,title,loc]) => `
+              <div style="background:#fff;border:1px solid #E0DDD0;border-radius:8px;padding:10px;text-align:center">
+                <div style="font-size:18px;margin-bottom:4px">${icon}</div>
+                <div style="font-size:8px;font-weight:800;color:#2d2d2d">${title}</div>
+                <div style="font-size:7px;color:#999;margin-top:3px">${loc}</div>
+              </div>`).join("")}
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
     ${footer("04 / 04", GOLD, "#fff", "rgba(255,255,255,0.9)")}
   </div>`;
 }
