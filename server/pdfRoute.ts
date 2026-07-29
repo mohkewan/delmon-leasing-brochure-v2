@@ -69,7 +69,7 @@ function footer(page: string, bg: string, textColor: string, accentColor: string
     "✓ لا معسلات"
   ].map(t => `<span style="color:${accentColor};font-size:7.5px;font-weight:700">${t}</span>`).join("");
   return `
-  <div style="height:7.4mm;background:${bg};display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0;gap:12px">
+  <div style="height:6mm;background:${bg};display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;gap:12px">
     <span style="color:${textColor};font-size:8px;font-weight:700;opacity:0.7">${page}</span>
     <div style="display:flex;gap:16px;flex:1;justify-content:center">${terms}</div>
     <span style="color:${textColor};font-size:7.5px;opacity:0.6">delmoninvest.com | 011-2080129</span>
@@ -247,12 +247,9 @@ function classicPage1(data: ProjectData, amenitiesList: string[], kpis: {v:strin
         <div style="font-size:8px;color:rgba(255,255,255,0.6);letter-spacing:1px;margin-top:2px">${kpis[2]?.l || ""}</div>
       </div>
     </div>
-    <!-- Bottom: location + contact -->
-    <div style="position:absolute;bottom:20px;left:48px;right:24px;display:flex;justify-content:space-between;align-items:flex-end">
+    <!-- Bottom: location only (phone already in CTA Banner above) -->
+    <div style="position:absolute;bottom:20px;left:48px;right:24px;display:flex;justify-content:flex-start;align-items:flex-end">
       <div style="font-size:10px;color:rgba(255,255,255,0.65)">📍 ${data.city} — ${data.district}</div>
-      <div style="background:${GOLD};padding:8px 18px;border-radius:2px">
-        <div style="font-size:11px;font-weight:800;color:#fff">${data.contactPhone}</div>
-      </div>
     </div>
   </div>`;
 }
@@ -565,8 +562,9 @@ function page3(data: ProjectData, template: string) {
   const rowOdd = isDark ? DARK_PANEL : "#fff";
 
   const totalUnits = data.units?.length || 0;
-  const totalArea = data.units?.reduce((s, u) => s + (parseFloat(u.area) || 0), 0) || 0;
-  const totalRent = data.units?.reduce((s, u) => s + (parseFloat(u.monthlyRent || "0") || 0), 0) || 0;
+  const parseNum = (v?: string) => parseFloat((v || "0").replace(/[^\d.]/g, "")) || 0;
+  const totalArea = data.units?.reduce((s, u) => s + parseNum(u.area), 0) || 0;
+  const totalRent = data.units?.reduce((s, u) => s + parseNum(u.monthlyRent), 0) || 0;
   const avgRent = totalUnits > 0 ? Math.round(totalRent / totalUnits) : 0;
   const annualRent = totalRent * 12;
 
@@ -575,9 +573,9 @@ function page3(data: ProjectData, template: string) {
       <td style="padding:9px 8px;text-align:center;font-size:10px;color:${subColor}">${i + 1}</td>
       <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:700;color:${textColor}">${u.unitNumber || "—"}</td>
       <td style="padding:9px 8px;text-align:center;font-size:10px;color:${textColor}">${u.floor || "—"}</td>
-      <td style="padding:9px 8px;text-align:center;font-size:10px;color:${textColor}">${u.unitType || "—"}</td>
-      <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:600;color:${textColor}">${u.area ? Number(u.area).toLocaleString("ar-SA") : "—"} م²</td>
-      <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:800;color:${GOLD}">${u.monthlyRent ? Number(u.monthlyRent).toLocaleString("ar-SA") + " ر.س" : "—"}</td>
+      <td style="padding:9px 8px;text-align:center;font-size:10px;color:${textColor}">${(u as any).type || u.unitType || "—"}</td>
+      <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:600;color:${textColor}">${u.area ? (isNaN(Number(u.area)) ? u.area : Number(u.area).toLocaleString("ar-SA") + " م²") : "—"}</td>
+      <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:800;color:${GOLD}">${u.monthlyRent ? (isNaN(Number(u.monthlyRent)) ? u.monthlyRent : Number(u.monthlyRent).toLocaleString("ar-SA") + " ر.س") : "—"}</td>
     </tr>`).join("");
 
   return `
@@ -802,7 +800,7 @@ function page4(data: ProjectData, template: string) {
       <table style="width:1123px;height:730px;border-collapse:collapse;table-layout:fixed">
         <tr>
           <!-- Left: gold brand panel -->
-          <td style="width:380px;vertical-align:middle;padding:36px 28px;background:${GOLD};text-align:center">
+          <td style="width:380px;vertical-align:middle;padding:36px 28px;background:linear-gradient(160deg,${GOLD} 0%,#8B6914 100%);text-align:center">
             <img src="${LOGO}" style="height:60px;width:auto;filter:brightness(0) invert(1);margin-bottom:16px;display:block;margin-left:auto;margin-right:auto">
             <div style="font-size:13px;font-weight:900;color:#fff;letter-spacing:1px;margin-bottom:4px">شركة دلمون للاستثمار</div>
             <div style="font-size:8px;color:rgba(255,255,255,0.7);letter-spacing:2px;margin-bottom:20px">DELMON INVESTMENT CO</div>
@@ -911,7 +909,7 @@ function page4(data: ProjectData, template: string) {
       <!-- Contact -->
       <div style="text-align:right;width:100%">
         <div style="font-size:9px;color:#666;margin-bottom:10px">للتواصل والاستفسار</div>
-        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:6px">${data.contactName}</div>
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:6px">${(data as any).contactName || "شركة دلمون للاستثمار"}</div>
         <div style="font-size:16px;font-weight:900;color:${GOLD};margin-bottom:6px">${data.contactPhone || "011-2080129"}</div>
         <div style="font-size:9px;color:#666">${data.contactEmail || "info@delmoninvest.com"}</div>
         <div style="font-size:9px;color:#555;margin-top:6px">delmoninvest.com</div>
