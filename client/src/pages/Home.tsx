@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw, Archive, LogOut, LogIn, User } from "lucide-react";
+import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw, Archive, LogOut, LogIn, User, TableProperties } from "lucide-react";
 import BrochurePreview from "@/components/BrochurePreview";
 import { generateBrochurePDF } from "@/lib/pdfGenerator";
 
@@ -20,16 +20,16 @@ import { generateBrochurePDF } from "@/lib/pdfGenerator";
 // ===== PROJECT IMAGES MAP =====
 // صور ثابتة لكل مشروع من مشاريع دلمون
 const PROJECT_IMAGES: Record<string, string> = {
-  "1": "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80", // بارك فيو - مول
-  "2": "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80", // دلمون مكتبي 2
-  "3": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80", // معارض جازان 1
-  "4": "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80", // رفالا الأولى
-  "5": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80", // فندق لؤلؤة جازان
-  "6": "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80", // دلمون مكتبي 1
-  "7": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80", // معارض جازان 2
-  "8": "https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80", // رفالا الثانية
-  "9": "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80", // دلمون 3
-  "10": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80", // فندق جيزان
+  "1": "/manus-storage/p1_park_view_main_01dcc575.jpg",   // بارك فيو - مول تجاري - محايل عسير (صورة حقيقية من الموقع)
+  "2": "/manus-storage/p2_delmon_office2_f43dd896.jpg",   // دلمون مكتبي 2 - مبنى مكتبي - جازان
+  "3": "/manus-storage/p3_mazaref_jazan1_b85a0a7f.jpg",   // معارض جازان 1 - معارض - جازان
+  "4": "/manus-storage/p4_rafala1_d0da1bec.jpg",          // رفالا الأولى - سترب مول - أبها
+  "5": "/manus-storage/p5_hotel_lulua_2d83a898.jpg",      // فندق لؤلؤة جازان - فندق - جازان
+  "6": "/manus-storage/p6_delmon_office1_7a94ceaf.jpg",   // دلمون مكتبي 1 - مبنى مكتبي - جازان
+  "7": "/manus-storage/p7_mazaref_jazan2_f597cf7b.jpg",   // معارض جازان 2 - معارض - جازان
+  "8": "/manus-storage/p8_rafala2_76bd8200.jpg",          // رفالا الثانية - سترب مول - خميس مشيط
+  "9": "/manus-storage/p9_delmon3_b422c301.jpg",          // دلمون 3 - مبنى مكتبي - الرياض
+  "10": "/manus-storage/p10_hotel_jazan_07ba1132.png",    // فندق جيزان - فندق - جازان
 };
 
 const STORAGE_KEY = "delmon_brochure_draft";
@@ -225,6 +225,43 @@ export default function Home() {
     reader.readAsDataURL(file);
   };
 
+  const handleExportExcel = () => {
+    if (!projectData.projectName) {
+      toast.error("يرجى إدخال اسم المشروع أولاً");
+      return;
+    }
+    // بيانات المشروع
+    const projectSheet = [
+      ["اسم المشروع", projectData.projectName],
+      ["نوع المشروع", projectData.projectType],
+      ["المدينة", projectData.city],
+      ["الحي / الموقع", projectData.district],
+      ["إجمالي المساحة (م²)", projectData.totalArea],
+      ["عدد الطوابق", projectData.floors],
+      ["سنة الإنجاز", projectData.completionYear],
+      ["وصف المشروع", projectData.description],
+      ["المرافق والخدمات", projectData.amenities],
+      ["مسؤول التأجير", projectData.contactName],
+      ["رقم التواصل", projectData.contactPhone],
+      ["البريد الإلكتروني", projectData.contactEmail],
+    ];
+    // بيانات الوحدات
+    const unitsHeader = ["رقم الوحدة", "الطابق", "المساحة (م²)", "نوع الوحدة", "الوصف", "المميزات", "السعر/م²", "الإيجار الشهري", "مدة العقد"];
+    const unitsRows = projectData.units.map(u => [
+      u.unitNumber, u.floor, u.area, u.unitType, u.description,
+      u.features, u.pricePerMeter || "", u.monthlyRent || "", u.contractDuration || ""
+    ]);
+    const wb = XLSX.utils.book_new();
+    const ws1 = XLSX.utils.aoa_to_sheet(projectSheet);
+    ws1["!cols"] = [{ wch: 25 }, { wch: 40 }];
+    XLSX.utils.book_append_sheet(wb, ws1, "بيانات المشروع");
+    const ws2 = XLSX.utils.aoa_to_sheet([unitsHeader, ...unitsRows]);
+    ws2["!cols"] = unitsHeader.map(() => ({ wch: 18 }));
+    XLSX.utils.book_append_sheet(wb, ws2, "الوحدات");
+    XLSX.writeFile(wb, `${projectData.projectName} - بروشور التأجير.xlsx`);
+    toast.success("✅ تم تصدير ملف Excel بنجاح!");
+  };
+
   const handleExportPDF = async () => {
     if (!projectData.projectName) {
       toast.error("يرجى إدخال اسم المشروع أولاً");
@@ -360,6 +397,115 @@ export default function Home() {
               {isGenerating ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <FileDown className="w-4 h-4 ml-1" />}
               {isGenerating ? exportStep : "تصدير PDF"}
             </Button>
+            <Button
+              onClick={handleExportExcel}
+              size="sm"
+              variant="outline"
+              className="border-[#2e7d32] text-[#2e7d32] hover:bg-[#2e7d32] hover:text-white font-bold transition-all"
+            >
+              <TableProperties className="w-4 h-4 ml-1" />
+              Excel
+            </Button>
+            {/* Desktop-only buttons */}
+            <Button
+              onClick={() => setShowPreview(true)}
+              variant="outline"
+              size="sm"
+              className="hidden md:flex border-[#8fa9dc]/60 text-[#555555] hover:border-[#949437] hover:text-[#949437] bg-transparent transition-all"
+            >
+              <Eye className="w-4 h-4 ml-1" />
+              معاينة
+            </Button>
+            <Button
+              onClick={handleExportPDF}
+              disabled={isGenerating}
+              size="sm"
+              className="hidden md:flex bg-[#949437] hover:bg-[#7a7a2e] text-white font-bold transition-all shadow-md"
+            >
+              {isGenerating ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <FileDown className="w-4 h-4 ml-1" />}
+              {isGenerating ? exportStep : "تصدير PDF"}
+            </Button>
+            <Button
+              onClick={handleExportExcel}
+              size="sm"
+              variant="outline"
+              className="hidden md:flex border-[#2e7d32] text-[#2e7d32] hover:bg-[#2e7d32] hover:text-white font-bold transition-all"
+            >
+              <TableProperties className="w-4 h-4 ml-1" />
+              Excel
+            </Button>
+            {/* Mobile: compact action buttons */}
+            <div className="flex md:hidden items-center gap-1.5">
+              <Button
+                onClick={() => setShowPreview(true)}
+                variant="outline"
+                size="sm"
+                className="border-[#8fa9dc]/60 text-[#555555] px-2"
+              >
+                <Eye className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={handleExportPDF}
+                disabled={isGenerating}
+                size="sm"
+                className="bg-[#949437] hover:bg-[#7a7a2e] text-white font-bold px-2"
+              >
+                {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
+              </Button>
+            </div>
+            {/* Mobile menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="md:hidden border-[#D0D0D0]">
+                  <Menu className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                {isAuthenticated && user ? (
+                  <>
+                    <DropdownMenuItem className="text-xs text-[#949437] font-medium cursor-default">
+                      <User className="w-3.5 h-3.5 ml-1" />
+                      {user.name || user.email || "مستخدم"}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                ) : !loading ? (
+                  <>
+                    <DropdownMenuItem onClick={() => startLogin()}>
+                      <LogIn className="w-3.5 h-3.5 ml-1" />
+                      تسجيل الدخول
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                ) : null}
+                <DropdownMenuItem onClick={() => setLocation("/archive")}>
+                  <Archive className="w-3.5 h-3.5 ml-1" />
+                  الأرشيف
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSaveToArchive} disabled={saveBrochureMutation.isPending || !isAuthenticated}>
+                  <Save className="w-3.5 h-3.5 ml-1" />
+                  حفظ في الأرشيف
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleClearDraft}>
+                  <RotateCcw className="w-3.5 h-3.5 ml-1" />
+                  مسح البيانات
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportExcel}>
+                  <TableProperties className="w-3.5 h-3.5 ml-1" />
+                  تصدير Excel
+                </DropdownMenuItem>
+                {isAuthenticated && user && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => logout()} className="text-red-500">
+                      <LogOut className="w-3.5 h-3.5 ml-1" />
+                      تسجيل الخروج
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         {/* Auto-save indicator */}
@@ -860,3 +1006,13 @@ export default function Home() {
     </div>
   );
 }
+import * as XLSX from "xlsx";
+import { useState as useMenuState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Menu } from "lucide-react";

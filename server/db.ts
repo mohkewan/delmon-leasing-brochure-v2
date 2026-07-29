@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, brochures, InsertBrochure } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -118,6 +118,5 @@ export async function getBrochureById(id: number) {
 export async function deleteBrochure(id: number, userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const { and } = await import("drizzle-orm");
   return db.delete(brochures).where(and(eq(brochures.id, id), eq(brochures.userId, userId)));
 }
