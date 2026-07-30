@@ -69,7 +69,7 @@ function footer(page: string, bg: string, textColor: string, accentColor: string
     "✓ لا معسلات"
   ].map(t => `<span style="color:${accentColor};font-size:7.5px;font-weight:700">${t}</span>`).join("");
   return `
-  <div style="height:6mm;background:${bg};display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;gap:12px">
+  <div style="height:4.5mm;background:${bg};display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;gap:10px;opacity:0.82">
     <span style="color:${textColor};font-size:8px;font-weight:700;opacity:0.7">${page}</span>
     <div style="display:flex;gap:16px;flex:1;justify-content:center">${terms}</div>
     <span style="color:${textColor};font-size:7.5px;opacity:0.6">delmoninvest.com | 011-2080129</span>
@@ -136,288 +136,226 @@ function classicEditorialPage(data: ProjectData, imgSrc: string) {
   </div>`;
 }
 
-// ── Page 1 — Classic ──────────────────────────────────────────────────────────
+// ── Page 1 — Classic (redesigned: clean full-bleed hero, text on right) ─────────────────────────
 function classicPage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l:string}[], imgSrc: string) {
   const imgBlock = imgSrc
     ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover">`
-    : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#2a2a2a,#1a1a1a);display:flex;align-items:center;justify-content:center;color:#888;font-size:60px">🏢</div>`;
+    : `<div style="width:100%;height:100%;background:linear-gradient(160deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);display:flex;align-items:center;justify-content:center;color:#888;font-size:60px">🏢</div>`;
 
   return `
-  <div class="page" style="background:#1a1a1a;position:relative;overflow:hidden">
-    <!-- HERO: Full-bleed image covers entire page -->
-    <div style="position:absolute;inset:0">
-      ${imgBlock}
+  <div class="page" style="background:#0d0d0d;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0">${imgBlock}</div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to left, rgba(5,5,5,0.96) 0%, rgba(5,5,5,0.82) 35%, rgba(5,5,5,0.40) 65%, rgba(5,5,5,0.08) 100%)"></div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:160px;background:linear-gradient(transparent,rgba(0,0,0,0.65))"></div>
+    <!-- Top bar -->
+    <div style="position:absolute;top:0;left:0;right:0;padding:20px 28px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:8px;color:rgba(255,255,255,0.38);letter-spacing:2px;text-transform:uppercase">LEASING BROCHURE</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="text-align:right">
+          <div style="font-size:11px;font-weight:900;color:#fff;letter-spacing:0.5px">أعمال دلمون للعقارات</div>
+          <div style="font-size:6px;font-weight:600;color:${GOLD};letter-spacing:2px;margin-top:1px">DELMON REAL ESTATE BUSINESS</div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="28" height="40">
+          <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="${GOLD}" stroke-width="2.5"/>
+          <path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="${GOLD}" opacity="0.3"/>
+          <circle cx="24" cy="40" r="5" fill="${GOLD}"/>
+        </svg>
+      </div>
     </div>
-    <!-- Gradient overlays for text readability -->
-    <div style="position:absolute;inset:0;background:linear-gradient(to right, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.70) 40%, rgba(0,0,0,0.50) 65%, rgba(0,0,0,0.40) 100%)"></div>
-    <div style="position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(transparent,rgba(0,0,0,0.7))"></div>
-    <!-- Top bar: Logo right, Badge left -->
-    <div style="position:absolute;top:0;left:0;right:0;padding:18px 24px;display:flex;justify-content:space-between;align-items:center">
-      <div style="background:${GOLD};color:#fff;font-size:8px;font-weight:800;padding:5px 18px;letter-spacing:1px">◆ وحدات للتأجير</div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0">
-  <div style="display:flex;align-items:center;gap:6px">
-    <div style="text-align:right">
-      <div style="font-size:12px;font-weight:900;color:#ffffff;letter-spacing:0.5px;line-height:1.1">أعمال دلمون للعقارات</div>
-      <div style="font-size:6px;font-weight:600;color:#C9A84C;letter-spacing:2px;margin-top:1px">DELMON REAL ESTATE BUSINESS</div>
-    </div>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="32" height="46">
-      <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
-      <path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="#C9A84C" opacity="0.3"/>
-      <circle cx="24" cy="40" r="5" fill="#C9A84C"/>
-      <line x1="24" y1="22" x2="24" y2="34" stroke="#C9A84C" stroke-width="1.5" opacity="0.7"/>
-    </svg>
-  </div>
-</div>
-    </div>
-    <!-- Main content: positioned on left side -->
-    <div style="position:absolute;top:0;left:0;bottom:0;width:660px;display:flex;flex-direction:column;justify-content:center;padding:80px 48px 80px 48px">
-      <!-- Project type -->
-      <div style="font-size:10px;font-weight:700;color:${GOLD};letter-spacing:3px;margin-bottom:12px;text-transform:uppercase">${data.projectType}</div>
-      <!-- Project name — massive -->
-      <h1 style="font-size:52px;font-weight:900;color:#ffffff;line-height:1.05;margin:0 0 16px;text-shadow:0 2px 20px rgba(0,0,0,0.5)">${data.projectName}</h1>
-      <!-- Gold rule -->
-      <div style="width:70px;height:3px;background:${GOLD};margin-bottom:20px"></div>
-      <!-- Description -->
-      <div style="font-size:11px;color:rgba(255,255,255,0.82);line-height:1.85;margin-bottom:28px;max-width:420px">${data.description}</div>
-      <!-- KPIs row -->
-      <div style="display:flex;gap:0;margin-bottom:28px">
+    <!-- Main content: RIGHT side over dark gradient -->
+    <div style="position:absolute;top:0;right:0;bottom:0;width:510px;display:flex;flex-direction:column;justify-content:center;padding:80px 32px 70px 20px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;justify-content:flex-end">
+        <div style="font-size:9px;font-weight:700;color:${GOLD};letter-spacing:3px;text-transform:uppercase">${data.projectType}</div>
+        <div style="width:24px;height:2px;background:${GOLD}"></div>
+      </div>
+      <h1 style="font-size:46px;font-weight:900;color:#ffffff;line-height:1.05;margin:0 0 10px;text-align:right;text-shadow:0 2px 20px rgba(0,0,0,0.6)">${data.projectName}</h1>
+      <div style="font-size:10px;color:rgba(255,255,255,0.52);margin-bottom:14px;text-align:right">📍 ${data.city} — ${data.district}</div>
+      <div style="width:60px;height:3px;background:${GOLD};margin-bottom:18px;margin-left:auto"></div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.76);line-height:1.85;margin-bottom:20px;text-align:right;border-right:3px solid rgba(201,168,76,0.5);padding-right:14px">${data.description}</div>
+      <!-- KPIs — single clean row, no duplication -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:20px;border:1px solid rgba(201,168,76,0.25)">
         ${kpis.map((k: {v:string,l:string}, i: number) => `
-        <div style="padding:12px 18px;${i > 0 ? 'border-right:1px solid rgba(255,255,255,0.2)' : ''}">
-          <div style="font-size:22px;font-weight:900;color:#fff">${k.v}</div>
-          <div style="font-size:8px;color:rgba(255,255,255,0.55);margin-top:2px">${k.l}</div>
+        <div style="padding:12px 8px;text-align:center;${i > 0 ? 'border-right:1px solid rgba(201,168,76,0.2)' : ''}">
+          <div style="font-size:18px;font-weight:900;color:${GOLD};line-height:1">${k.v}</div>
+          <div style="font-size:7px;color:rgba(255,255,255,0.48);margin-top:3px;letter-spacing:0.5px">${k.l}</div>
         </div>`).join("")}
       </div>
-      <!-- Amenity tags -->
-      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:28px">
-        ${amenityTags(amenitiesList.slice(0,6), "rgba(201,168,76,0.2)", "rgba(255,255,255,0.85)", "rgba(201,168,76,0.6)")}
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:20px;justify-content:flex-end">
+        ${amenityTags(amenitiesList.slice(0,7), "rgba(201,168,76,0.12)", "rgba(255,255,255,0.80)", "rgba(201,168,76,0.45)")}
       </div>
-      <!-- Why choose section -->
-      <div style="border-top:1px solid rgba(201,168,76,0.3);padding-top:18px;margin-top:4px">
-        <div style="font-size:8px;font-weight:700;color:${GOLD};letter-spacing:2px;margin-bottom:12px">لماذا تختار هذا المشروع؟</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:28px;height:28px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📍</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.8);line-height:1.4">موقع استراتيجي<br><span style="color:rgba(255,255,255,0.5);font-size:8px">على الشارع الرئيسي</span></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:28px;height:28px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">🏛️</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.8);line-height:1.4">إدارة احترافية<br><span style="color:rgba(255,255,255,0.5);font-size:8px">شركة دلمون للاستثمار</span></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:28px;height:28px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">📈</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.8);line-height:1.4">عوائد مجزية<br><span style="color:rgba(255,255,255,0.5);font-size:8px">استثمار مضمون</span></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:28px;height:28px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">🔒</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.8);line-height:1.4">عقود مرنة<br><span style="color:rgba(255,255,255,0.5);font-size:8px">شروط تنافسية</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- CTA Banner -->
-    <div style="position:absolute;bottom:60px;left:0;width:calc(100% - 380px);padding:0 48px;">
-      <div style="background:linear-gradient(135deg,rgba(201,168,76,0.18),rgba(201,168,76,0.06));border:1px solid rgba(201,168,76,0.45);padding:18px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="background:${GOLD};padding:13px 18px;display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div style="color:#C9A84C;font-size:12px;font-weight:800;letter-spacing:1px;margin-bottom:6px">احجز وحدتك التجارية الآن</div>
-          <div style="color:rgba(255,255,255,0.75);font-size:10px;line-height:1.5">وحدات تجارية متميزة بموقع استراتيجي — تواصل مع فريق التأجير</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.8);letter-spacing:1px;margin-bottom:3px">للاستفسار والحجز</div>
+          <div style="font-size:17px;font-weight:900;color:#fff">${data.contactPhone || "011-2080129"}</div>
         </div>
-        <div style="text-align:center;flex-shrink:0;margin-right:16px">
-          <div style="background:#C9A84C;padding:10px 22px;">
-            <div style="color:#fff;font-size:9px;font-weight:700;letter-spacing:1px">للاستفسار</div>
-            <div style="color:#fff;font-size:14px;font-weight:900;margin-top:2px">${data.contactPhone}</div>
-          </div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.88);text-align:left">
+          <div style="font-weight:800">احجز وحدتك</div>
+          <div style="font-size:8px;opacity:0.75">التجارية الآن</div>
         </div>
       </div>
-    </div>
-    <!-- Right panel: floating stats on right side -->
-    <div style="position:absolute;top:0;right:0;bottom:0;width:380px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:60px 32px;gap:20px">
-      <!-- Decorative vertical line -->
-      <div style="position:absolute;left:0;top:80px;bottom:80px;width:1px;background:linear-gradient(transparent,rgba(201,168,76,0.5),transparent)"></div>
-      <!-- Stats cards -->
-      <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border:1px solid rgba(201,168,76,0.3);padding:16px 20px;width:200px;text-align:right">
-        <div style="font-size:28px;font-weight:900;color:#C9A84C">${kpis[0]?.v || "—"}</div>
-        <div style="font-size:8px;color:rgba(255,255,255,0.6);letter-spacing:1px;margin-top:2px">${kpis[0]?.l || ""}</div>
-      </div>
-      <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border:1px solid rgba(201,168,76,0.3);padding:16px 20px;width:200px;text-align:right">
-        <div style="font-size:28px;font-weight:900;color:#C9A84C">${kpis[1]?.v || "—"}</div>
-        <div style="font-size:8px;color:rgba(255,255,255,0.6);letter-spacing:1px;margin-top:2px">${kpis[1]?.l || ""}</div>
-      </div>
-      <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border:1px solid rgba(201,168,76,0.3);padding:16px 20px;width:200px;text-align:right">
-        <div style="font-size:28px;font-weight:900;color:#C9A84C">${kpis[2]?.v || "—"}</div>
-        <div style="font-size:8px;color:rgba(255,255,255,0.6);letter-spacing:1px;margin-top:2px">${kpis[2]?.l || ""}</div>
-      </div>
-    </div>
-    <!-- Bottom: location only (phone already in CTA Banner above) -->
-    <div style="position:absolute;bottom:20px;left:48px;right:24px;display:flex;justify-content:flex-start;align-items:flex-end">
-      <div style="font-size:10px;color:rgba(255,255,255,0.65)">📍 ${data.city} — ${data.district}</div>
     </div>
   </div>`;
 }
 
-// ── Page 1 — Dark Luxury ──────────────────────────────────────────────────────
+// ── Page 1 — Dark Luxury (redesigned: full-bleed image left, deep dark panel right) ────────────────
 function darkPage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l:string}[], imgSrc: string) {
   const imgBlock = imgSrc
-    ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.8)">`
+    ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.85)">`
     : `<div style="width:100%;height:100%;background:${DARK_PANEL};display:flex;align-items:center;justify-content:center;color:#555;font-size:40px">🏢</div>`;
 
   return `
-  <div class="page" style="background:${DARK_BG}">
-    ${logoHeader(DARK_PANEL, GOLD, "#f0f0f0", "#888", data.projectName)}
-    <!-- Body: table layout for reliable height fill -->
-    <table style="width:1123px;height:682px;border-collapse:collapse;table-layout:fixed">
-      <tr>
-        <!-- Image half: 48% = 539px -->
-        <td style="width:539px;padding:0;overflow:hidden;vertical-align:top">
-          <div style="width:539px;height:682px;overflow:hidden;position:relative">
-            ${imgBlock}
-            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,168,76,0.15) 0%,transparent 60%)"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,rgba(15,17,23,0.95))"></div>
-            <div style="position:absolute;bottom:14px;right:14px;left:14px">
-              <div style="font-size:9px;color:rgba(255,255,255,0.6);margin-bottom:5px;text-align:right">أبرز المرافق</div>
-              <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
-                ${amenityTags(amenitiesList.slice(0,6), "rgba(201,168,76,0.25)", GOLD, "rgba(201,168,76,0.5)")}
-              </div>
-            </div>
-          </div>
-        </td>
-        <!-- Content half -->
-        <td style="vertical-align:top;padding:22px 28px 14px;background:${DARK_BG}">
-          <!-- Badge -->
-          <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
-            <div style="background:${GOLD};color:#fff;font-size:8px;font-weight:800;padding:4px 14px;border-radius:2px;letter-spacing:0.5px">◆ وحدات شاغرة للتأجير</div>
-          </div>
-          <!-- Title -->
-          <div style="text-align:right;margin-bottom:12px">
-            <h1 style="font-size:44px;font-weight:900;color:#ffffff;line-height:1;margin:0 0 4px">${data.projectName}</h1>
-            <div style="font-size:14px;font-weight:700;color:${GOLD};margin-bottom:4px">${data.projectType}</div>
-            <div style="font-size:10px;color:#aaa">📍 ${data.city} — ${data.district}</div>
-          </div>
-          <!-- Description -->
-          <div style="background:${DARK_PANEL};border-radius:6px;padding:12px 16px;border-right:4px solid ${GOLD};font-size:10px;color:#ccc;line-height:1.8;text-align:right;margin-bottom:14px">${data.description}</div>
-          <!-- Amenities -->
-          <div style="margin-bottom:14px">
-            <div style="font-size:9px;font-weight:800;color:#e0e0e0;margin-bottom:8px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
-              <span>أبرز المرافق والخدمات</span>
-              <div style="width:30px;height:2px;background:${GOLD}"></div>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end">
-              ${amenityTags(amenitiesList, "rgba(201,168,76,0.1)", GOLD, "rgba(201,168,76,0.35)")}
-            </div>
-          </div>
-          <!-- KPIs -->
-          <div style="display:flex;gap:6px;margin-bottom:10px">
-            ${kpiBar(kpis, DARK_PANEL, GOLD, "#777", GOLD)}
-          </div>
-          <!-- Features highlight -->
-          ${data.features ? `
-          <div>
-            <div style="font-size:9px;font-weight:800;color:#e0e0e0;margin-bottom:6px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
-              <span>مميزات المشروع</span>
-              <div style="width:30px;height:2px;background:${GOLD}"></div>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
-              ${((Array.isArray(data.features) ? data.features : (data.features as string).split(",")).filter(Boolean)).map((f: string) => `<span style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.4);color:${GOLD};font-size:8px;padding:3px 10px;border-radius:3px">✓ ${f.trim()}</span>`).join("")}
-            </div>
-          </div>` : ""}
-        </td>
-      </tr>
-    </table>
-    ${footer("01 / 04", DARK_PANEL, "#e0e0e0", GOLD)}
+  <div class="page" style="background:${DARK_BG};position:relative;overflow:hidden">
+    <!-- Full-bleed image: left 55% -->
+    <div style="position:absolute;top:0;left:0;bottom:0;width:620px;overflow:hidden">
+      ${imgBlock}
+      <!-- Subtle gold tint overlay -->
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,168,76,0.08) 0%,transparent 50%)"></div>
+      <!-- Right fade into dark panel -->
+      <div style="position:absolute;top:0;right:0;bottom:0;width:120px;background:linear-gradient(to right,transparent,${DARK_BG})"></div>
+      <!-- Bottom fade -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:140px;background:linear-gradient(transparent,rgba(15,17,23,0.9))"></div>
+      <!-- Project name overlay on image bottom -->
+      <div style="position:absolute;bottom:20px;right:30px;left:20px">
+        <div style="font-size:9px;color:${GOLD};letter-spacing:2px;font-weight:700;margin-bottom:6px;text-transform:uppercase">${data.projectType}</div>
+        <div style="font-size:28px;font-weight:900;color:#fff;line-height:1.05;text-shadow:0 2px 12px rgba(0,0,0,0.8)">${data.projectName}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:5px">📍 ${data.city} — ${data.district}</div>
+      </div>
+      <!-- Badge top-left -->
+      <div style="position:absolute;top:20px;left:20px;background:${GOLD};color:#fff;font-size:8px;font-weight:900;padding:5px 16px;letter-spacing:1px">◆ وحدات شاغرة للتأجير</div>
+    </div>
+    <!-- Dark content panel: right 45% -->
+    <div style="position:absolute;top:0;right:0;bottom:0;width:503px;background:${DARK_BG};display:flex;flex-direction:column;padding:28px 32px 20px 24px">
+      <!-- Logo + brand -->
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(201,168,76,0.2)">
+        <div style="text-align:right">
+          <div style="font-size:10px;font-weight:900;color:#e0e0e0">أعمال دلمون للعقارات</div>
+          <div style="font-size:6px;color:${GOLD};letter-spacing:2px;margin-top:1px">DELMON REAL ESTATE BUSINESS</div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="26" height="37">
+          <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="${GOLD}" stroke-width="2.5"/>
+          <path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="${GOLD}" opacity="0.25"/>
+          <circle cx="24" cy="40" r="5" fill="${GOLD}"/>
+        </svg>
+      </div>
+      <!-- Section label -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;justify-content:flex-end">
+        <div style="font-size:8px;color:${GOLD};letter-spacing:2px;font-weight:800;text-transform:uppercase">PROPERTY OVERVIEW</div>
+        <div style="width:3px;height:18px;background:${GOLD}"></div>
+      </div>
+      <!-- Description -->
+      <div style="font-size:10px;color:rgba(255,255,255,0.72);line-height:1.9;text-align:right;margin-bottom:16px;background:${DARK_PANEL};border-radius:6px;padding:12px 14px;border-right:4px solid ${GOLD}">${data.description}</div>
+      <!-- KPI grid 2x2 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+        ${kpis.map(k => `
+        <div style="background:${DARK_PANEL};border-radius:6px;padding:12px 14px;text-align:right;border-bottom:2px solid ${GOLD}">
+          <div style="font-size:20px;font-weight:900;color:#fff;line-height:1">${k.v}</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.45);margin-top:3px">${k.l}</div>
+        </div>`).join("")}
+      </div>
+      <!-- Amenities -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:8px;color:${GOLD};letter-spacing:1px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;justify-content:flex-end;gap:6px">
+          <span>المرافق والخدمات</span>
+          <div style="width:20px;height:1px;background:${GOLD}"></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
+          ${amenityTags(amenitiesList, "rgba(201,168,76,0.1)", GOLD, "rgba(201,168,76,0.35)")}
+        </div>
+      </div>
+      <!-- CTA -->
+      <div style="margin-top:auto;background:${GOLD};border-radius:4px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.8);letter-spacing:1px;margin-bottom:3px">للتواصل والاستفسار</div>
+          <div style="font-size:18px;font-weight:900;color:#fff">${data.contactPhone || "011-2080129"}</div>
+        </div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.85);text-align:left">
+          <div style="font-weight:800">احجز الآن</div>
+          <div style="font-size:8px;opacity:0.7">وحدات شاغرة</div>
+        </div>
+      </div>
+    </div>
   </div>`;
 }
 
-// ── Page 1 — Bold Magazine ────────────────────────────────────────────────────
+// ── Page 1 — Bold Magazine (redesigned: editorial layout, large image right, info panel left) ────────
 function magazinePage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l:string}[], imgSrc: string) {
   const imgBlock = imgSrc
     ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover">`
     : `<div style="width:100%;height:100%;background:#1a1a2e;display:flex;align-items:center;justify-content:center;color:#555;font-size:40px">🏢</div>`;
 
   return `
-  <div class="page" style="background:#111;position:relative">
-    <!-- Top accent bar -->
-    <div style="height:8px;background:linear-gradient(90deg,${GOLD} 0%,#8B6914 50%,${GOLD} 100%);flex-shrink:0"></div>
-    <!-- Header -->
-    <div style="height:48px;background:#1a1a1a;border-bottom:1px solid rgba(201,168,76,0.4);display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0">
-      <div style="display:flex;align-items:center;gap:10px">
-        <img src="${LOGO}" style="height:28px;width:auto;filter:brightness(0) invert(1)">
-        <div style="width:1px;height:20px;background:rgba(201,168,76,0.4)"></div>
-        <div style="font-size:8px;color:rgba(255,255,255,0.5);letter-spacing:2px;text-transform:uppercase">LEASING BROCHURE | بروشور التأجير</div>
+  <div class="page" style="background:#F5F0E8;position:relative;overflow:hidden">
+    <!-- Top accent bar: gold gradient -->
+    <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,${GOLD} 0%,#8B6914 50%,${GOLD} 100%);z-index:10"></div>
+    <!-- LEFT: editorial info panel 42% -->
+    <div style="position:absolute;top:0;left:0;bottom:0;width:472px;background:#F5F0E8;display:flex;flex-direction:column;padding:28px 28px 20px 32px;z-index:5">
+      <!-- Brand header -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid ${GOLD}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="26" height="37">
+          <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="${GOLD}" stroke-width="2.5"/>
+          <path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="${GOLD}" opacity="0.3"/>
+          <circle cx="24" cy="40" r="5" fill="${GOLD}"/>
+        </svg>
+        <div>
+          <div style="font-size:11px;font-weight:900;color:#1a1a1a">أعمال دلمون للعقارات</div>
+          <div style="font-size:6px;color:#8B6914;letter-spacing:2px;margin-top:1px">DELMON REAL ESTATE BUSINESS</div>
+        </div>
+        <div style="margin-right:auto;background:#1a1a1a;color:#F5F0E8;font-size:7px;font-weight:800;padding:4px 12px;letter-spacing:1px">LEASING BROCHURE</div>
       </div>
-      <div style="font-size:8px;color:rgba(255,255,255,0.4)">${data.projectName}</div>
+      <!-- Project type -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="width:3px;height:20px;background:${GOLD}"></div>
+        <div style="font-size:9px;font-weight:800;color:#8B6914;letter-spacing:2px;text-transform:uppercase">${data.projectType}</div>
+      </div>
+      <!-- Project name — editorial large -->
+      <h1 style="font-size:40px;font-weight:900;color:#1a1a1a;line-height:1.05;margin:0 0 8px;text-align:right">${data.projectName}</h1>
+      <!-- Location -->
+      <div style="font-size:10px;color:#666;margin-bottom:14px;text-align:right">📍 ${data.city} — ${data.district}</div>
+      <!-- Gold rule -->
+      <div style="width:50px;height:3px;background:${GOLD};margin-bottom:14px;margin-left:auto"></div>
+      <!-- Description -->
+      <div style="font-size:10px;color:#444;line-height:1.9;text-align:right;margin-bottom:16px;border-right:3px solid ${GOLD};padding-right:12px">${data.description}</div>
+      <!-- KPI grid 2x2 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+        ${kpis.map(k => `
+        <div style="background:#fff;padding:12px 14px;text-align:right;border-bottom:2px solid ${GOLD};box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+          <div style="font-size:20px;font-weight:900;color:#1a1a1a;line-height:1">${k.v}</div>
+          <div style="font-size:8px;color:#888;margin-top:3px">${k.l}</div>
+        </div>`).join("")}
+      </div>
+      <!-- Amenity tags -->
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;justify-content:flex-end">
+        ${amenityTags(amenitiesList.slice(0,8), "#fff", "#555", "#ddd")}
+      </div>
+      <!-- CTA -->
+      <div style="margin-top:auto;background:#1a1a1a;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.7);letter-spacing:1px;margin-bottom:3px">للتواصل والاستفسار</div>
+          <div style="font-size:17px;font-weight:900;color:#fff">${data.contactPhone || "011-2080129"}</div>
+        </div>
+        <div style="background:${GOLD};padding:8px 16px">
+          <div style="font-size:9px;font-weight:800;color:#fff">احجز الآن</div>
+        </div>
+      </div>
     </div>
-    <!-- Body: table layout -->
-    <table style="width:1123px;height:682px;border-collapse:collapse;table-layout:fixed">
-      <tr>
-        <!-- Image: full bleed 55% -->
-        <td style="width:618px;padding:0;overflow:hidden;vertical-align:top">
-          <div style="width:618px;height:682px;overflow:hidden;position:relative">
-            ${imgBlock}
-            <!-- Dark overlay gradient -->
-            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.3) 0%,transparent 60%)"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(transparent,rgba(0,0,0,0.9))"></div>
-            <!-- Project type badge -->
-            <div style="position:absolute;top:16px;right:16px;background:${GOLD};color:#fff;font-size:8px;font-weight:900;padding:4px 14px;letter-spacing:1px">${data.projectType}</div>
-            <!-- Bottom overlay content -->
-            <div style="position:absolute;bottom:16px;right:16px;left:16px">
-              <div style="font-size:32px;font-weight:900;color:#fff;line-height:1;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,0.8)">${data.projectName}</div>
-              <div style="font-size:10px;color:${GOLD};margin-bottom:8px">📍 ${data.city} — ${data.district}</div>
-              <div style="display:flex;flex-wrap:wrap;gap:4px">
-                ${amenityTags(amenitiesList.slice(0,5), "rgba(0,0,0,0.7)", "#fff", "rgba(201,168,76,0.6)")}
-              </div>
-            </div>
-          </div>
-        </td>
-        <!-- Content: dark panel 45% -->
-        <td style="vertical-align:top;padding:20px 24px 16px;background:#1a1a1a">
-          <!-- Section label -->
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-            <div style="width:3px;height:20px;background:${GOLD}"></div>
-            <div style="font-size:8px;color:${GOLD};letter-spacing:2px;font-weight:800">PROPERTY OVERVIEW</div>
-          </div>
-          <!-- Description -->
-          <div style="font-size:10px;color:rgba(255,255,255,0.75);line-height:1.9;text-align:right;margin-bottom:18px;border-right:3px solid ${GOLD};padding-right:12px">${data.description}</div>
-          <!-- Stats grid -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">
-            ${kpis.map(k => `
-            <div style="background:#222;border-radius:6px;padding:12px 14px;text-align:right;border-bottom:2px solid ${GOLD}">
-              <div style="font-size:18px;font-weight:900;color:#fff;line-height:1">${k.v}</div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.5);margin-top:3px">${k.l}</div>
-            </div>`).join("")}
-          </div>
-          <!-- Amenities -->
-          <div style="margin-bottom:16px">
-            <div style="font-size:8px;color:${GOLD};letter-spacing:1px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px">
-              <div style="width:20px;height:1px;background:${GOLD}"></div>
-              <span>المرافق والخدمات</span>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
-              ${amenityTags(amenitiesList, "#222", "rgba(255,255,255,0.7)", "rgba(201,168,76,0.3)")}
-            </div>
-          </div>
-          <!-- CTA -->
-          <div style="background:${GOLD};border-radius:4px;padding:12px 16px;text-align:center;margin-top:auto">
-            <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-bottom:2px">للتواصل والاستفسار</div>
-            <div style="font-size:16px;font-weight:900;color:#fff">${data.contactPhone || "011-2080129"}</div>
-          </div>
-        </td>
-      </tr>
-    </table>
-    ${footer("01 / 04", "#111", "#e0e0e0", GOLD)}
+    <!-- RIGHT: large image 58% -->
+    <div style="position:absolute;top:0;right:0;bottom:0;width:651px;overflow:hidden">
+      ${imgBlock}
+      <!-- Subtle left fade to blend with panel -->
+      <div style="position:absolute;top:0;left:0;bottom:0;width:80px;background:linear-gradient(to right,#F5F0E8,transparent)"></div>
+      <!-- Bottom overlay with project type badge -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(transparent,rgba(0,0,0,0.7))"></div>
+      <div style="position:absolute;bottom:16px;right:16px">
+        <div style="background:${GOLD};color:#fff;font-size:8px;font-weight:900;padding:5px 16px;letter-spacing:1px">◆ وحدات شاغرة للتأجير</div>
+      </div>
+    </div>
   </div>`;
 }
 
-// ── Page 2 — Project Details (editorial layout) ───────────────────────────────
+// ── Page 2 — Project Details (each template has distinct layout) ─────────────────────────────────
 function page2(data: ProjectData, template: string, amenitiesList: string[]) {
   const isDark = template === "dark";
   const isMag = template === "magazine";
-  const bg = isDark ? DARK_BG : isMag ? "#F4F1EB" : "#fff";
-  const panelBg = isDark ? DARK_PANEL : isMag ? "#fff" : "#F7F6F2";
-  const textColor = isDark ? "#e0e0e0" : "#2d2d2d";
-  const subColor = isDark ? "#aaa" : "#666";
-  const borderColor = isDark ? `rgba(201,168,76,0.3)` : "#E0DDD0";
-  const headerBg = isDark ? DARK_PANEL : isMag ? "#1a1a1a" : "#fff";
-  const headerTitle = isDark ? "#e0e0e0" : isMag ? "#fff" : "#2d2d2d";
-  const headerSub = isDark ? "#888" : isMag ? "#aaa" : "#999";
 
   const infoCards = [
     { icon: "🏙️", label: "المدينة", value: data.city },
@@ -428,7 +366,6 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
     { icon: "📅", label: "سنة الإنجاز", value: data.completionYear || "—" },
   ];
 
-  // Leasing conditions
   const conditions = [
     { icon: "📋", label: "مدة العقد", value: "5 سنوات" },
     { icon: "💳", label: "الدفع", value: "ربع سنوي" },
@@ -436,113 +373,314 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
     { icon: "🚫", label: "المعسلات", value: "غير مسموح" },
   ];
 
-  return `
-  <div class="page" style="background:${bg}">
-    ${isMag ? `<div style="height:8px;background:linear-gradient(90deg,${GOLD} 0%,#8B6914 50%,${GOLD} 100%);flex-shrink:0"></div>` : ""}
-    <!-- Header: 56px -->
-    <div style="height:56px;background:${headerBg};border-bottom:2px solid ${isMag ? GOLD : borderColor};display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0">
-      <div style="display:flex;align-items:center;gap:10px">
-        <img src="${LOGO}" style="height:32px;width:auto;${isMag ? "filter:brightness(0) invert(1)" : isDark ? "filter:brightness(0.9)" : ""}">
-        <div>
-          <div style="font-size:12px;font-weight:900;color:${headerTitle}">تفاصيل المشروع</div>
-          <div style="font-size:8px;color:${headerSub}">Project Details</div>
+  const featuresList = data.features
+    ? (Array.isArray(data.features) ? data.features : (data.features as string).split(",")).filter(Boolean)
+    : ["موقع استراتيجي", "تصميم عصري", "خدمات متكاملة", "إدارة احترافية"];
+
+  // ── CLASSIC: clean white grid layout ──────────────────────────────────────────
+  if (!isDark && !isMag) {
+    return `
+    <div class="page" style="background:#fff;position:relative">
+      <!-- Header -->
+      <div style="height:56px;background:#fff;border-bottom:2px solid #E0DDD0;display:flex;align-items:center;justify-content:space-between;padding:0 28px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="${LOGO}" style="height:32px;width:auto">
+          <div>
+            <div style="font-size:12px;font-weight:900;color:#2d2d2d">تفاصيل المشروع</div>
+            <div style="font-size:8px;color:#999">Project Details</div>
+          </div>
         </div>
+        <div style="font-size:9px;color:#999">${data.projectName}</div>
       </div>
-      <div style="font-size:9px;color:${headerSub}">${data.projectName}</div>
-    </div>
-    <!-- Body: 2-col layout using table for reliable height fill -->
-    <table style="width:1123px;height:682px;border-collapse:collapse;table-layout:fixed">
-      <tr>
-        <!-- Left col: 42% = 471px -->
-        <td style="width:471px;vertical-align:top;padding:20px 20px 16px;border-left:1px solid ${borderColor};background:${bg}">
-          <!-- Description -->
-          <div style="font-size:9px;font-weight:900;color:${textColor};margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
-            <span>نبذة عن المشروع</span>
-            <div style="flex:1;height:1px;background:${GOLD}"></div>
+      <!-- Body: 3-column grid -->
+      <div style="padding:20px 28px;height:calc(794px - 56px - 22px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+        <!-- Col 1: Description + Conditions -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <div style="font-size:9px;font-weight:900;color:#2d2d2d;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+              <span>نبذة عن المشروع</span>
+              <div style="flex:1;height:1px;background:${GOLD}"></div>
+            </div>
+            <div style="font-size:10px;color:#555;line-height:1.9;text-align:right;background:#F7F6F2;border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD}">${data.description}</div>
           </div>
-          <div style="font-size:10.5px;color:${subColor};line-height:1.9;text-align:right;background:${panelBg};border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD};margin-bottom:16px">${data.description}</div>
-          <!-- Amenities -->
-          <div style="font-size:9px;font-weight:900;color:${textColor};margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
-            <span>المرافق والخدمات</span>
-            <div style="flex:1;height:1px;background:${GOLD}"></div>
-          </div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end;margin-bottom:16px">
-            ${amenityTags(amenitiesList, panelBg, isDark ? GOLD : "#555", isDark ? "rgba(201,168,76,0.3)" : "#ddd")}
-          </div>
-          <!-- Leasing conditions -->
-          <div style="font-size:9px;font-weight:900;color:${textColor};margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
-            <span>شروط التأجير</span>
-            <div style="flex:1;height:1px;background:${GOLD}"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-            ${conditions.map(c => `
-              <div style="background:${isDark ? "rgba(201,168,76,0.1)" : GOLD + "18"};border-radius:6px;padding:8px 10px;text-align:right;border:1px solid ${isDark ? "rgba(201,168,76,0.2)" : GOLD + "40"}">
-                <div style="font-size:8px;color:${subColor};margin-bottom:2px">${c.icon} ${c.label}</div>
-                <div style="font-size:12px;font-weight:800;color:${textColor}">${c.value}</div>
+          <div>
+            <div style="font-size:9px;font-weight:900;color:#2d2d2d;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+              <span>شروط التأجير</span>
+              <div style="flex:1;height:1px;background:${GOLD}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              ${conditions.map(c => `
+              <div style="background:${GOLD}18;border-radius:6px;padding:8px 10px;text-align:right;border:1px solid ${GOLD}40">
+                <div style="font-size:8px;color:#888;margin-bottom:2px">${c.icon} ${c.label}</div>
+                <div style="font-size:12px;font-weight:800;color:#2d2d2d">${c.value}</div>
               </div>`).join("")}
+            </div>
           </div>
-        </td>
-        <!-- Right col: flex:1 = 652px -->
-        <td style="vertical-align:top;padding:20px 24px 16px;background:${bg}">
-          <!-- Info cards -->
-          <div style="font-size:9px;font-weight:900;color:${textColor};margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+        </div>
+        <!-- Col 2: Project specs -->
+        <div>
+          <div style="font-size:9px;font-weight:900;color:#2d2d2d;margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
             <span>مواصفات المشروع</span>
             <div style="flex:1;height:1px;background:${GOLD}"></div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
             ${infoCards.map(c => `
-              <div style="background:${panelBg};padding:14px 16px;border-right:3px solid ${GOLD};text-align:right">
-                <div style="font-size:8px;color:${subColor};margin-bottom:4px">${c.icon} ${c.label}</div>
-                <div style="font-size:15px;font-weight:800;color:${textColor}">${c.value || "—"}</div>
-              </div>`).join("")}
+            <div style="background:#F7F6F2;padding:12px 14px;border-right:3px solid ${GOLD};text-align:right">
+              <div style="font-size:8px;color:#888;margin-bottom:3px">${c.icon} ${c.label}</div>
+              <div style="font-size:14px;font-weight:800;color:#2d2d2d">${c.value || "—"}</div>
+            </div>`).join("")}
           </div>
-          <!-- Units summary -->
-          <div style="font-size:9px;font-weight:900;color:${textColor};margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
-            <span>ملخص الوحدات المتاحة</span>
+          <div style="font-size:9px;font-weight:900;color:#2d2d2d;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+            <span>المرافق والخدمات</span>
             <div style="flex:1;height:1px;background:${GOLD}"></div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
-            <div style="background:${isDark ? DARK_PANEL : GOLD};padding:14px;text-align:center">
-              <div style="font-size:28px;font-weight:900;color:#fff;line-height:1">${data.units?.length || "—"}</div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.8);margin-top:4px">إجمالي الوحدات</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end">
+            ${amenityTags(amenitiesList, "#F7F6F2", "#555", "#ddd")}
+          </div>
+        </div>
+        <!-- Col 3: Units summary + contact -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <div style="font-size:9px;font-weight:900;color:#2d2d2d;margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+              <span>ملخص الوحدات</span>
+              <div style="flex:1;height:1px;background:${GOLD}"></div>
             </div>
-            <div style="background:${panelBg};padding:14px;text-align:center;border:1px solid ${borderColor}">
-              <div style="font-size:28px;font-weight:900;color:${GOLD};line-height:1">${data.floors || "—"}</div>
-              <div style="font-size:8px;color:${subColor};margin-top:4px">الطوابق</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+              <div style="background:${GOLD};padding:14px;text-align:center">
+                <div style="font-size:28px;font-weight:900;color:#fff;line-height:1">${data.units?.length || "—"}</div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.85);margin-top:4px">إجمالي الوحدات</div>
+              </div>
+              <div style="background:#F7F6F2;padding:14px;text-align:center;border:1px solid #E0DDD0">
+                <div style="font-size:28px;font-weight:900;color:${GOLD};line-height:1">${data.floors || "—"}</div>
+                <div style="font-size:8px;color:#888;margin-top:4px">الطوابق</div>
+              </div>
             </div>
-            <div style="background:${panelBg};padding:14px;text-align:center;border:1px solid ${borderColor}">
-              <div style="font-size:28px;font-weight:900;color:${GOLD};line-height:1">${data.completionYear || "—"}</div>
-              <div style="font-size:8px;color:${subColor};margin-top:4px">سنة الإنجاز</div>
+            <div style="font-size:9px;font-weight:900;color:#2d2d2d;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+              <span>مميزات المشروع</span>
+              <div style="flex:1;height:1px;background:${GOLD}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              ${featuresList.slice(0,4).map((f: string) => `
+              <div style="background:${GOLD}15;border-radius:6px;padding:8px;text-align:center;border:1px solid ${GOLD}30">
+                <div style="font-size:9px;font-weight:700;color:#2d2d2d">✓ ${f.trim()}</div>
+              </div>`).join("")}
             </div>
           </div>
-          <!-- Contact strip -->
-          <div style="background:${isDark ? DARK_PANEL : GOLD};padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <div style="font-size:13px;font-weight:900;color:#fff">${data.contactPhone || "011-2080129"}</div>
+          <div style="margin-top:auto;background:${GOLD};padding:14px 16px">
+            <div style="font-size:8px;color:rgba(255,255,255,0.8);margin-bottom:4px">للتواصل والاستفسار</div>
+            <div style="font-size:14px;font-weight:900;color:#fff">${data.contactPhone || "011-2080129"}</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-top:3px">${data.contactEmail || "leasing@delmoninvest.com"}</div>
+          </div>
+        </div>
+      </div>
+      ${footer("02 / 04", GOLD, "#fff", "rgba(255,255,255,0.9)")}
+    </div>`;
+  }
+
+  // ── DARK LUXURY: full-bleed sections, wide panels ─────────────────────────────
+  if (isDark) {
+    return `
+    <div class="page" style="background:${DARK_BG};position:relative">
+      <!-- Header -->
+      <div style="height:52px;background:${DARK_PANEL};border-bottom:1px solid rgba(201,168,76,0.25);display:flex;align-items:center;justify-content:space-between;padding:0 28px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="${LOGO}" style="height:28px;width:auto;filter:brightness(0.9)">
+          <div>
+            <div style="font-size:11px;font-weight:900;color:#e0e0e0">تفاصيل المشروع</div>
+            <div style="font-size:7px;color:#888">Project Details</div>
+          </div>
+        </div>
+        <div style="font-size:9px;color:#888">${data.projectName}</div>
+      </div>
+      <!-- Body: 2-column asymmetric -->
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;height:calc(794px - 52px - 22px);gap:0">
+        <!-- Left: description + conditions -->
+        <div style="padding:20px 20px 16px;border-left:1px solid rgba(201,168,76,0.15);display:flex;flex-direction:column;gap:14px">
+          <div>
+            <div style="font-size:8px;font-weight:800;color:${GOLD};letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>نبذة عن المشروع</span>
+              <div style="width:30px;height:2px;background:${GOLD}"></div>
+            </div>
+            <div style="font-size:10px;color:#ccc;line-height:1.9;text-align:right;background:${DARK_PANEL};border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD}">${data.description}</div>
+          </div>
+          <div>
+            <div style="font-size:8px;font-weight:800;color:${GOLD};letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>شروط التأجير</span>
+              <div style="width:30px;height:2px;background:${GOLD}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              ${conditions.map(c => `
+              <div style="background:rgba(201,168,76,0.08);border-radius:6px;padding:10px 12px;text-align:right;border:1px solid rgba(201,168,76,0.2)">
+                <div style="font-size:8px;color:#888;margin-bottom:2px">${c.icon} ${c.label}</div>
+                <div style="font-size:13px;font-weight:800;color:#e0e0e0">${c.value}</div>
+              </div>`).join("")}
+            </div>
+          </div>
+          <div>
+            <div style="font-size:8px;font-weight:800;color:${GOLD};letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>المرافق والخدمات</span>
+              <div style="width:30px;height:2px;background:${GOLD}"></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">
+              ${amenityTags(amenitiesList, "rgba(201,168,76,0.1)", GOLD, "rgba(201,168,76,0.3)")}
+            </div>
+          </div>
+        </div>
+        <!-- Right: wide specs + stats -->
+        <div style="padding:20px 24px 16px;display:flex;flex-direction:column;gap:14px">
+          <div>
+            <div style="font-size:8px;font-weight:800;color:${GOLD};letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>مواصفات المشروع</span>
+              <div style="width:30px;height:2px;background:${GOLD}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+              ${infoCards.map(c => `
+              <div style="background:${DARK_PANEL};padding:12px 14px;border-right:3px solid ${GOLD};text-align:right">
+                <div style="font-size:8px;color:#777;margin-bottom:3px">${c.icon} ${c.label}</div>
+                <div style="font-size:13px;font-weight:800;color:#e0e0e0">${c.value || "—"}</div>
+              </div>`).join("")}
+            </div>
+          </div>
+          <!-- Big stats row -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div style="background:${GOLD};padding:16px;text-align:center">
+              <div style="font-size:32px;font-weight:900;color:#fff;line-height:1">${data.units?.length || "—"}</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.85);margin-top:4px">إجمالي الوحدات</div>
+            </div>
+            <div style="background:${DARK_PANEL};padding:16px;text-align:center;border:1px solid rgba(201,168,76,0.2)">
+              <div style="font-size:32px;font-weight:900;color:${GOLD};line-height:1">${data.floors || "—"}</div>
+              <div style="font-size:8px;color:#888;margin-top:4px">الطوابق</div>
+            </div>
+            <div style="background:${DARK_PANEL};padding:16px;text-align:center;border:1px solid rgba(201,168,76,0.2)">
+              <div style="font-size:32px;font-weight:900;color:${GOLD};line-height:1">${data.completionYear || "—"}</div>
+              <div style="font-size:8px;color:#888;margin-top:4px">سنة الإنجاز</div>
+            </div>
+          </div>
+          <!-- Features -->
+          <div>
+            <div style="font-size:8px;font-weight:800;color:${GOLD};letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>مميزات المشروع</span>
+              <div style="width:30px;height:2px;background:${GOLD}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+              ${featuresList.slice(0,6).map((f: string) => `
+              <div style="background:rgba(201,168,76,0.08);border-radius:6px;padding:10px;text-align:center;border:1px solid rgba(201,168,76,0.2)">
+                <div style="font-size:9px;font-weight:700;color:${GOLD}">✓ ${f.trim()}</div>
+              </div>`).join("")}
+            </div>
+          </div>
+          <!-- Contact -->
+          <div style="margin-top:auto;background:${GOLD};padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:14px;font-weight:900;color:#fff">${data.contactPhone || "011-2080129"}</div>
             <div style="width:1px;height:24px;background:rgba(255,255,255,0.3)"></div>
             <div style="font-size:9px;color:rgba(255,255,255,0.85)">${data.contactEmail || "leasing@delmoninvest.com"}</div>
             <div style="width:1px;height:24px;background:rgba(255,255,255,0.3)"></div>
             <div style="font-size:9px;color:rgba(255,255,255,0.85)">للتواصل والاستفسار</div>
           </div>
-          <!-- Project image (fills remaining space) -->
-          ${data.projectImage ? `
-          <div style="border-radius:10px;overflow:hidden;height:180px;position:relative">
-            <img src="${data.projectImage}" style="width:100%;height:100%;object-fit:cover">
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5) 0%,transparent 50%)"></div>
-            <div style="position:absolute;bottom:10px;right:14px;font-size:9px;font-weight:700;color:#fff;letter-spacing:1px">${data.projectName} — ${data.city}</div>
-          </div>` : `
-          <div style="border-radius:10px;overflow:hidden;height:180px;background:${panelBg};border:1px solid ${borderColor};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
-            <div style="font-size:10px;font-weight:800;color:${textColor};text-align:center">مميزات المشروع</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 20px;width:100%">
-              ${(data.features ? (Array.isArray(data.features) ? data.features : (data.features as string).split(",")).slice(0,4) : ["موقع استراتيجي","تصميم عصري","خدمات متكاملة","إدارة احترافية"]).map((f: string) => `
-              <div style="background:${isDark ? "rgba(201,168,76,0.1)" : GOLD + "15"};border-radius:6px;padding:8px;text-align:center;border:1px solid ${isDark ? "rgba(201,168,76,0.2)" : GOLD + "30"}">
-                <div style="font-size:9px;font-weight:700;color:${textColor}">${f.trim()}</div>
-              </div>`).join("")}
-            </div>
-          </div>`}
-        </td>
-      </tr>
-    </table>
-    ${footer("02 / 04", isDark ? DARK_PANEL : GOLD, "#fff", "rgba(255,255,255,0.9)")}
+        </div>
+      </div>
+      ${footer("02 / 04", DARK_PANEL, "#e0e0e0", GOLD)}
+    </div>`;
+  }
+
+  // ── MAGAZINE: editorial layout, warm beige tones ──────────────────────────────
+  return `
+  <div class="page" style="background:#F5F0E8;position:relative">
+    <!-- Top accent bar -->
+    <div style="height:6px;background:linear-gradient(90deg,${GOLD} 0%,#8B6914 50%,${GOLD} 100%)"></div>
+    <!-- Header -->
+    <div style="height:50px;background:#1a1a1a;display:flex;align-items:center;justify-content:space-between;padding:0 28px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="${LOGO}" style="height:28px;width:auto;filter:brightness(0) invert(1)">
+        <div style="width:1px;height:20px;background:rgba(201,168,76,0.4)"></div>
+        <div style="font-size:8px;color:rgba(255,255,255,0.5);letter-spacing:2px">PROJECT DETAILS | تفاصيل المشروع</div>
+      </div>
+      <div style="font-size:8px;color:rgba(255,255,255,0.4)">${data.projectName}</div>
+    </div>
+    <!-- Body: editorial 2-col -->
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;height:calc(794px - 56px - 22px);gap:0">
+      <!-- Left: full info -->
+      <div style="padding:20px 24px 16px;border-left:2px solid ${GOLD};display:flex;flex-direction:column;gap:12px">
+        <!-- Description -->
+        <div style="font-size:9px;font-weight:900;color:#1a1a1a;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+          <span>نبذة عن المشروع</span>
+          <div style="flex:1;height:1px;background:${GOLD}"></div>
+        </div>
+        <div style="font-size:10px;color:#444;line-height:1.9;text-align:right;background:#fff;border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD};margin-bottom:4px">${data.description}</div>
+        <!-- Specs grid -->
+        <div style="font-size:9px;font-weight:900;color:#1a1a1a;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+          <span>مواصفات المشروع</span>
+          <div style="flex:1;height:1px;background:${GOLD}"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px">
+          ${infoCards.map(c => `
+          <div style="background:#fff;padding:10px 12px;border-right:3px solid ${GOLD};text-align:right;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
+            <div style="font-size:7px;color:#888;margin-bottom:3px">${c.icon} ${c.label}</div>
+            <div style="font-size:13px;font-weight:800;color:#1a1a1a">${c.value || "—"}</div>
+          </div>`).join("")}
+        </div>
+        <!-- Amenities -->
+        <div style="font-size:9px;font-weight:900;color:#1a1a1a;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+          <span>المرافق والخدمات</span>
+          <div style="flex:1;height:1px;background:${GOLD}"></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end">
+          ${amenityTags(amenitiesList, "#fff", "#555", "#ddd")}
+        </div>
+      </div>
+      <!-- Right: stats + conditions + contact -->
+      <div style="padding:20px 20px 16px;background:#EDEAE0;display:flex;flex-direction:column;gap:12px">
+        <!-- Big stats -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:${GOLD};padding:16px;text-align:center">
+            <div style="font-size:32px;font-weight:900;color:#fff;line-height:1">${data.units?.length || "—"}</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.85);margin-top:4px">إجمالي الوحدات</div>
+          </div>
+          <div style="background:#fff;padding:16px;text-align:center;border:1px solid #ddd">
+            <div style="font-size:32px;font-weight:900;color:${GOLD};line-height:1">${data.floors || "—"}</div>
+            <div style="font-size:8px;color:#888;margin-top:4px">الطوابق</div>
+          </div>
+          <div style="background:#fff;padding:16px;text-align:center;border:1px solid #ddd">
+            <div style="font-size:32px;font-weight:900;color:#1a1a1a;line-height:1">${data.completionYear || "—"}</div>
+            <div style="font-size:8px;color:#888;margin-top:4px">سنة الإنجاز</div>
+          </div>
+          <div style="background:#1a1a1a;padding:16px;text-align:center">
+            <div style="font-size:24px;font-weight:900;color:${GOLD};line-height:1">${data.totalArea ? data.totalArea.replace(/,/g,"،") + " م²" : "—"}</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.7);margin-top:4px">إجمالي المساحة</div>
+          </div>
+        </div>
+        <!-- Conditions -->
+        <div style="font-size:9px;font-weight:900;color:#1a1a1a;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+          <span>شروط التأجير</span>
+          <div style="flex:1;height:1px;background:${GOLD}"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px">
+          ${conditions.map(c => `
+          <div style="background:#fff;border-radius:6px;padding:8px 10px;text-align:right;border:1px solid #ddd">
+            <div style="font-size:8px;color:#888;margin-bottom:2px">${c.icon} ${c.label}</div>
+            <div style="font-size:12px;font-weight:800;color:#1a1a1a">${c.value}</div>
+          </div>`).join("")}
+        </div>
+        <!-- Features -->
+        <div style="font-size:9px;font-weight:900;color:#1a1a1a;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
+          <span>مميزات المشروع</span>
+          <div style="flex:1;height:1px;background:${GOLD}"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:4px">
+          ${featuresList.slice(0,4).map((f: string) => `
+          <div style="background:#fff;border-radius:6px;padding:8px;text-align:center;border:1px solid #ddd">
+            <div style="font-size:9px;font-weight:700;color:#1a1a1a">✓ ${f.trim()}</div>
+          </div>`).join("")}
+        </div>
+        <!-- Contact -->
+        <div style="margin-top:auto;background:#1a1a1a;padding:14px 16px">
+          <div style="font-size:8px;color:rgba(255,255,255,0.65);margin-bottom:4px">للتواصل والاستفسار</div>
+          <div style="font-size:14px;font-weight:900;color:#fff;margin-bottom:3px">${data.contactPhone || "011-2080129"}</div>
+          <div style="font-size:9px;color:${GOLD}">${data.contactEmail || "leasing@delmoninvest.com"}</div>
+        </div>
+      </div>
+    </div>
+    ${footer("02 / 04", "#1a1a1a", "#e0e0e0", GOLD)}
   </div>`;
 }
 
