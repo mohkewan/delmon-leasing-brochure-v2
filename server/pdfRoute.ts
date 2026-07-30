@@ -81,7 +81,7 @@ function footer(page: string, bg: string, textColor: string, accentColor: string
     <span style="color:${textColor};font-size:7.5px;font-weight:600;opacity:0.55">${page}</span>
     <div style="display:flex;align-items:center;gap:6px">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="10" height="14"><path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="${accentColor}" stroke-width="3"/><circle cx="24" cy="40" r="5" fill="${accentColor}"/></svg>
-      <span style="color:${textColor};font-size:7.5px;font-weight:700;opacity:0.7">أعمال دلمون للعقارات</span>
+      <span style="color:${textColor};font-size:7.5px;font-weight:700;opacity:0.7">شركة دلمون للاستثمار</span>
     </div>
     <span style="color:${textColor};font-size:7px;opacity:0.5">delmoninvest.com</span>
   </div>`;
@@ -95,8 +95,8 @@ function logoHeader(bgColor: string, accentColor: string, textColor: string, sub
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0">
   <div style="display:flex;align-items:center;gap:8px">
     <div style="text-align:right">
-      <div style="font-size:13px;font-weight:900;color:#1a1a2e;letter-spacing:0.5px;line-height:1.1">أعمال دلمون للعقارات</div>
-      <div style="font-size:7px;font-weight:600;color:${GOLD};letter-spacing:2px;margin-top:1px">DELMON REAL ESTATE BUSINESS</div>
+      <div style="font-size:13px;font-weight:900;color:#1a1a2e;letter-spacing:0.5px;line-height:1.1">شركة دلمون للاستثمار</div>
+      <div style="font-size:7px;font-weight:600;color:${GOLD};letter-spacing:2px;margin-top:1px">DELMON INVESTMENT CO</div>
     </div>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="36" height="50">
       <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="${GOLD}" stroke-width="2.5"/>
@@ -141,7 +141,7 @@ function classicEditorialPage(data: ProjectData, imgSrc: string) {
       <!-- Divider + company -->
       <div style="margin-top:48px;text-align:center">
         <div style="width:80px;height:2px;background:${GOLD};margin:0 auto 14px"></div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:3px">أعمال دلمون للعقارات — DELMON REAL ESTATE BUSINESS</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:3px">شركة دلمون للاستثمار — DELMON INVESTMENT CO</div>
       </div>
     </div>
   </div>`;
@@ -151,25 +151,51 @@ function classicEditorialPage(data: ProjectData, imgSrc: string) {
 function classicPage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l:string}[], imgSrc: string) {
   const imgBlock = imgSrc
     ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover">`
-    : `<div style="width:100%;height:100%;background:linear-gradient(160deg,#1A2B4A 0%,#2d4a7a 50%,#4A6FB5 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden">
-      <!-- Geometric pattern -->
-      <div style="position:absolute;inset:0;opacity:0.08">
+    : `<div style="width:100%;height:100%;background:linear-gradient(160deg,#0F1A2E 0%,#1A2B4A 40%,#2d4a7a 100%);display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden;padding:32px 24px;box-sizing:border-box">
+      <!-- Geometric grid pattern -->
+      <div style="position:absolute;inset:0;opacity:0.06">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs>
-          <rect width="100%" height="100%" fill="url(#grid)"/>
+          <defs><pattern id="grid2" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.8"/></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#grid2)"/>
         </svg>
       </div>
-      <!-- Delmon logo centered -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="60" height="85" style="margin-bottom:20px;opacity:0.9">
-        <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
-        <path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="#C9A84C" opacity="0.3"/>
-        <circle cx="24" cy="40" r="5" fill="#C9A84C"/>
-      </svg>
-      <div style="color:rgba(255,255,255,0.9);font-size:14px;font-weight:900;text-align:center;padding:0 20px;line-height:1.4">${data.projectName}</div>
-      <div style="color:rgba(255,255,255,0.5);font-size:8px;margin-top:8px;letter-spacing:2px;text-transform:uppercase">${data.city} · ${data.district}</div>
-      <!-- Gold accent line -->
-      <div style="width:40px;height:2px;background:#C9A84C;margin-top:16px;opacity:0.8"></div>
-    </div>`;
+      <!-- Top: Delmon logo -->
+      <div style="display:flex;flex-direction:column;align-items:center;z-index:1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="52" height="74" style="margin-bottom:12px">
+          <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
+          <path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="#C9A84C" opacity="0.35"/>
+          <circle cx="24" cy="40" r="5" fill="#C9A84C"/>
+        </svg>
+        <div style="color:#FFFFFF;font-size:13px;font-weight:900;text-align:center;line-height:1.3">${data.projectName}</div>
+        <div style="color:rgba(201,168,76,0.9);font-size:7px;margin-top:5px;letter-spacing:2px;text-transform:uppercase">${data.city} · ${data.district}</div>
+        <div style="width:36px;height:1.5px;background:#C9A84C;margin-top:10px;opacity:0.8"></div>
+      </div>
+      <!-- Middle: Key stats -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;z-index:1">
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:6px;padding:12px 10px;text-align:center">
+          <div style="color:#C9A84C;font-size:16px;font-weight:900">${data.totalArea ? Number(String(data.totalArea).replace(/,/g,"")).toLocaleString("en-US") : "—"}</div>
+          <div style="color:rgba(255,255,255,0.55);font-size:7px;margin-top:3px">م² المساحة الإجمالية</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:6px;padding:12px 10px;text-align:center">
+          <div style="color:#C9A84C;font-size:16px;font-weight:900">${data.floors || "—"}</div>
+          <div style="color:rgba(255,255,255,0.55);font-size:7px;margin-top:3px">طوابق</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:6px;padding:12px 10px;text-align:center">
+          <div style="color:#C9A84C;font-size:16px;font-weight:900">${data.completionYear || "—"}</div>
+          <div style="color:rgba(255,255,255,0.55);font-size:7px;margin-top:3px">سنة الإنجاز</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:6px;padding:12px 10px;text-align:center">
+          <div style="color:#C9A84C;font-size:16px;font-weight:900">${data.occupancyRate ? data.occupancyRate + "%" : "—"}</div>
+          <div style="color:rgba(255,255,255,0.55);font-size:7px;margin-top:3px">نسبة الإشغال</div>
+        </div>
+      </div>
+      <!-- Bottom: Company tagline -->
+      <div style="text-align:center;z-index:1">
+        <div style="color:rgba(255,255,255,0.4);font-size:7px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">MANAGED BY</div>
+        <div style="color:rgba(255,255,255,0.85);font-size:9px;font-weight:700">شركة دلمون للاستثمار</div>
+        <div style="color:rgba(201,168,76,0.7);font-size:6.5px;letter-spacing:1px;margin-top:2px">DELMON INVESTMENT CO</div>
+      </div>
+    </div>`
 
   return `
   <div class="page" style="background:#FFFFFF;position:relative;overflow:hidden;display:flex;flex-direction:row">
@@ -188,8 +214,8 @@ function classicPage1(data: ProjectData, amenitiesList: string[], kpis: {v:strin
         <div style="font-size:7px;color:${DELMON_TEXT_LIGHT};letter-spacing:2px;text-transform:uppercase;margin-top:4px">LEASING BROCHURE</div>
         <div style="display:flex;align-items:center;gap:7px">
           <div style="text-align:right">
-            <div style="font-size:10px;font-weight:900;color:${DELMON_TEXT};letter-spacing:0.3px">أعمال دلمون للعقارات</div>
-            <div style="font-size:6px;font-weight:600;color:${GOLD};letter-spacing:1.5px;margin-top:1px">DELMON REAL ESTATE BUSINESS</div>
+            <div style="font-size:10px;font-weight:900;color:${DELMON_TEXT};letter-spacing:0.3px">شركة دلمون للاستثمار</div>
+            <div style="font-size:6px;font-weight:600;color:${GOLD};letter-spacing:1.5px;margin-top:1px">DELMON INVESTMENT CO</div>
           </div>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="24" height="34">
             <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="${GOLD}" stroke-width="2.5"/>
@@ -211,7 +237,7 @@ function classicPage1(data: ProjectData, amenitiesList: string[], kpis: {v:strin
         <svg width="28" height="20" viewBox="0 0 28 20"><path d="M0,10 L20,10 M14,4 L20,10 L14,16" stroke="${DELMON_BLUE}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <!-- Description -->
-      <div style="font-size:9px;color:${DELMON_TEXT_LIGHT};line-height:1.9;margin-bottom:16px;text-align:right;border-right:3px solid ${DELMON_BLUE};padding-right:12px;background:${DELMON_LIGHT_GRAY};padding:10px 14px 10px 10px;border-radius:0 4px 4px 0;flex-shrink:0">${data.description}</div>
+      <div style="font-size:9px;color:${DELMON_TEXT_LIGHT};line-height:1.9;margin-bottom:16px;text-align:right;border-right:3px solid ${DELMON_BLUE};padding-right:12px;background:${DELMON_LIGHT_GRAY};padding:10px 14px 10px 10px;border-radius:0 4px 4px 0;flex-shrink:0">${data.description || "مشروع تجاري متميز يقدم بيئة عمل متكاملة في موقع استراتيجي بمواصفات عالية الجودة."}</div>
       <!-- KPIs — Delmon blue borders -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px">
         ${kpis.map((k: {v:string,l:string}) => `
@@ -240,22 +266,26 @@ function classicPage1(data: ProjectData, amenitiesList: string[], kpis: {v:strin
 function darkPage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l:string}[], imgSrc: string) {
   const imgBlock = imgSrc
     ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover">`
-    : `<div style="width:100%;height:100%;background:linear-gradient(160deg,#0d1b2e 0%,#1a2b4a 60%,#2d4a7a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden">
-      <div style="position:absolute;inset:0;opacity:0.06">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs><pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1" fill="white"/></pattern></defs>
-          <rect width="100%" height="100%" fill="url(#dots)"/>
-        </svg>
+    : `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden;padding:28px 22px;box-sizing:border-box;background:linear-gradient(160deg,#0F1A2E 0%,#1A2B4A 40%,#2d4a7a 100%)">
+      <div style="position:absolute;inset:0;opacity:0.06"><svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grd" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.8"/></pattern></defs><rect width="100%" height="100%" fill="url(#grd)"/></svg></div>
+      <div style="display:flex;flex-direction:column;align-items:center;z-index:1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="48" height="68" style="margin-bottom:10px"><path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="#C9A84C" stroke-width="2.5"/><path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="#C9A84C" opacity="0.35"/><circle cx="24" cy="40" r="5" fill="#C9A84C"/></svg>
+        <div style="color:#FFFFFF;font-size:12px;font-weight:900;text-align:center;line-height:1.3">${data.projectName}</div>
+        <div style="color:rgba(201,168,76,0.9);font-size:7px;margin-top:4px;letter-spacing:2px;text-transform:uppercase">${data.city} · ${data.district}</div>
+        <div style="width:32px;height:1.5px;background:#C9A84C;margin-top:8px;opacity:0.8"></div>
       </div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="55" height="78" style="margin-bottom:18px;opacity:0.85">
-        <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
-        <path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="#C9A84C" opacity="0.25"/>
-        <circle cx="24" cy="40" r="5" fill="#C9A84C"/>
-      </svg>
-      <div style="color:rgba(255,255,255,0.85);font-size:13px;font-weight:900;text-align:center;padding:0 20px;line-height:1.4">${data.projectName}</div>
-      <div style="color:rgba(255,255,255,0.4);font-size:7px;margin-top:8px;letter-spacing:2.5px;text-transform:uppercase">${data.city}</div>
-      <div style="width:35px;height:1px;background:#C9A84C;margin-top:14px;opacity:0.7"></div>
-    </div>`;
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;z-index:1">
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:5px;padding:10px 8px;text-align:center"><div style="color:#C9A84C;font-size:15px;font-weight:900">${data.totalArea ? Number(String(data.totalArea).replace(/,/g,"")).toLocaleString("en-US") : "—"}</div><div style="color:rgba(255,255,255,0.5);font-size:6.5px;margin-top:2px">م² المساحة</div></div>
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:5px;padding:10px 8px;text-align:center"><div style="color:#C9A84C;font-size:15px;font-weight:900">${data.floors || "—"}</div><div style="color:rgba(255,255,255,0.5);font-size:6.5px;margin-top:2px">طوابق</div></div>
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:5px;padding:10px 8px;text-align:center"><div style="color:#C9A84C;font-size:15px;font-weight:900">${data.completionYear || "—"}</div><div style="color:rgba(255,255,255,0.5);font-size:6.5px;margin-top:2px">سنة الإنجاز</div></div>
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:5px;padding:10px 8px;text-align:center"><div style="color:#C9A84C;font-size:15px;font-weight:900">${data.occupancyRate ? data.occupancyRate + "%" : "—"}</div><div style="color:rgba(255,255,255,0.5);font-size:6.5px;margin-top:2px">نسبة الإشغال</div></div>
+      </div>
+      <div style="text-align:center;z-index:1">
+        <div style="color:rgba(255,255,255,0.35);font-size:6.5px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px">MANAGED BY</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:8.5px;font-weight:700">شركة دلمون للاستثمار</div>
+        <div style="color:rgba(201,168,76,0.65);font-size:6px;letter-spacing:1px;margin-top:2px">DELMON INVESTMENT CO</div>
+      </div>
+    </div>`
 
   return `
   <div class="page" style="background:#0F1117;position:relative;overflow:hidden;display:flex;flex-direction:row">
@@ -278,8 +308,8 @@ function darkPage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l
       <!-- Delmon logo -->
       <div style="display:flex;justify-content:flex-end;align-items:center;gap:7px;margin-bottom:20px">
         <div style="text-align:right">
-          <div style="font-size:10px;font-weight:900;color:#fff">أعمال دلمون للعقارات</div>
-          <div style="font-size:6px;font-weight:600;color:${GOLD};letter-spacing:1.5px;margin-top:1px">DELMON REAL ESTATE BUSINESS</div>
+          <div style="font-size:10px;font-weight:900;color:#fff">شركة دلمون للاستثمار</div>
+          <div style="font-size:6px;font-weight:600;color:${GOLD};letter-spacing:1.5px;margin-top:1px">DELMON INVESTMENT CO</div>
         </div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="22" height="32">
           <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="${GOLD}" stroke-width="2.5"/>
@@ -294,7 +324,7 @@ function darkPage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l
       <h1 style="font-size:30px;font-weight:900;color:#FFFFFF;line-height:1.15;margin:0 0 14px;text-align:right">${data.projectName}</h1>
       <div style="width:40px;height:2px;background:${DELMON_BLUE};margin-bottom:14px;margin-left:auto"></div>
       <!-- Description -->
-      <div style="font-size:9px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:16px;text-align:right;border-right:2px solid ${DELMON_BLUE};padding-right:12px">${data.description}</div>
+      <div style="font-size:9px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:16px;text-align:right;border-right:2px solid ${DELMON_BLUE};padding-right:12px">${data.description || "مشروع تجاري متميز يقدم بيئة عمل متكاملة في موقع استراتيجي بمواصفات عالية الجودة."}</div>
       <!-- KPIs -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">
         ${kpis.slice(0,4).map((k: {v:string,l:string}) => `
@@ -323,21 +353,25 @@ function darkPage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l
 function magazinePage1(data: ProjectData, amenitiesList: string[], kpis: {v:string,l:string}[], imgSrc: string) {
   const imgBlock = imgSrc
     ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover">`
-    : `<div style="width:100%;height:100%;background:linear-gradient(160deg,#1A2B4A 0%,#2d4a7a 60%,#4A6FB5 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;left:0;right:0;bottom:0;opacity:0.05">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs><pattern id="diag" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="20" stroke="white" stroke-width="1"/></pattern></defs>
-          <rect width="100%" height="100%" fill="url(#diag)"/>
-        </svg>
+    : `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden;padding:28px 22px;box-sizing:border-box;background:linear-gradient(160deg,#0F1A2E 0%,#1A2B4A 40%,#2d4a7a 100%)">
+      <div style="position:absolute;inset:0;opacity:0.06"><svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="mgrd" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.8"/></pattern></defs><rect width="100%" height="100%" fill="url(#mgrd)"/></svg></div>
+      <div style="display:flex;flex-direction:column;align-items:center;z-index:1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="48" height="68" style="margin-bottom:10px"><path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="#C9A84C" stroke-width="2.5"/><path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="#C9A84C" opacity="0.35"/><circle cx="24" cy="40" r="5" fill="#C9A84C"/></svg>
+        <div style="color:#FFFFFF;font-size:12px;font-weight:900;text-align:center;line-height:1.3">${data.projectName}</div>
+        <div style="color:rgba(201,168,76,0.9);font-size:7px;margin-top:4px;letter-spacing:2px;text-transform:uppercase">${data.city} · ${data.district}</div>
+        <div style="width:32px;height:1.5px;background:#C9A84C;margin-top:8px;opacity:0.8"></div>
       </div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="65" height="92" style="margin-bottom:22px;opacity:0.9">
-        <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
-        <path d="M24,18 C24,18 13,30 13,38 C13,44 18,49 24,49 C30,49 35,44 35,38 C35,30 24,18 24,18 Z" fill="#C9A84C" opacity="0.3"/>
-        <circle cx="24" cy="40" r="5" fill="#C9A84C"/>
-      </svg>
-      <div style="color:rgba(255,255,255,0.9);font-size:15px;font-weight:900;text-align:center;padding:0 24px;line-height:1.4">${data.projectName}</div>
-      <div style="color:rgba(255,255,255,0.5);font-size:8px;margin-top:10px;letter-spacing:2px">${data.projectType}</div>
-      <div style="width:50px;height:2px;background:#C9A84C;margin-top:18px;opacity:0.8"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;z-index:1">
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:5px;padding:10px 8px;text-align:center"><div style="color:#C9A84C;font-size:15px;font-weight:900">${data.totalArea ? Number(String(data.totalArea).replace(/,/g,"")).toLocaleString("en-US") : "—"}</div><div style="color:rgba(255,255,255,0.5);font-size:6.5px;margin-top:2px">م² المساحة</div></div>
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:5px;padding:10px 8px;text-align:center"><div style="color:#C9A84C;font-size:15px;font-weight:900">${data.floors || "—"}</div><div style="color:rgba(255,255,255,0.5);font-size:6.5px;margin-top:2px">طوابق</div></div>
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:5px;padding:10px 8px;text-align:center"><div style="color:#C9A84C;font-size:15px;font-weight:900">${data.completionYear || "—"}</div><div style="color:rgba(255,255,255,0.5);font-size:6.5px;margin-top:2px">سنة الإنجاز</div></div>
+        <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:5px;padding:10px 8px;text-align:center"><div style="color:#C9A84C;font-size:15px;font-weight:900">${data.occupancyRate ? data.occupancyRate + "%" : "—"}</div><div style="color:rgba(255,255,255,0.5);font-size:6.5px;margin-top:2px">نسبة الإشغال</div></div>
+      </div>
+      <div style="text-align:center;z-index:1">
+        <div style="color:rgba(255,255,255,0.35);font-size:6.5px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px">MANAGED BY</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:8.5px;font-weight:700">شركة دلمون للاستثمار</div>
+        <div style="color:rgba(201,168,76,0.65);font-size:6px;letter-spacing:1px;margin-top:2px">DELMON INVESTMENT CO</div>
+      </div>
     </div>`;
 
   return `
@@ -347,8 +381,8 @@ function magazinePage1(data: ProjectData, amenitiesList: string[], kpis: {v:stri
       <!-- Top: Delmon logo -->
       <div style="display:flex;justify-content:flex-end;align-items:center;gap:7px;margin-bottom:16px">
         <div style="text-align:right">
-          <div style="font-size:10px;font-weight:900;color:${DELMON_TEXT}">أعمال دلمون للعقارات</div>
-          <div style="font-size:6px;font-weight:600;color:${GOLD};letter-spacing:1.5px;margin-top:1px">DELMON REAL ESTATE BUSINESS</div>
+          <div style="font-size:10px;font-weight:900;color:${DELMON_TEXT}">شركة دلمون للاستثمار</div>
+          <div style="font-size:6px;font-weight:600;color:${GOLD};letter-spacing:1.5px;margin-top:1px">DELMON INVESTMENT CO</div>
         </div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 68" width="22" height="32">
           <path d="M24,4 C24,4 6,22 6,38 C6,50 14,60 24,60 C34,60 42,50 42,38 C42,22 24,4 24,4 Z" fill="none" stroke="${GOLD}" stroke-width="2.5"/>
@@ -364,7 +398,7 @@ function magazinePage1(data: ProjectData, amenitiesList: string[], kpis: {v:stri
       <h1 style="font-size:32px;font-weight:900;color:${DELMON_TEXT};line-height:1.1;margin:0 0 6px;text-align:right;border-right:4px solid ${DELMON_BLUE};padding-right:10px">${data.projectName}</h1>
       <div style="font-size:9px;color:${DELMON_TEXT_LIGHT};margin-bottom:14px;text-align:right;font-weight:600">${data.city} — ${data.district} · ${data.projectType}</div>
       <!-- Description — editorial pull-quote style -->
-      <div style="font-size:10px;color:${DELMON_TEXT};line-height:1.75;margin-bottom:16px;text-align:right;font-style:italic;border-right:3px solid ${DELMON_BLUE};padding-right:12px;background:${DELMON_LIGHT_GRAY};padding:10px 14px 10px 8px">${data.description}</div>
+      <div style="font-size:10px;color:${DELMON_TEXT};line-height:1.75;margin-bottom:16px;text-align:right;font-style:italic;border-right:3px solid ${DELMON_BLUE};padding-right:12px;background:${DELMON_LIGHT_GRAY};padding:10px 14px 10px 8px">${data.description || "مشروع تجاري متميز يقدم بيئة عمل متكاملة في موقع استراتيجي بمواصفات عالية الجودة."}</div>
       <!-- KPIs — 2×2 grid editorial style -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">
         ${kpis.slice(0,4).map((k: {v:string,l:string}) => `
@@ -446,7 +480,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
               <span>نبذة عن المشروع</span>
               <div style="flex:1;height:1px;background:${GOLD}"></div>
             </div>
-            <div style="font-size:10px;color:#555;line-height:1.9;text-align:right;background:#F7F6F2;border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD}">${data.description}</div>
+            <div style="font-size:10px;color:#555;line-height:1.9;text-align:right;background:#F7F6F2;border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD}">${data.description || "مشروع تجاري متميز يقدم بيئة عمل متكاملة في موقع استراتيجي بمواصفات عالية الجودة."}</div>
           </div>
           <div>
             <div style="font-size:9px;font-weight:900;color:#2d2d2d;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
@@ -563,7 +597,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
               <span>نبذة عن المشروع</span>
               <div style="width:30px;height:2px;background:${GOLD}"></div>
             </div>
-            <div style="font-size:10px;color:#ccc;line-height:1.9;text-align:right;background:${DARK_PANEL};border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD}">${data.description}</div>
+            <div style="font-size:10px;color:#ccc;line-height:1.9;text-align:right;background:${DARK_PANEL};border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD}">${data.description || "مشروع تجاري متميز يقدم بيئة عمل متكاملة في موقع استراتيجي بمواصفات عالية الجودة."}</div>
           </div>
           <div>
             <div style="font-size:8px;font-weight:800;color:${GOLD};letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
@@ -668,7 +702,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
           <span>نبذة عن المشروع</span>
           <div style="flex:1;height:1px;background:${GOLD}"></div>
         </div>
-        <div style="font-size:10px;color:#444;line-height:1.9;text-align:right;background:#fff;border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD};margin-bottom:4px">${data.description}</div>
+        <div style="font-size:10px;color:#444;line-height:1.9;text-align:right;background:#fff;border-radius:6px;padding:14px 16px;border-right:4px solid ${GOLD};margin-bottom:4px">${data.description || "مشروع تجاري متميز يقدم بيئة عمل متكاملة في موقع استراتيجي بمواصفات عالية الجودة."}</div>
         <!-- Specs grid -->
         <div style="font-size:9px;font-weight:900;color:#1a1a1a;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-direction:row-reverse">
           <span>مواصفات المشروع</span>
@@ -1225,9 +1259,9 @@ function buildBrochureHTML(data: ProjectData, template: string): string {
   const normalizedData = { ...data, features: featuresStr };
 
   const kpis = [
-    { v: data.totalArea ? Number(String(data.totalArea).replace(/,/g, "")).toLocaleString("ar-SA") : "—" as string, l: "المساحة م²" },
+    { v: data.totalArea ? Number(String(data.totalArea).replace(/,/g, "")).toLocaleString("en-US") + " م²" : "—" as string, l: "المساحة" },
     { v: String(data.floors || "—"), l: "الطوابق" },
-    { v: data.units ? String(data.units) : "—" as string, l: "الوحدات" },
+    { v: (() => { const n = Array.isArray(data.units_list) ? data.units_list.length : (typeof data.units === "number" ? data.units : (typeof data.units === "string" ? parseInt(data.units) || 0 : 0)); return n > 0 ? String(n) : "—"; })(), l: "الوحدات" },
     { v: String(data.completionYear || "—"), l: "الإنجاز" },
   ];
 
