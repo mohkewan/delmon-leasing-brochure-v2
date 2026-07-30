@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, json } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, json, bigint } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -39,3 +39,30 @@ export const brochures = mysqlTable("brochures", {
 
 export type Brochure = typeof brochures.$inferSelect;
 export type InsertBrochure = typeof brochures.$inferInsert;
+
+// جدول مهام توليد البروشورات بالذكاء الاصطناعي
+export const brochureJobs = mysqlTable("brochure_jobs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  projectName: varchar("projectName", { length: 255 }).notNull(),
+  // حالة المهمة: pending → processing → done → error
+  status: mysqlEnum("status", ["pending", "processing", "done", "error"]).default("pending").notNull(),
+  // بيانات المشروع الكاملة (JSON)
+  projectData: json("projectData").notNull(),
+  // URL صورة المشروع المرفوعة (S3)
+  projectImageUrl: text("projectImageUrl"),
+  // روابط ملفات PDF المولّدة (JSON: { classic, dark, magazine })
+  pdfUrls: json("pdfUrls"),
+  // روابط صفحات AI المولّدة (JSON: { classic: [...], dark: [...], magazine: [...] })
+  pageUrls: json("pageUrls"),
+  // رسالة الخطأ إن وُجدت
+  errorMessage: text("errorMessage"),
+  // عدد الصفحات المكتملة من أصل 21
+  completedPages: int("completedPages").default(0).notNull(),
+  totalPages: int("totalPages").default(21).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BrochureJob = typeof brochureJobs.$inferSelect;
+export type InsertBrochureJob = typeof brochureJobs.$inferInsert;

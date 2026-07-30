@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Archive from "./pages/Archive";
 import TemplateMockup from "./pages/TemplateMockup";
+import AiBrochureGenerator from "./pages/AiBrochureGenerator";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -15,6 +16,7 @@ function Router() {
       <Route path={"/"} component={Home} />
     <Route path={"/archive"} component={Archive} />
     <Route path={"/template-mockup"} component={TemplateMockup} />
+    <Route path={"/ai-generator"} component={AiBrochureGenerator} />
     <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

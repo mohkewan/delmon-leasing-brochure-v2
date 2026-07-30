@@ -15,6 +15,13 @@
       "when": 1785252213725,
       "tag": "0001_whole_silvermane",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1785452291100,
+      "tag": "0002_opposite_spitfire",
+      "breakpoints": true
     }
   ]
 }

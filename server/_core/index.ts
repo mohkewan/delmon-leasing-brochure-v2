@@ -9,6 +9,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { pdfRouteHandler } from "../pdfRoute";
+import { aiGenerationRouter } from "../aiGenerationRoute";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -39,6 +40,8 @@ async function startServer() {
   registerOAuthRoutes(app);
   // PDF generation route (server-side via Puppeteer)
   app.post("/api/generate-pdf", pdfRouteHandler);
+  // AI Brochure generation routes
+  app.use("/api/ai-brochure", aiGenerationRouter);
   // tRPC API
   app.use(
     "/api/trpc",

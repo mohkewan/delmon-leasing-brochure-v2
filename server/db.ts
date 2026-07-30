@@ -1,6 +1,6 @@
 import { eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, brochures, InsertBrochure } from "../drizzle/schema";
+import { InsertUser, users, brochures, InsertBrochure, brochureJobs, InsertBrochureJob, BrochureJob } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -119,4 +119,45 @@ export async function deleteBrochure(id: number, userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   return db.delete(brochures).where(and(eq(brochures.id, id), eq(brochures.userId, userId)));
+}
+
+// ===== BrochureJobs (AI generation) =====
+
+export async function createBrochureJob(data: InsertBrochureJob): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(brochureJobs).values(data);
+  return (result as any)[0]?.insertId ?? 0;
+}
+
+export async function getBrochureJob(id: number): Promise<BrochureJob | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(brochureJobs).where(eq(brochureJobs.id, id)).limit(1);
+  return result[0] ?? null;
+}
+
+export async function getBrochureJobsByUser(userId: number): Promise<BrochureJob[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db
+    .select()
+    .from(brochureJobs)
+    .where(eq(brochureJobs.userId, userId))
+    .orderBy(brochureJobs.createdAt);
+}
+
+export async function updateBrochureJob(
+  id: number,
+  patch: Partial<Pick<BrochureJob, "status" | "completedPages" | "pdfUrls" | "pageUrls" | "errorMessage" | "projectImageUrl">>
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(brochureJobs).set(patch as any).where(eq(brochureJobs.id, id));
+}
+
+export async function deleteBrochureJob(id: number, userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(brochureJobs).where(and(eq(brochureJobs.id, id), eq(brochureJobs.userId, userId)));
 }

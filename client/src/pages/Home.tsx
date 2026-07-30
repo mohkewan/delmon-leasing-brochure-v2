@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw, Archive, LogOut, LogIn, User, TableProperties, Download, MessageCircle } from "lucide-react";
+import { Plus, Trash2, FileDown, Eye, Building2, MapPin, Phone, Mail, Globe, Loader2, CheckCircle2, LayoutList, Save, RotateCcw, Archive, LogOut, LogIn, User, TableProperties, Download, MessageCircle, Sparkles } from "lucide-react";
 import BrochurePreview from "@/components/BrochurePreview";
 import BrochurePreviewModern from "@/components/BrochurePreviewModern";
 import BrochurePreviewDark from "@/components/BrochurePreviewDark";
@@ -523,6 +523,15 @@ export default function Home() {
             >
               <MessageCircle className="w-4 h-4 ml-1" />
               واتساب
+            </Button>
+            {/* AI Generator button */}
+            <Button
+              onClick={() => setLocation("/ai-generator")}
+              size="sm"
+              className="hidden md:flex bg-[#1a2744] hover:bg-[#2a3a6a] text-white font-bold transition-all shadow-md border border-[#c9a84c]/40"
+            >
+              <Sparkles className="w-4 h-4 ml-1 text-[#c9a84c]" />
+              توليد AI
             </Button>
             {/* Mobile: compact action buttons */}
             <div className="flex md:hidden items-center gap-1.5">
