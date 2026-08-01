@@ -467,7 +467,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
     { icon: "🏙️", label: "المدينة", value: data.city },
     { icon: "📍", label: "الموقع / الحي", value: data.district },
     { icon: "🏗️", label: "نوع المشروع", value: data.projectType },
-    { icon: "📐", label: "إجمالي المساحة", value: data.totalArea ? `${Number(String(data.totalArea).replace(/,/g, "")).toLocaleString("ar-SA")} م²` : "—" },
+    { icon: "📐", label: "إجمالي المساحة", value: data.totalArea ? `${Number(String(data.totalArea).replace(/,/g, "")).toLocaleString("en-US")} م²` : "—" },
     { icon: "🏢", label: "عدد الطوابق", value: data.floors || "—" },
     { icon: "📅", label: "سنة الإنجاز", value: data.completionYear || "—" },
   ];
@@ -486,7 +486,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
   // ── CLASSIC: clean white grid layout ──────────────────────────────────────────
   if (!isDark && !isMag) {
     const totalUnitsCount = Array.isArray(data.units_list) && data.units_list.length > 0 ? data.units_list.length : (typeof data.units === "number" ? data.units : "—");
-    const annualRentFmt = data.annualRent ? Number(String(data.annualRent).replace(/,/g,"")).toLocaleString("ar-SA") : "8,400,000";
+    const annualRentFmt = data.annualRent ? Number(String(data.annualRent).replace(/,/g,"")).toLocaleString("en-US") : "8,400,000";
     const occupancyFmt = data.occupancyRate ? String(data.occupancyRate).replace("%","") + "%" : "87%";
     return `
     <div class="page" style="background:#fff;position:relative;display:flex;flex-direction:column">
@@ -504,13 +504,13 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
       <!-- KPI Strip -->
       <div style="flex-shrink:0;background:#1A1A2E;padding:14px 28px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0">
         ${[
-          {label:"إجمالي المساحة", value: data.totalArea ? Number(String(data.totalArea).replace(/,/g,"")).toLocaleString("ar-SA") + " م²" : "—"},
+          {label:"إجمالي المساحة", value: data.totalArea ? Number(String(data.totalArea).replace(/,/g,"")).toLocaleString("en-US") + " م²" : "—"},
           {label:"عدد الوحدات", value: String(totalUnitsCount)},
           {label:"الإيجار السنوي", value: annualRentFmt + " ر.س"},
           {label:"نسبة الإشغال", value: occupancyFmt}
         ].map((k,i) => `
         <div style="text-align:center;padding:6px 12px;${i<3?"border-left:1px solid rgba(255,255,255,0.12)":""}">
-          <div style="font-size:17px;font-weight:900;color:${GOLD};line-height:1">${k.value}</div>
+          <div style="font-size:14px;font-weight:900;color:${GOLD};line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${k.value}</div>
           <div style="font-size:7px;color:rgba(255,255,255,0.6);margin-top:4px;letter-spacing:0.5px">${k.label}</div>
         </div>`).join("")}
       </div>
@@ -580,8 +580,23 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
               </div>`).join("")}
             </div>
           </div>
+          <!-- Performance KPIs -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div style="background:#F7F6F2;border:1px solid #E0DDD0;padding:12px;text-align:center;border-top:3px solid ${GOLD}">
+              <div style="font-size:20px;font-weight:900;color:${GOLD}">${data.occupancyRate || "—"}%</div>
+              <div style="font-size:7px;color:#888;margin-top:3px">نسبة الإشغال</div>
+            </div>
+            <div style="background:#F7F6F2;border:1px solid #E0DDD0;padding:12px;text-align:center;border-top:3px solid #1A1A2E">
+              <div style="font-size:20px;font-weight:900;color:#1A1A2E">${data.floors || "—"}</div>
+              <div style="font-size:7px;color:#888;margin-top:3px">عدد الطوابق</div>
+            </div>
+            <div style="background:#F7F6F2;border:1px solid #E0DDD0;padding:12px;text-align:center;border-top:3px solid #1A1A2E">
+              <div style="font-size:20px;font-weight:900;color:#1A1A2E">${data.completionYear || "—"}</div>
+              <div style="font-size:7px;color:#888;margin-top:3px">سنة الإنجاز</div>
+            </div>
+          </div>
           <!-- Why Delmon -->
-          <div style="background:linear-gradient(135deg,#1A1A2E 0%,#2d3a5e 100%);padding:16px 18px;margin-top:auto">
+          <div style="background:linear-gradient(135deg,#1A1A2E 0%,#2d3a5e 100%);padding:16px 18px;margin-top:0">
             <div style="font-size:8px;font-weight:800;color:${GOLD};letter-spacing:1.5px;margin-bottom:10px;text-align:right">لماذا تختار دلمون للاستثمار؟</div>
             <div style="display:flex;flex-direction:column;gap:6px">
               ${["خبرة أكثر من 15 عاماً في القطاع العقاري","إدارة احترافية متكاملة لجميع المرافق","عقود تأجير مرنة تناسب احتياجاتك","دعم فني وصيانة على مدار الساعة"].map(item => `
@@ -928,7 +943,7 @@ function page3(data: ProjectData, template: string) {
                   <div style="font-size:8px;color:${subColor}">الموقع</div>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#E0DDD0"}">
-                  <div style="font-size:11px;font-weight:700;color:${textColor}">${data.totalArea ? Number(String(data.totalArea).replace(/,/g, "")).toLocaleString("ar-SA") + " م²" : "—"}</div>
+                  <div style="font-size:11px;font-weight:700;color:${textColor}">${data.totalArea ? Number(String(data.totalArea).replace(/,/g, "")).toLocaleString("en-US") + " م²" : "—"}</div>
                   <div style="font-size:8px;color:${subColor}">المساحة الإجمالية</div>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center">
@@ -1121,7 +1136,8 @@ function page4(data: ProjectData, template: string) {
     <!-- Full-bleed 2x2 photo collage on left 60% -->
     <div style="position:absolute;top:0;left:0;width:660px;height:794px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;background:#000">
     <div style="overflow:hidden;position:relative;background:#111">
-        ${data.projectImage ? `<img src="${data.projectImage}" style="width:100%;height:100%;object-fit:cover;object-position:center">` : `<div style="width:100%;height:100%;background:#2a2a2a;display:flex;align-items:center;justify-content:center;font-size:32px;opacity:0.4">🏢</div>`}
+        <img src="${data.projectImage || RAVALA_IMG}" style="width:100%;height:100%;object-fit:cover;object-position:center">
+        ${data.projectImage ? `<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:8px 10px"><div style="font-size:8px;font-weight:700;color:#fff">${data.projectName || ""}</div></div>` : ""}
     </div>
       <div style="overflow:hidden;position:relative;background:#111">
         <img src="${HOTEL_IMG}" style="width:100%;height:100%;object-fit:cover;object-position:center 30%">
@@ -1226,7 +1242,7 @@ function page5(data: ProjectData, template: string, imgSrc: string): string {
           <!-- Stats grid -->
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
             ${[
-              ["📐", data.totalArea ? Number(String(data.totalArea).replace(/,/g, "")).toLocaleString("ar-SA") + " م²" : "—", "المساحة الإجمالية"],
+              ["📐", data.totalArea ? Number(String(data.totalArea).replace(/,/g, "")).toLocaleString("en-US") + " م²" : "—", "المساحة الإجمالية"],
               ["🏢", data.floors || "—", "عدد الطوابق"],
               ["🏪", (Array.isArray(data.units_list) && data.units_list.length > 0 ? data.units_list.length : (typeof data.units === "number" ? data.units : 0)) + " وحدة", "الوحدات المتاحة"],
               ["📅", data.completionYear || "—", "سنة الإنجاز"],
