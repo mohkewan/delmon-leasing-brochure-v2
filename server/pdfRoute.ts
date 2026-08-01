@@ -1613,16 +1613,31 @@ function buildBrochureHTML(data: ProjectData, template: string): string {
 
   const imgSrc = data.projectImage || DEFAULT_IMG_B64;
 
+  // Normalize units: الواجهة ترسل data.units كـ array، لكن محرك PDF يقرأ data.units_list
+  // نوحّد الحقلين هنا ونعالج أسماء الحقول المختلفة
+  let unitsList: Unit[] = [];
+  if (Array.isArray(data.units_list) && data.units_list.length > 0) {
+    unitsList = data.units_list;
+  } else if (Array.isArray(data.units) && data.units.length > 0) {
+    unitsList = data.units as Unit[];
+  }
+  // Normalize unit fields: الواجهة ترسل type وprice، لكن محرك PDF يقرأ unitType وmonthlyRent
+  unitsList = unitsList.map((u: Unit) => ({
+    ...u,
+    unitType: u.unitType || (u as any).type || "",
+    monthlyRent: u.monthlyRent !== undefined ? u.monthlyRent : ((u as any).price || ""),
+  }));
+
   // Normalize features: accept both string and string[]
   const featuresStr: string | undefined = Array.isArray(data.features)
     ? (data.features as string[]).join(",")
     : (data.features as string | undefined);
-  const normalizedData = { ...data, features: featuresStr };
+  const normalizedData = { ...data, features: featuresStr, units_list: unitsList };
 
   const kpis = [
     { v: data.totalArea ? Number(String(data.totalArea).replace(/,/g, "")).toLocaleString("en-US") + " م²" : "—" as string, l: "المساحة" },
     { v: String(data.floors || "—"), l: "الطوابق" },
-    { v: (() => { const n = Array.isArray(data.units_list) ? data.units_list.length : (typeof data.units === "number" ? data.units : (typeof data.units === "string" ? parseInt(data.units) || 0 : 0)); return n > 0 ? String(n) : "—"; })(), l: "الوحدات" },
+    { v: unitsList.length > 0 ? String(unitsList.length) : "—", l: "الوحدات" },
     { v: String(data.completionYear || "—"), l: "الإنجاز" },
   ];
 
