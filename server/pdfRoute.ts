@@ -1533,6 +1533,77 @@ function page5(data: ProjectData, template: string, imgSrc: string, finalAmeniti
 
 
 // ── Main builder ──────────────────────────────────────────────────────────────
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ████  صفحة 6 — رؤية المشروع: Full-bleed image + inspirational overlay  ████
+// ═══════════════════════════════════════════════════════════════════════════
+function page6(data: ProjectData, template: string, imgSrc: string): string {
+  const isDark = template === "dark";
+  const isMag = template === "magazine";
+  const img = imgSrc || DEFAULT_IMG_B64;
+  
+  // نصوص تحفيزية حسب نوع المشروع
+  const visionText = data.description 
+    ? data.description 
+    : "نؤمن بأن كل مشروع هو فرصة لبناء مستقبل أفضل — مساحات تجارية متكاملة تجمع بين الجودة والاستدامة لتحقيق أعلى معدلات العائد الاستثماري.";
+  
+  const overlayColor = isDark 
+    ? "rgba(10,20,40,0.82)" 
+    : isMag 
+      ? "rgba(26,43,74,0.78)" 
+      : "rgba(13,35,64,0.80)";
+  
+  return `<div class="page" style="position:relative;overflow:hidden">
+    <!-- صورة خلفية كاملة -->
+    <img src="${img}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0">
+    <!-- overlay داكن -->
+    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:${overlayColor};z-index:1"></div>
+    <!-- محتوى مركزي -->
+    <div style="position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:0">
+      <!-- هيدر -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid rgba(184,148,63,0.4)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="${DEFAULT_LOGO_IMG}" style="height:36px;object-fit:contain;filter:brightness(0) invert(1)">
+          <div style="width:1px;height:28px;background:rgba(255,255,255,0.3)"></div>
+          <div>
+            <div style="font-size:9px;font-weight:800;color:${C.white};letter-spacing:1px">DELMON INVESTMENT COMPANY</div>
+            <div style="font-size:7px;color:rgba(255,255,255,0.6);margin-top:1px">شركة دلمون للاستثمار</div>
+          </div>
+        </div>
+        <div style="background:${C.gold};color:${C.navyBlue};font-size:8px;font-weight:900;padding:6px 18px;letter-spacing:1.5px">${data.projectType || "مشروع تجاري"}</div>
+      </div>
+      <!-- المحتوى الرئيسي -->
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 80px;text-align:center">
+        <!-- خط ذهبي علوي -->
+        <div style="width:60px;height:3px;background:${C.gold};margin-bottom:20px"></div>
+        <!-- عنوان رؤية -->
+        <div style="font-size:11px;font-weight:700;color:${C.gold};letter-spacing:2px;margin-bottom:12px;text-transform:uppercase">رؤية المشروع</div>
+        <!-- اسم المشروع -->
+        <div style="font-size:42px;font-weight:900;color:${C.white};line-height:1.1;margin-bottom:20px">${data.projectName || "اسم المشروع"}</div>
+        <!-- خط فاصل -->
+        <div style="width:120px;height:1px;background:rgba(184,148,63,0.5);margin-bottom:24px"></div>
+        <!-- النص التحفيزي -->
+        <div style="font-size:13px;font-weight:400;color:rgba(255,255,255,0.85);line-height:1.9;max-width:680px">${visionText}</div>
+        <!-- خط ذهبي سفلي -->
+        <div style="width:60px;height:3px;background:${C.gold};margin-top:24px"></div>
+      </div>
+      <!-- إحصائيات في الأسفل -->
+      <div style="display:flex;justify-content:center;gap:0;border-top:1px solid rgba(184,148,63,0.3);padding:0 32px">
+        ${[
+          ["م²", data.totalArea ? Number(data.totalArea).toLocaleString("en-US") : "—", "إجمالي المساحة"],
+          ["%", data.occupancyRate ? data.occupancyRate + "" : "—", "نسبة الإشغال"],
+          ["", data.completionYear || "—", "سنة الإنجاز"],
+          ["", data.city || "—", "الموقع"],
+        ].map(([unit, val, label]) => `
+          <div style="flex:1;text-align:center;padding:16px 20px;border-left:1px solid rgba(255,255,255,0.1)">
+            <div style="font-size:22px;font-weight:900;color:${C.gold};line-height:1">${val}<span style="font-size:11px;margin-right:2px">${unit}</span></div>
+            <div style="font-size:7.5px;color:rgba(255,255,255,0.6);margin-top:3px">${label}</div>
+          </div>`).join("")}
+      </div>
+    </div>
+  </div>`;
+}
+
 function buildBrochureHTML(data: ProjectData, template: string): string {
   const amenitiesList = data.amenities
     ? data.amenities.split(/[,،\n]/).map((s: string) => s.trim()).filter(Boolean)
@@ -1565,6 +1636,7 @@ function buildBrochureHTML(data: ProjectData, template: string): string {
   const p4 = page4(normalizedData, template);
   // Page 5: photo gallery — only when a project image is provided
   const p5 = page5(normalizedData, template, imgSrc, finalAmenitiesList);
+  const p6 = page6(normalizedData, template, imgSrc);
 
   return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
@@ -1609,6 +1681,7 @@ ${p2}
 ${p3}
 ${p4}
 ${p5}
+${p6}
 </body>
 </html>`;
 }

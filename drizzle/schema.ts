@@ -66,3 +66,18 @@ export const brochureJobs = mysqlTable("brochure_jobs", {
 
 export type BrochureJob = typeof brochureJobs.$inferSelect;
 export type InsertBrochureJob = typeof brochureJobs.$inferInsert;
+
+// جدول تحليلات الاستخدام
+export const analytics = mysqlTable("analytics", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  eventType: varchar("eventType", { length: 64 }).notNull(), // pdf_export, json_export, excel_export, archive_save
+  template: varchar("template", { length: 32 }), // classic, dark, magazine
+  projectName: varchar("projectName", { length: 255 }),
+  projectType: varchar("projectType", { length: 100 }),
+  city: varchar("city", { length: 100 }),
+  unitsCount: int("unitsCount"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type Analytics = typeof analytics.$inferSelect;
+export type InsertAnalytics = typeof analytics.$inferInsert;

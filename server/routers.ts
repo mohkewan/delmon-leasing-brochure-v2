@@ -2,20 +2,17 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
-import { saveBrochure, getBrochuresByUser, getBrochureById, deleteBrochure } from "./db";
+import { saveBrochure, getBrochuresByUser, getBrochureById, deleteBrochure, trackEvent, getAnalyticsSummary } from "./db";
 import { z } from "zod";
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-      return {
-        success: true,
-      } as const;
+      return { success: true } as const;
     }),
   }),
 
@@ -60,6 +57,37 @@ export const appRouter = router({
         await deleteBrochure(input.id, ctx.user.id);
         return { success: true };
       }),
+  }),
+
+  analytics: router({
+    // تسجيل حدث استخدام (public — لا يتطلب تسجيل دخول)
+    track: publicProcedure
+      .input(z.object({
+        eventType: z.enum(["pdf_export", "json_export", "excel_export", "archive_save"]),
+        template: z.string().optional(),
+        projectName: z.string().optional(),
+        projectType: z.string().optional(),
+        city: z.string().optional(),
+        unitsCount: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await trackEvent({
+          userId: ctx.user?.id ?? null,
+          eventType: input.eventType,
+          template: input.template ?? null,
+          projectName: input.projectName ?? null,
+          projectType: input.projectType ?? null,
+          city: input.city ?? null,
+          unitsCount: input.unitsCount ?? null,
+        });
+        return { success: true };
+      }),
+
+    // جلب ملخص الإحصاءات (للمدير فقط)
+    summary: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") return null;
+      return getAnalyticsSummary();
+    }),
   }),
 });
 

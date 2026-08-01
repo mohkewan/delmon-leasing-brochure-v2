@@ -116,6 +116,7 @@ export default function Home() {
       toast.error("خطأ في الحفظ — تأكد من تسجيل الدخول");
     },
   });
+  const trackEventMutation = trpc.analytics.track.useMutation();
 
   const handleSaveToArchive = async () => {
     if (!projectData.projectName) {
@@ -127,6 +128,13 @@ export default function Home() {
       projectType: projectData.projectType,
       city: projectData.city,
       data: projectData,
+    });
+    trackEventMutation.mutate({
+      eventType: "archive_save",
+      projectName: projectData.projectName,
+      projectType: projectData.projectType,
+      city: projectData.city,
+      unitsCount: projectData.units.length,
     });
   };
 
@@ -286,6 +294,13 @@ export default function Home() {
     XLSX.utils.book_append_sheet(wb, ws2, "الوحدات");
     XLSX.writeFile(wb, `${projectData.projectName} - بروشور التأجير.xlsx`);
     toast.success("✅ تم تصدير ملف Excel بنجاح!");
+    trackEventMutation.mutate({
+      eventType: "excel_export",
+      projectName: projectData.projectName,
+      projectType: projectData.projectType,
+      city: projectData.city,
+      unitsCount: projectData.units.length,
+    });
   };
 
   const handleExportJSON = () => {
@@ -306,6 +321,13 @@ export default function Home() {
     a.click();
     URL.revokeObjectURL(url);
     toast.success("✅ تم تصدير النسخة الاحتياطية بنجاح!");
+    trackEventMutation.mutate({
+      eventType: "json_export",
+      projectName: projectData.projectName,
+      projectType: projectData.projectType,
+      city: projectData.city,
+      unitsCount: projectData.units.length,
+    });
   };
 
   const handleWhatsApp = () => {
@@ -381,6 +403,14 @@ export default function Home() {
       setExportDone(true);
       toast.success("✅ تم تصدير البروشور بنجاح!");
       setTimeout(() => { setExportDone(false); setExportStep(""); }, 3000);
+      trackEventMutation.mutate({
+        eventType: "pdf_export",
+        template: selectedTemplate,
+        projectName: projectData.projectName,
+        projectType: projectData.projectType,
+        city: projectData.city,
+        unitsCount: projectData.units.length,
+      });
     } catch (err) {
       toast.error("حدث خطأ أثناء التصدير، يرجى المحاولة مرة أخرى");
       console.error(err);

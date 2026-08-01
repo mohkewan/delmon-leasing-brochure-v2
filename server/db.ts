@@ -1,6 +1,6 @@
 import { eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, brochures, InsertBrochure, brochureJobs, InsertBrochureJob, BrochureJob } from "../drizzle/schema";
+import { InsertUser, users, brochures, InsertBrochure, brochureJobs, InsertBrochureJob, BrochureJob, analytics, InsertAnalytics } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -160,4 +160,43 @@ export async function deleteBrochureJob(id: number, userId: number): Promise<voi
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(brochureJobs).where(and(eq(brochureJobs.id, id), eq(brochureJobs.userId, userId)));
+}
+
+// ===== Analytics =====
+export async function trackEvent(data: InsertAnalytics): Promise<void> {
+  try {
+    const db = await getDb();
+    if (!db) return; // silent fail — analytics are non-critical
+    await db.insert(analytics).values(data);
+  } catch {
+    // never throw from analytics
+  }
+}
+
+export async function getAnalyticsSummary() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const allEvents = await db.select().from(analytics);
+  const pdfExports = allEvents.filter(e => e.eventType === "pdf_export");
+  const jsonExports = allEvents.filter(e => e.eventType === "json_export");
+  const excelExports = allEvents.filter(e => e.eventType === "excel_export");
+  const archiveSaves = allEvents.filter(e => e.eventType === "archive_save");
+  const templateCounts: Record<string, number> = {};
+  pdfExports.forEach(e => {
+    if (e.template) templateCounts[e.template] = (templateCounts[e.template] || 0) + 1;
+  });
+  const cityCounts: Record<string, number> = {};
+  allEvents.forEach(e => {
+    if (e.city) cityCounts[e.city] = (cityCounts[e.city] || 0) + 1;
+  });
+  return {
+    totalExports: allEvents.length,
+    pdfExports: pdfExports.length,
+    jsonExports: jsonExports.length,
+    excelExports: excelExports.length,
+    archiveSaves: archiveSaves.length,
+    templateCounts,
+    cityCounts,
+    recentExports: allEvents.slice(-10).reverse(),
+  };
 }
