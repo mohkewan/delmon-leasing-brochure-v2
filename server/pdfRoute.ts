@@ -1076,8 +1076,8 @@ function page3(data: ProjectData, template: string) {
       <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:700;color:${textColor}">${u.unitNumber || "—"}</td>
       <td style="padding:9px 8px;text-align:center;font-size:10px;color:${textColor}">${u.floor || "—"}</td>
       <td style="padding:9px 8px;text-align:center;font-size:10px;color:${textColor}">${(u as any).type || u.unitType || "—"}</td>
-      <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:600;color:${textColor}">${u.area ? (isNaN(Number(u.area)) ? u.area : Number(u.area).toLocaleString("ar-SA") + " م²") : "—"}</td>
-      <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:800;color:${GOLD}">${u.monthlyRent ? (isNaN(Number(u.monthlyRent)) ? u.monthlyRent : Number(u.monthlyRent).toLocaleString("ar-SA") + " ر.س") : "—"}</td>
+      <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:600;color:${textColor}">${u.area ? (isNaN(Number(u.area)) ? u.area : Number(u.area).toLocaleString("en-US") + " م²") : "—"}</td>
+      <td style="padding:9px 8px;text-align:center;font-size:10px;font-weight:800;color:${GOLD}">${u.monthlyRent ? (isNaN(Number(u.monthlyRent)) ? u.monthlyRent : Number(u.monthlyRent).toLocaleString("en-US") + " ر.س") : "—"}</td>
     </tr>`).join("");
 
   return `
@@ -1105,15 +1105,15 @@ function page3(data: ProjectData, template: string) {
               <div style="font-size:8px;color:rgba(255,255,255,0.85);margin-top:4px">إجمالي الوحدات</div>
             </div>
             <div style="background:${panelBg};padding:12px;text-align:center;border-top:3px solid ${GOLD}">
-              <div style="font-size:22px;font-weight:900;color:${GOLD};line-height:1">${totalArea > 0 ? totalArea.toLocaleString("ar-SA") : "—"}</div>
+              <div style="font-size:22px;font-weight:900;color:${GOLD};line-height:1">${totalArea > 0 ? totalArea.toLocaleString("en-US") : "—"}</div>
               <div style="font-size:8px;color:${subColor};margin-top:4px">إجمالي المساحة م²</div>
             </div>
             <div style="background:${panelBg};padding:12px;text-align:center;border-top:3px solid ${GOLD}">
-              <div style="font-size:22px;font-weight:900;color:${GOLD};line-height:1">${avgRent > 0 ? avgRent.toLocaleString("ar-SA") : "—"}</div>
+              <div style="font-size:22px;font-weight:900;color:${GOLD};line-height:1">${avgRent > 0 ? avgRent.toLocaleString("en-US") : "—"}</div>
               <div style="font-size:8px;color:${subColor};margin-top:4px">متوسط الإيجار الشهري ر.س</div>
             </div>
             <div style="background:${panelBg};padding:12px;text-align:center;border-top:3px solid ${GOLD}">
-              <div style="font-size:22px;font-weight:900;color:${GOLD};line-height:1">${annualRent > 0 ? annualRent.toLocaleString("ar-SA") : "—"}</div>
+              <div style="font-size:22px;font-weight:900;color:${GOLD};line-height:1">${annualRent > 0 ? annualRent.toLocaleString("en-US") : "—"}</div>
               <div style="font-size:8px;color:${subColor};margin-top:4px">الإيجار السنوي الإجمالي ر.س</div>
             </div>
           </div>
