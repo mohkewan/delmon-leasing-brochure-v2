@@ -1,3 +1,4 @@
+# Full rebuild forced: 2026-08-02 v5 - Puppeteer + Chromium
 FROM node:22-slim
 
 # Install Chromium and Arabic fonts for Puppeteer PDF generation
