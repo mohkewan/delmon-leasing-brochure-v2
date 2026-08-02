@@ -4,6 +4,7 @@ import * as os from "os";
 import * as path from "path";
 import * as fsSync from "fs";
 import { fileURLToPath } from "url";
+import puppeteer from "puppeteer";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -2163,7 +2164,7 @@ export async function pdfRouteHandler(req: Request, res: Response) {
     const html = buildBrochureHTML(resolvedData, template);
 
     // ── WeasyPrint PDF generation (serverless-safe, no Chromium OOM) ──
-    const pdfBuffer = await generatePDFWithWeasyPrint(html);
+    const pdfBuffer = await generatePDFWithPuppeteer(html);
 
     // Clean up temp image file
     if (tmpImagePath) { try { fsSync.unlinkSync(tmpImagePath); } catch {} }
@@ -2185,87 +2186,45 @@ export async function pdfRouteHandler(req: Request, res: Response) {
 }
 
 // ── WeasyPrint helper ─────────────────────────────────────────────────────────
-async function generatePDFWithWeasyPrint(html: string): Promise<Buffer> {
-  const tmpDir = os.tmpdir();
-  const tmpId = `delmon_pdf_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-  const htmlPath = path.join(tmpDir, `${tmpId}.html`);
-  const pdfPath = path.join(tmpDir, `${tmpId}.pdf`);
-
-  // Locate font directory (works locally and in Docker /app)
-  const fontDirs = [
-    path.join(__dirname, "fonts"),
-    path.join(process.cwd(), "server", "fonts"),
-    "/app/server/fonts",
-    "/usr/share/fonts/truetype/cairo",
-  ];
-  const fontDir =
-    fontDirs.find((d) => {
-      try {
-        return fsSync.existsSync(path.join(d, "Cairo-Regular.ttf"));
-      } catch {
-        return false;
-      }
-    }) || "/usr/share/fonts/truetype/cairo";
-
-  const cairoRegular = path.join(fontDir, "Cairo-Regular.ttf");
-  const cairoBold = path.join(fontDir, "Cairo-Bold.ttf");
-  const cairoSemiBold = path.join(fontDir, "Cairo-SemiBold.ttf");
-
-  // Inject @font-face so WeasyPrint uses local Cairo fonts
-  const fontFaceCSS = `
-@font-face { font-family: Cairo; src: url("file://${cairoRegular}") format("truetype"); font-weight: 400; }
-@font-face { font-family: Cairo; src: url("file://${cairoBold}") format("truetype"); font-weight: 700; }
-@font-face { font-family: Cairo; src: url("file://${cairoSemiBold}") format("truetype"); font-weight: 600; }
-`;
-  const htmlWithFonts = html.replace(/<style>/, `<style>\n${fontFaceCSS}`);
-  fsSync.writeFileSync(htmlPath, htmlWithFonts, "utf8");
-
-  const pythonScript = `
-import sys
-from weasyprint import HTML
-from weasyprint.text.fonts import FontConfiguration
-font_config = FontConfiguration()
-HTML(filename=sys.argv[1]).write_pdf(sys.argv[2], font_config=font_config)
-`;
-
-  return new Promise((resolve, reject) => {
-    const proc = spawn("python3", ["-c", pythonScript, htmlPath, pdfPath], {
-      timeout: 90000,
-    });
-    let stderr = "";
-    proc.stderr.on("data", (d: Buffer) => {
-      stderr += d.toString();
-    });
-    proc.on("close", (code) => {
-      try {
-        fsSync.unlinkSync(htmlPath);
-      } catch {}
-      // code=null means process ended by signal (common in container envs); treat as success if PDF exists
-      const failed = code !== null && code !== 0;
-      if (failed) {
-        try {
-          fsSync.unlinkSync(pdfPath);
-        } catch {}
-        reject(new Error(`WeasyPrint exited ${code}: ${stderr.slice(0, 500)}`));
-        return;
-      }
-      try {
-        const buf = fsSync.readFileSync(pdfPath);
-        fsSync.unlinkSync(pdfPath);
-        resolve(buf);
-      } catch (e) {
-        // PDF file not found even though exit code was 0/null — real failure
-        reject(new Error(`WeasyPrint produced no output (code=${code}): ${stderr.slice(0, 500)}`));
-      }
-    });
-    proc.on("error", (e) => {
-      try {
-        fsSync.unlinkSync(htmlPath);
-      } catch {}
-      try {
-        fsSync.unlinkSync(pdfPath);
-      } catch {}
-      reject(e);
-    });
+async function generatePDFWithPuppeteer(html: string): Promise<Buffer> {
+  // Serverless-safe Chromium launch (works in Docker containers with limited /dev/shm)
+  const browser = await puppeteer.launch({
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--disable-software-rasterizer",
+      "--single-process",
+      "--no-zygote",
+      "--disable-extensions",
+      "--disable-background-networking",
+      "--disable-default-apps",
+      "--disable-sync",
+      "--disable-translate",
+      "--hide-scrollbars",
+      "--mute-audio",
+      "--no-first-run",
+      "--safebrowsing-disable-auto-update",
+    ],
   });
+  try {
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "domcontentloaded", timeout: 60000 });
+    // Wait for fonts (with timeout fallback to avoid hanging)
+    await Promise.race([
+      page.evaluate(() => document.fonts.ready),
+      new Promise(r => setTimeout(r, 3000)),
+    ]);
+    const pdf = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    });
+    return Buffer.from(pdf);
+  } finally {
+    await browser.close();
+  }
 }
