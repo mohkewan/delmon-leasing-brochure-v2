@@ -74,7 +74,7 @@ export default function BrochurePreviewDark({ data }: Props) {
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
                 {[
                   { v: String(data.units.length), l: "وحدة شاغرة", primary: true },
-                  { v: `${totalArea.toLocaleString("ar-SA")} م²`, l: "إجمالي المساحة", primary: false },
+                  { v: `${totalArea.toLocaleString("en-US")} م²`, l: "إجمالي المساحة", primary: false },
                   ...(data.floors ? [{ v: data.floors, l: "طابق", primary: false }] : []),
                   ...(data.completionYear ? [{ v: data.completionYear, l: "سنة الإنجاز", primary: false }] : []),
                 ].map((s, i) => (
@@ -151,7 +151,7 @@ export default function BrochurePreviewDark({ data }: Props) {
                 { label: "نوع المشروع", value: data.projectType },
                 { label: "المدينة", value: data.city },
                 { label: "الحي / الموقع", value: data.district },
-                { label: "إجمالي المساحة", value: data.totalArea ? `${parseFloat(data.totalArea).toLocaleString("ar-SA")} م²` : "" },
+                { label: "إجمالي المساحة", value: data.totalArea ? `${parseFloat(data.totalArea).toLocaleString("en-US")} م²` : "" },
                 { label: "عدد الطوابق", value: data.floors },
                 { label: "سنة الإنجاز", value: data.completionYear },
                 { label: "الوحدات الشاغرة", value: String(data.units.length) },
@@ -173,7 +173,7 @@ export default function BrochurePreviewDark({ data }: Props) {
         <div style={{ padding: "16px 40px", flex: 1, overflow: "hidden" }}>
           <div style={{ marginBottom: 14 }}>
             <DSectionTitle title={`الوحدات الشاغرة — ${data.projectName || "المشروع"}`} />
-            <p style={{ color: TEXT_MID, fontSize: 12, margin: 0 }}>إجمالي {data.units.length} وحدة شاغرة بمساحة إجمالية {totalArea.toLocaleString("ar-SA")} م²</p>
+            <p style={{ color: TEXT_MID, fontSize: 12, margin: 0 }}>إجمالي {data.units.length} وحدة شاغرة بمساحة إجمالية {totalArea.toLocaleString("en-US")} م²</p>
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, marginBottom: 16, border: `2px solid ${GOLD_BORDER}`, borderRadius: 8, overflow: "hidden" }}>
             <thead>
@@ -185,7 +185,7 @@ export default function BrochurePreviewDark({ data }: Props) {
             </thead>
             <tbody>
               {data.units.map((unit, idx) => {
-                const annualRent = unit.monthlyRent ? (parseFloat(unit.monthlyRent) * 12).toLocaleString("ar-SA") : "—";
+                const annualRent = unit.monthlyRent ? (parseFloat(unit.monthlyRent) * 12).toLocaleString("en-US") : "—";
                 return (
                   <tr key={unit.id} style={{ background: idx % 2 === 0 ? BG_DARK : BG_CARD, borderBottom: `1px solid ${GOLD_BORDER}` }}>
                     <td style={{ padding: "8px 6px", textAlign: "center", color: GOLD, fontWeight: 800, fontSize: 12, border: `1px solid ${GOLD_BORDER}` }}>{idx + 1}</td>
@@ -194,10 +194,10 @@ export default function BrochurePreviewDark({ data }: Props) {
                     <td style={{ padding: "8px 6px", textAlign: "center", border: `1px solid ${GOLD_BORDER}` }}>
                       <span style={{ background: GOLD_PALE, color: GOLD, padding: "2px 8px", borderRadius: 10, fontSize: 10, fontWeight: 700 }}>{unit.unitType}</span>
                     </td>
-                    <td style={{ padding: "8px 6px", textAlign: "center", fontWeight: 800, color: TEXT_LIGHT, border: `1px solid ${GOLD_BORDER}` }}>{unit.area ? parseFloat(unit.area).toLocaleString("ar-SA") : "—"}</td>
+                    <td style={{ padding: "8px 6px", textAlign: "center", fontWeight: 800, color: TEXT_LIGHT, border: `1px solid ${GOLD_BORDER}` }}>{unit.area ? parseFloat(unit.area).toLocaleString("en-US") : "—"}</td>
                     <td style={{ padding: "8px 6px", textAlign: "center", color: TEXT_MID, border: `1px solid ${GOLD_BORDER}` }}>{(unit as any).contractDuration || "—"}</td>
                     <td style={{ padding: "8px 6px", textAlign: "center", color: GOLD_LIGHT, fontWeight: 700, border: `1px solid ${GOLD_BORDER}` }}>{annualRent}</td>
-                    <td style={{ padding: "8px 6px", textAlign: "center", color: TEXT_MID, border: `1px solid ${GOLD_BORDER}` }}>{unit.pricePerMeter ? parseFloat(unit.pricePerMeter).toLocaleString("ar-SA") : "—"}</td>
+                    <td style={{ padding: "8px 6px", textAlign: "center", color: TEXT_MID, border: `1px solid ${GOLD_BORDER}` }}>{unit.pricePerMeter ? parseFloat(unit.pricePerMeter).toLocaleString("en-US") : "—"}</td>
                     <td style={{ padding: "8px 6px", color: TEXT_DIM, fontSize: 10, border: `1px solid ${GOLD_BORDER}` }}>{unit.features || "—"}</td>
                   </tr>
                 );
@@ -206,7 +206,7 @@ export default function BrochurePreviewDark({ data }: Props) {
             <tfoot>
               <tr style={{ background: BG_ACCENT, borderTop: `2px solid ${GOLD}` }}>
                 <td colSpan={4} style={{ padding: "10px 8px", fontWeight: 900, color: GOLD, fontSize: 12, border: `1px solid ${GOLD_BORDER}` }}>الإجمالي</td>
-                <td style={{ padding: "10px 8px", textAlign: "center", fontWeight: 900, color: GOLD, fontSize: 13, border: `1px solid ${GOLD_BORDER}` }}>{totalArea.toLocaleString("ar-SA")} م²</td>
+                <td style={{ padding: "10px 8px", textAlign: "center", fontWeight: 900, color: GOLD, fontSize: 13, border: `1px solid ${GOLD_BORDER}` }}>{totalArea.toLocaleString("en-US")} م²</td>
                 <td colSpan={4} style={{ border: `1px solid ${GOLD_BORDER}` }} />
               </tr>
             </tfoot>
@@ -214,8 +214,8 @@ export default function BrochurePreviewDark({ data }: Props) {
           <div style={{ display: "flex", gap: 14 }}>
             {[
               { label: "إجمالي الوحدات الشاغرة", value: String(data.units.length), sub: "وحدة", accent: GOLD },
-              { label: "إجمالي المساحة الشاغرة", value: totalArea.toLocaleString("ar-SA"), sub: "م²", accent: GOLD_LIGHT },
-              { label: "متوسط مساحة الوحدة", value: data.units.length ? Math.round(totalArea / data.units.length).toLocaleString("ar-SA") : "—", sub: "م²", accent: GOLD },
+              { label: "إجمالي المساحة الشاغرة", value: totalArea.toLocaleString("en-US"), sub: "م²", accent: GOLD_LIGHT },
+              { label: "متوسط مساحة الوحدة", value: data.units.length ? Math.round(totalArea / data.units.length).toLocaleString("en-US") : "—", sub: "م²", accent: GOLD },
             ].map((c, i) => (
               <div key={i} style={{ flex: 1, background: BG_CARD, border: `1px solid ${GOLD_BORDER}`, borderTop: `4px solid ${c.accent}`, borderRadius: 10, padding: "14px 18px", textAlign: "center" }}>
                 <div style={{ fontSize: 24, fontWeight: 900, color: c.accent, lineHeight: 1 }}>{c.value}<span style={{ fontSize: 11, fontWeight: 600, marginRight: 4, color: TEXT_DIM }}>{c.sub}</span></div>

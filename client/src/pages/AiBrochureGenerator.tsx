@@ -386,7 +386,7 @@ export default function AiBrochureGenerator() {
                         <span className="text-xs text-gray-500 shrink-0">{job.progress}%</span>
                       </div>
                       <p className="text-xs text-gray-400 mt-1">
-                        {new Date(job.createdAt).toLocaleString("ar-SA")}
+                        {new Date(job.createdAt).toLocaleString("en-US")}
                       </p>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">

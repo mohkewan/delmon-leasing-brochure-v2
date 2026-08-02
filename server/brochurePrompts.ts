@@ -51,12 +51,12 @@ function buildUnitsText(data: ProjectData): string {
   const available = data.units.filter((_, i) => i % 2 === 0); // نصف الوحدات "متاحة"
   const rows = data.units.slice(0, 8).map((u, i) => {
     const status = i % 2 === 0 ? "متاحة" : "مؤجرة";
-    const rent = u.monthlyRent ? `${Number(u.monthlyRent).toLocaleString("ar-SA")} ريال` : "—";
+    const rent = u.monthlyRent ? `${Number(u.monthlyRent).toLocaleString("en-US")} ريال` : "—";
     return `وحدة ${u.unitNumber || (i + 101)} | الطابق ${u.floor || (i + 1)} | ${u.area} م² | ${u.unitType} | ${status} | ${rent}`;
   }).join("\n");
   const totalArea = data.units.reduce((s, u) => s + (parseFloat(u.area) || 0), 0);
   const availableCount = data.units.filter((_, i) => i % 2 === 0).length;
-  return `${rows}\n\nإجمالي الوحدات: ${data.units.length} | المتاحة: ${availableCount} | إجمالي المساحة: ${totalArea.toLocaleString("ar-SA")} م²`;
+  return `${rows}\n\nإجمالي الوحدات: ${data.units.length} | المتاحة: ${availableCount} | إجمالي المساحة: ${totalArea.toLocaleString("en-US")} م²`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -130,7 +130,7 @@ Data rows:
 ${units}
 SUMMARY BAR at bottom: 3 boxes:
   Box 1: "إجمالي الوحدات" + "${data.units.length} وحدة"
-  Box 2: "إجمالي المساحة" + "${totalArea.toLocaleString("ar-SA")} م²"
+  Box 2: "إجمالي المساحة" + "${totalArea.toLocaleString("en-US")} م²"
   Box 3: "الوحدات المتاحة" + "${availableCount} وحدة"
 FOOTER: "${BRAND.website}" | "${BRAND.email}" | "${data.contactPhone}" | "${data.city}"
 All Arabic RTL, professional data table design.`,
@@ -247,7 +247,7 @@ TABLE (RTL):
 Headers (gold background, black text): رقم الوحدة | الطابق | المساحة م² | نوع الوحدة | الحالة | الإيجار السنوي ريال
 Data rows (dark alternating):
 ${units}
-SUMMARY BAR (gold gradient): إجمالي الوحدات ${data.units.length} | إجمالي المساحة ${totalArea.toLocaleString("ar-SA")} م² | الوحدات المتاحة ${availableCount}
+SUMMARY BAR (gold gradient): إجمالي الوحدات ${data.units.length} | إجمالي المساحة ${totalArea.toLocaleString("en-US")} م² | الوحدات المتاحة ${availableCount}
 FOOTER: "${BRAND.website}" | "${BRAND.email}" | "${data.contactPhone}" | "${data.city}"
 IMPORTANT: All company references must say "${BRAND.nameAr}" / "${BRAND.nameEn}" — no other variations.`,
 

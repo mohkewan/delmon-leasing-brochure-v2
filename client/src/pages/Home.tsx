@@ -667,7 +667,7 @@ export default function Home() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
             { label: "إجمالي الوحدات", value: String(projectData.units.length), icon: Building2 },
-            { label: "إجمالي المساحة", value: `${totalArea.toLocaleString("ar-SA")} م²`, icon: MapPin },
+            { label: "إجمالي المساحة", value: `${totalArea.toLocaleString("en-US")} م²`, icon: MapPin },
             { label: "المشروع المحدد", value: projectData.projectName || "—", icon: Building2 },
             { label: "اكتمال البيانات", value: `${completionPct}%`, icon: LayoutList },
           ].map((stat, i) => (
@@ -808,7 +808,7 @@ export default function Home() {
                   {unitsWithArea}/{projectData.units.length} وحدة مكتملة البيانات
                 </span>
                 <span className="text-xs font-bold text-[#2C2C2C]">
-                  {totalArea > 0 ? `${totalArea.toLocaleString("ar-SA")} م²` : "أدخل المساحات"}
+                  {totalArea > 0 ? `${totalArea.toLocaleString("en-US")} م²` : "أدخل المساحات"}
                 </span>
               </div>
             </div>

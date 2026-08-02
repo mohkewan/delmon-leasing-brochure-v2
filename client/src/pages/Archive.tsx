@@ -119,7 +119,7 @@ export default function Archive() {
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Building2 className="w-4 h-4 text-[#949437]" />
-                        <span>{unitCount} وحدة — {totalArea.toLocaleString("ar-SA")} م²</span>
+                        <span>{unitCount} وحدة — {totalArea.toLocaleString("en-US")} م²</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         <Calendar className="w-4 h-4 text-[#8fa9dc]" />
