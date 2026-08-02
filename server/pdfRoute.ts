@@ -615,7 +615,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
           </div>
         </div>
       </div>
-      ${footer("02", C.white, C.darkBlue, C.gold)}
+      ${footer("02 / 10", C.white, C.darkBlue, C.gold)}
     </div>`;
   }
 
@@ -774,7 +774,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
           </div>
         </div>
       </div>
-      ${footer("02", C.darkCard, "#e0e0e0", C.gold)}
+      ${footer("02 / 10", C.darkCard, "#e0e0e0", C.gold)}
     </div>`;
   }
 
@@ -934,7 +934,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
         </div>
       </div>
     </div>
-    ${footer("02", C.offWhite, C.black, C.gold)}
+    ${footer("02 / 10", C.offWhite, C.black, C.gold)}
   </div>`;
 }
 
@@ -1218,7 +1218,7 @@ function page3(data: ProjectData, template: string) {
         </td>
       </tr>
     </table>
-    ${footer("03 / 04", isDark ? DARK_PANEL : GOLD, "#fff", "rgba(255,255,255,0.9)")}
+    ${footer("03 / 10", isDark ? DARK_PANEL : GOLD, "#fff", "rgba(255,255,255,0.9)")}
   </div>`;
 }
 
@@ -1291,7 +1291,7 @@ function page4(data: ProjectData, template: string) {
           </td>
         </tr>
       </table>
-      ${footer("04 / 04", DARK_PANEL, "#e0e0e0", GOLD)}
+      ${footer("04 / 10", DARK_PANEL, "#e0e0e0", GOLD)}
     </div>`;
   }
 
@@ -1355,7 +1355,7 @@ function page4(data: ProjectData, template: string) {
           </td>
         </tr>
       </table>
-      ${footer("04 / 04", "#111", "#e0e0e0", GOLD)}
+      ${footer("04 / 10", "#111", "#e0e0e0", GOLD)}
     </div>`;
   }
 
@@ -1448,7 +1448,7 @@ function page5(data: ProjectData, template: string, imgSrc: string, finalAmeniti
   const borderColor = (isDark || isMag) ? "rgba(201,168,76,0.3)" : "#E0DDD0";
   const footerBg = isDark ? DARK_PANEL : isMag ? "#111" : GOLD;
   const footerText = (isDark || isMag) ? "#e0e0e0" : "#fff";
-  const pageNum = "05 / 05";
+  const pageNum = "05 / 10";
 
   return `
   <div class="page" style="background:${bg};position:relative">
@@ -1604,6 +1604,388 @@ function page6(data: ProjectData, template: string, imgSrc: string): string {
   </div>`;
 }
 
+function page7(data: ProjectData, template: string): string {
+  const isDark = template === "dark";
+  const isMag = template === "magazine";
+  const bg = isDark ? DARK_BG : isMag ? "#F4F1EB" : "#fff";
+  const panelBg = isDark ? DARK_PANEL : isMag ? "#fff" : "#F7F6F2";
+  const textColor = isDark ? "#e0e0e0" : "#1A2B4A";
+  const subColor = isDark ? "#aaa" : "#64748B";
+  const borderColor = isDark ? "rgba(201,168,76,0.3)" : "#E2E8F0";
+  const headerBg = isDark ? DARK_PANEL : isMag ? "#1a1a1a" : DELMON_TEXT;
+
+  const parseNum = (v?: string | number) => typeof v === 'number' ? v : parseFloat((String(v || '0')).replace(/[^\d.]/g, '')) || 0;
+  const unitsList: Unit[] = Array.isArray(data.units_list) ? data.units_list : [];
+  const totalUnits = unitsList.length;
+  const totalAreaUnits = unitsList.reduce((s, u) => s + parseNum(u.area), 0);
+  const totalMonthlyRent = unitsList.reduce((s, u) => s + parseNum(u.monthlyRent), 0);
+  const annualRent = totalMonthlyRent * 12;
+  const avgPricePerMeter = totalAreaUnits > 0 && totalMonthlyRent > 0 ? Math.round((totalMonthlyRent * 12) / totalAreaUnits) : 0;
+  const projectTotalArea = parseNum(data.totalArea);
+  const occupancyRate = projectTotalArea > 0 && totalAreaUnits > 0 ? Math.round((totalAreaUnits / projectTotalArea) * 100) : 0;
+
+  const kpiCards = [
+    { icon: "💰", value: annualRent > 0 ? annualRent.toLocaleString("en-US") : "—", unit: "ر.س", label: "الإيجار السنوي الإجمالي", color: GOLD },
+    { icon: "📐", value: avgPricePerMeter > 0 ? avgPricePerMeter.toLocaleString("en-US") : "—", unit: "ر.س/م²", label: "متوسط سعر المتر السنوي", color: DELMON_BLUE },
+    { icon: "🏢", value: String(totalUnits || "—"), unit: "وحدة", label: "إجمالي الوحدات الشاغرة", color: DELMON_BLUE },
+    { icon: "📊", value: occupancyRate > 0 ? occupancyRate + "%" : "—", unit: "", label: "نسبة المساحة المعروضة", color: GOLD },
+    { icon: "📏", value: totalAreaUnits > 0 ? totalAreaUnits.toLocaleString("en-US") : "—", unit: "م²", label: "إجمالي المساحة الشاغرة", color: DELMON_BLUE },
+    { icon: "💵", value: totalMonthlyRent > 0 ? totalMonthlyRent.toLocaleString("en-US") : "—", unit: "ر.س", label: "الإيجار الشهري الإجمالي", color: GOLD },
+  ];
+
+  const typeMap: Record<string, number> = {};
+  unitsList.forEach(u => {
+    const t = (u as any).type || u.unitType || "أخرى";
+    typeMap[t] = (typeMap[t] || 0) + 1;
+  });
+  const typeEntries = Object.entries(typeMap);
+
+  const floorMap: Record<string, number> = {};
+  unitsList.forEach(u => {
+    const f = u.floor || "غير محدد";
+    floorMap[f] = (floorMap[f] || 0) + 1;
+  });
+  const floorEntries = Object.entries(floorMap).slice(0, 6);
+
+  return `
+  <div class="page" style="background:${bg};position:relative">
+    ${isMag ? `<div style="height:8px;background:linear-gradient(90deg,${GOLD} 0%,#8B6914 50%,${GOLD} 100%);flex-shrink:0"></div>` : ""}
+    <div style="height:56px;background:${headerBg};display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="${LOGO}" style="height:32px;width:auto;filter:brightness(0) invert(1)">
+        <div>
+          <div style="font-size:12px;font-weight:900;color:#fff">المؤشرات المالية</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.6)">Financial KPIs Dashboard</div>
+        </div>
+      </div>
+      <div style="font-size:9px;color:rgba(255,255,255,0.7)">${data.projectName} | ${data.city}</div>
+    </div>
+    <div style="padding:18px 24px;height:682px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+        ${kpiCards.map(k => `
+        <div style="background:${panelBg};border:1px solid ${borderColor};border-radius:10px;padding:16px 14px;text-align:center;border-top:3px solid ${k.color}">
+          <div style="font-size:24px;margin-bottom:6px">${k.icon}</div>
+          <div style="font-size:22px;font-weight:900;color:${k.color};line-height:1">${k.value}<span style="font-size:10px;font-weight:600;margin-right:3px;color:${subColor}">${k.unit}</span></div>
+          <div style="font-size:8px;color:${subColor};margin-top:5px">${k.label}</div>
+        </div>`).join("")}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div style="background:${panelBg};border:1px solid ${borderColor};border-radius:10px;padding:14px 16px">
+          <div style="font-size:10px;font-weight:900;color:${textColor};margin-bottom:12px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+            <span>توزيع الوحدات حسب النوع</span>
+            <div style="width:24px;height:2px;background:${GOLD}"></div>
+          </div>
+          ${typeEntries.length > 0 ? typeEntries.map(([type, count], i) => {
+            const pct = totalUnits > 0 ? Math.round((count / totalUnits) * 100) : 0;
+            const barColors = [GOLD, DELMON_BLUE, "#10B981", "#F59E0B", "#6366F1", "#EF4444"];
+            const barColor = barColors[i % barColors.length];
+            return `
+            <div style="margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                <span style="font-size:9px;font-weight:700;color:${textColor}">${count} وحدة</span>
+                <span style="font-size:9px;color:${subColor}">${type}</span>
+              </div>
+              <div style="background:${isDark ? "rgba(255,255,255,0.08)" : "#E2E8F0"};border-radius:4px;height:8px;overflow:hidden">
+                <div style="width:${pct}%;height:100%;background:${barColor};border-radius:4px"></div>
+              </div>
+              <div style="font-size:7px;color:${subColor};text-align:left;margin-top:1px">${pct}%</div>
+            </div>`;
+          }).join("") : `<div style="text-align:center;padding:20px;color:${subColor};font-size:10px">لا توجد بيانات</div>`}
+        </div>
+        <div style="background:${panelBg};border:1px solid ${borderColor};border-radius:10px;padding:14px 16px">
+          <div style="font-size:10px;font-weight:900;color:${textColor};margin-bottom:12px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+            <span>توزيع الوحدات حسب الطابق</span>
+            <div style="width:24px;height:2px;background:${GOLD}"></div>
+          </div>
+          ${floorEntries.length > 0 ? floorEntries.map(([floor, count], i) => {
+            const pct = totalUnits > 0 ? Math.round((count / totalUnits) * 100) : 0;
+            const barColors = [DELMON_BLUE, GOLD, "#10B981", "#F59E0B", "#6366F1", "#EF4444"];
+            const barColor = barColors[i % barColors.length];
+            return `
+            <div style="margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                <span style="font-size:9px;font-weight:700;color:${textColor}">${count} وحدة</span>
+                <span style="font-size:9px;color:${subColor}">الطابق ${floor}</span>
+              </div>
+              <div style="background:${isDark ? "rgba(255,255,255,0.08)" : "#E2E8F0"};border-radius:4px;height:8px;overflow:hidden">
+                <div style="width:${pct}%;height:100%;background:${barColor};border-radius:4px"></div>
+              </div>
+              <div style="font-size:7px;color:${subColor};text-align:left;margin-top:1px">${pct}%</div>
+            </div>`;
+          }).join("") : `<div style="text-align:center;padding:20px;color:${subColor};font-size:10px">لا توجد بيانات</div>`}
+        </div>
+      </div>
+      <div style="background:${isDark ? "rgba(201,168,76,0.1)" : GOLD + "15"};border:1px solid ${isDark ? "rgba(201,168,76,0.3)" : GOLD + "40"};border-radius:10px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
+        <div style="text-align:right">
+          <div style="font-size:9px;color:${subColor};margin-bottom:2px">ملاحظة استثمارية</div>
+          <div style="font-size:10px;font-weight:700;color:${textColor}">الأرقام المالية محسوبة بناءً على بيانات الوحدات المدخلة</div>
+        </div>
+        <div style="text-align:center;padding:0 20px;border-right:1px solid ${borderColor}">
+          <div style="font-size:20px;font-weight:900;color:${GOLD}">${data.completionYear || "—"}</div>
+          <div style="font-size:8px;color:${subColor}">سنة الإنجاز</div>
+        </div>
+        <div style="text-align:center;padding:0 20px;border-right:1px solid ${borderColor}">
+          <div style="font-size:20px;font-weight:900;color:${DELMON_BLUE}">${data.floors || "—"}</div>
+          <div style="font-size:8px;color:${subColor}">عدد الطوابق</div>
+        </div>
+        <div style="text-align:center;padding:0 20px;border-right:1px solid ${borderColor}">
+          <div style="font-size:20px;font-weight:900;color:${GOLD}">${projectTotalArea > 0 ? projectTotalArea.toLocaleString("en-US") : "—"}</div>
+          <div style="font-size:8px;color:${subColor}">م² إجمالي المشروع</div>
+        </div>
+      </div>
+    </div>
+    ${footer("07 / 10", isDark ? DARK_PANEL : DELMON_TEXT, "#fff", GOLD)}
+  </div>`;
+}
+
+function page8(data: ProjectData, template: string): string {
+  const isDark = template === "dark";
+  const isMag = template === "magazine";
+  const bg = isDark ? DARK_BG : isMag ? "#F4F1EB" : "#fff";
+  const panelBg = isDark ? DARK_PANEL : isMag ? "#fff" : "#F7F6F2";
+  const textColor = isDark ? "#e0e0e0" : "#1A2B4A";
+  const subColor = isDark ? "#aaa" : "#64748B";
+  const borderColor = isDark ? "rgba(201,168,76,0.3)" : "#E2E8F0";
+  const rowEven = isDark ? "#1e2330" : isMag ? "#F4F1EB" : "#F9F8F5";
+  const rowOdd = isDark ? DARK_PANEL : "#fff";
+
+  const parseNum = (v?: string | number) => typeof v === 'number' ? v : parseFloat((String(v || '0')).replace(/[^\d.]/g, '')) || 0;
+  const unitsList: Unit[] = Array.isArray(data.units_list) ? data.units_list : [];
+
+  const unitsRows = unitsList.map((u: Unit, i: number) => {
+    const area = parseNum(u.area);
+    const monthlyRent = parseNum(u.monthlyRent);
+    const annualRent = monthlyRent * 12;
+    const pricePerMeter = area > 0 && annualRent > 0 ? Math.round(annualRent / area) : 0;
+    return `
+    <tr style="background:${i % 2 === 0 ? rowEven : rowOdd}">
+      <td style="padding:8px 6px;text-align:center;font-size:9px;color:${subColor};border-bottom:1px solid ${borderColor}">${i + 1}</td>
+      <td style="padding:8px 6px;text-align:center;font-size:9px;font-weight:700;color:${textColor};border-bottom:1px solid ${borderColor}">${u.unitNumber || "—"}</td>
+      <td style="padding:8px 6px;text-align:center;font-size:9px;color:${textColor};border-bottom:1px solid ${borderColor}">${u.floor || "—"}</td>
+      <td style="padding:8px 6px;text-align:center;font-size:9px;color:${textColor};border-bottom:1px solid ${borderColor}">${(u as any).type || u.unitType || "—"}</td>
+      <td style="padding:8px 6px;text-align:center;font-size:9px;font-weight:600;color:${textColor};border-bottom:1px solid ${borderColor}">${area > 0 ? area.toLocaleString("en-US") + " م²" : "—"}</td>
+      <td style="padding:8px 6px;text-align:center;font-size:9px;font-weight:800;color:${GOLD};border-bottom:1px solid ${borderColor}">${monthlyRent > 0 ? monthlyRent.toLocaleString("en-US") : "—"}</td>
+      <td style="padding:8px 6px;text-align:center;font-size:9px;font-weight:800;color:${DELMON_BLUE};border-bottom:1px solid ${borderColor}">${annualRent > 0 ? annualRent.toLocaleString("en-US") : "—"}</td>
+      <td style="padding:8px 6px;text-align:center;font-size:9px;color:${subColor};border-bottom:1px solid ${borderColor}">${pricePerMeter > 0 ? pricePerMeter.toLocaleString("en-US") : "—"}</td>
+      <td style="padding:8px 6px;text-align:center;font-size:9px;color:${textColor};border-bottom:1px solid ${borderColor}">${u.contractDuration || "—"}</td>
+    </tr>`;
+  }).join("");
+
+  const totalArea = unitsList.reduce((s, u) => s + parseNum(u.area), 0);
+  const totalMonthly = unitsList.reduce((s, u) => s + parseNum(u.monthlyRent), 0);
+  const totalAnnual = totalMonthly * 12;
+
+  return `
+  <div class="page" style="background:${bg};position:relative">
+    ${isMag ? `<div style="height:8px;background:linear-gradient(90deg,${GOLD} 0%,#8B6914 50%,${GOLD} 100%);flex-shrink:0"></div>` : ""}
+    <div style="height:56px;background:${isDark ? DARK_PANEL : isMag ? "#1a1a1a" : DELMON_TEXT};display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="${LOGO}" style="height:32px;width:auto;filter:brightness(0) invert(1)">
+        <div>
+          <div style="font-size:12px;font-weight:900;color:#fff">جدول الوحدات التفصيلي</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.6)">Detailed Units Schedule</div>
+        </div>
+      </div>
+      <div style="font-size:9px;color:rgba(255,255,255,0.7)">${data.projectName} | ${data.city}</div>
+    </div>
+    <div style="padding:14px 20px;height:682px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="background:${GOLD};padding:10px;text-align:center;border-radius:6px">
+          <div style="font-size:20px;font-weight:900;color:#fff">${unitsList.length}</div>
+          <div style="font-size:7.5px;color:rgba(255,255,255,0.85);margin-top:2px">إجمالي الوحدات</div>
+        </div>
+        <div style="background:${panelBg};padding:10px;text-align:center;border-radius:6px;border-top:3px solid ${GOLD}">
+          <div style="font-size:20px;font-weight:900;color:${GOLD}">${totalArea > 0 ? totalArea.toLocaleString("en-US") : "—"}</div>
+          <div style="font-size:7.5px;color:${subColor};margin-top:2px">إجمالي المساحة م²</div>
+        </div>
+        <div style="background:${panelBg};padding:10px;text-align:center;border-radius:6px;border-top:3px solid ${DELMON_BLUE}">
+          <div style="font-size:20px;font-weight:900;color:${DELMON_BLUE}">${totalMonthly > 0 ? totalMonthly.toLocaleString("en-US") : "—"}</div>
+          <div style="font-size:7.5px;color:${subColor};margin-top:2px">الإيجار الشهري ر.س</div>
+        </div>
+        <div style="background:${panelBg};padding:10px;text-align:center;border-radius:6px;border-top:3px solid ${GOLD}">
+          <div style="font-size:20px;font-weight:900;color:${GOLD}">${totalAnnual > 0 ? totalAnnual.toLocaleString("en-US") : "—"}</div>
+          <div style="font-size:7.5px;color:${subColor};margin-top:2px">الإيجار السنوي ر.س</div>
+        </div>
+      </div>
+      <div style="overflow:hidden;border:1px solid ${borderColor};border-radius:8px">
+        <table style="width:100%;border-collapse:collapse;font-family:Cairo,sans-serif">
+          <thead>
+            <tr style="background:${isDark ? DARK_PANEL : DELMON_TEXT}">
+              ${["#","رقم الوحدة","الطابق","النوع","المساحة م²","إيجار شهري ر.س","إيجار سنوي ر.س","سعر م² سنوي","مدة العقد"].map(h => `<th style="color:#fff;padding:9px 5px;text-align:center;font-size:8.5px;font-weight:800;border-left:1px solid rgba(255,255,255,0.1)">${h}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>${unitsRows || `<tr><td colspan="9" style="text-align:center;padding:32px;color:${subColor};font-size:12px">لا توجد وحدات مضافة</td></tr>`}</tbody>
+          ${unitsList.length > 0 ? `
+          <tfoot>
+            <tr style="background:${isDark ? "rgba(201,168,76,0.15)" : GOLD + "20"}">
+              <td colspan="4" style="padding:9px 8px;text-align:right;font-size:9px;font-weight:900;color:${GOLD}">الإجمالي</td>
+              <td style="padding:9px 8px;text-align:center;font-size:9px;font-weight:900;color:${GOLD}">${totalArea > 0 ? totalArea.toLocaleString("en-US") + " م²" : "—"}</td>
+              <td style="padding:9px 8px;text-align:center;font-size:9px;font-weight:900;color:${GOLD}">${totalMonthly > 0 ? totalMonthly.toLocaleString("en-US") + " ر.س" : "—"}</td>
+              <td style="padding:9px 8px;text-align:center;font-size:9px;font-weight:900;color:${DELMON_BLUE}">${totalAnnual > 0 ? totalAnnual.toLocaleString("en-US") + " ر.س" : "—"}</td>
+              <td colspan="2" style="padding:9px 8px;text-align:center;font-size:9px;color:${subColor}">—</td>
+            </tr>
+          </tfoot>` : ""}
+        </table>
+      </div>
+      <div style="margin-top:10px;background:${isDark ? "rgba(201,168,76,0.08)" : GOLD + "10"};border:1px solid ${isDark ? "rgba(201,168,76,0.2)" : GOLD + "30"};border-radius:8px;padding:10px 14px;text-align:right">
+        <div style="font-size:8.5px;color:${subColor};line-height:1.7">
+          ملاحظة: جميع الأسعار بالريال السعودي وتخضع للمراجعة والتفاوض. الأسعار لا تشمل ضريبة القيمة المضافة (VAT 15%). للاستفسار: <span style="font-weight:800;color:${textColor}">${data.contactPhone || "011-2080129"}</span>
+        </div>
+      </div>
+    </div>
+    ${footer("08 / 10", isDark ? DARK_PANEL : DELMON_TEXT, "#fff", GOLD)}
+  </div>`;
+}
+
+function page9(data: ProjectData, template: string): string {
+  const isDark = template === "dark";
+  const isMag = template === "magazine";
+  const bg = isDark ? DARK_BG : isMag ? "#F4F1EB" : "#fff";
+  const panelBg = isDark ? DARK_PANEL : isMag ? "#fff" : "#F7F6F2";
+  const textColor = isDark ? "#e0e0e0" : "#1A2B4A";
+  const subColor = isDark ? "#aaa" : "#64748B";
+  const borderColor = isDark ? "rgba(201,168,76,0.3)" : "#E2E8F0";
+
+  const leaseTerms = [
+    { icon: "📅", title: "مدة العقد", value: "5 سنوات قابلة للتجديد", sub: "بموافقة الطرفين قبل 90 يوماً من الانتهاء" },
+    { icon: "💳", title: "طريقة الدفع", value: "ربع سنوي مقدم", sub: "شيك مصرفي أو تحويل بنكي" },
+    { icon: "🔐", title: "الضمان المطلوب", value: "ضمان بنكي أو تأمين نقدي", sub: "يعادل إيجار 3 أشهر" },
+    { icon: "📋", title: "التنازل عن العقد", value: "غير مسموح به", sub: "إلا بموافقة خطية من المؤجر" },
+    { icon: "🔧", title: "الصيانة الدورية", value: "على عاتق المستأجر", sub: "الصيانة الكبرى على المؤجر" },
+    { icon: "📈", title: "زيادة الإيجار", value: "وفق اتفاق مسبق", sub: "لا تتجاوز 10% عند التجديد" },
+  ];
+
+  const procedures = [
+    { num: "01", title: "التقديم والاستفسار", desc: "التواصل مع فريق التأجير وتقديم طلب الاستئجار مع المستندات المطلوبة" },
+    { num: "02", title: "معاينة الوحدة", desc: "جدولة زيارة ميدانية لمعاينة الوحدة والتحقق من المواصفات" },
+    { num: "03", title: "التفاوض والاتفاق", desc: "مناقشة الشروط المالية والتشغيلية والتوصل إلى اتفاق مبدئي" },
+    { num: "04", title: "توقيع العقد", desc: "إعداد عقد الإيجار الرسمي وتوقيعه من الطرفين وتسجيله في إيجار" },
+  ];
+
+  return `
+  <div class="page" style="background:${bg};position:relative">
+    ${isMag ? `<div style="height:8px;background:linear-gradient(90deg,${GOLD} 0%,#8B6914 50%,${GOLD} 100%);flex-shrink:0"></div>` : ""}
+    <div style="height:56px;background:${isDark ? DARK_PANEL : isMag ? "#1a1a1a" : DELMON_TEXT};display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="${LOGO}" style="height:32px;width:auto;filter:brightness(0) invert(1)">
+        <div>
+          <div style="font-size:12px;font-weight:900;color:#fff">شروط التأجير والأحكام</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.6)">Lease Terms and Conditions</div>
+        </div>
+      </div>
+      <div style="font-size:9px;color:rgba(255,255,255,0.7)">${data.projectName} | ${data.city}</div>
+    </div>
+    <div style="padding:16px 24px;height:682px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;height:100%">
+        <div>
+          <div style="font-size:11px;font-weight:900;color:${textColor};margin-bottom:12px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+            <span>الشروط والأحكام الرئيسية</span>
+            <div style="width:24px;height:2px;background:${GOLD}"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            ${leaseTerms.map(t => `
+            <div style="background:${panelBg};border:1px solid ${borderColor};border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:10px;text-align:right">
+              <div style="font-size:18px;flex-shrink:0">${t.icon}</div>
+              <div style="flex:1">
+                <div style="font-size:9px;color:${subColor};margin-bottom:2px">${t.title}</div>
+                <div style="font-size:10px;font-weight:800;color:${textColor};margin-bottom:2px">${t.value}</div>
+                <div style="font-size:8px;color:${subColor}">${t.sub}</div>
+              </div>
+            </div>`).join("")}
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div style="font-size:11px;font-weight:900;color:${textColor};margin-bottom:12px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>إجراءات التأجير</span>
+              <div style="width:24px;height:2px;background:${GOLD}"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              ${procedures.map(p => `
+              <div style="background:${panelBg};border:1px solid ${borderColor};border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:10px;text-align:right">
+                <div style="background:${GOLD};color:#fff;font-size:9px;font-weight:900;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">${p.num}</div>
+                <div style="flex:1">
+                  <div style="font-size:10px;font-weight:800;color:${textColor};margin-bottom:2px">${p.title}</div>
+                  <div style="font-size:8px;color:${subColor};line-height:1.5">${p.desc}</div>
+                </div>
+              </div>`).join("")}
+            </div>
+          </div>
+          <div style="background:${isDark ? "rgba(201,168,76,0.08)" : GOLD + "12"};border:1px solid ${isDark ? "rgba(201,168,76,0.25)" : GOLD + "40"};border-radius:8px;padding:12px 14px">
+            <div style="font-size:10px;font-weight:900;color:${textColor};margin-bottom:8px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px">
+              <span>المستندات المطلوبة</span>
+              <div style="width:20px;height:2px;background:${GOLD}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+              ${["السجل التجاري","الهوية الوطنية / الإقامة","وثيقة التأمين","خطاب بنكي","عقد التأسيس","تفويض التوقيع"].map(doc => `
+              <div style="display:flex;align-items:center;gap:5px;text-align:right">
+                <div style="width:5px;height:5px;background:${GOLD};border-radius:50%;flex-shrink:0"></div>
+                <span style="font-size:8px;color:${subColor}">${doc}</span>
+              </div>`).join("")}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    ${footer("09 / 10", isDark ? DARK_PANEL : DELMON_TEXT, "#fff", GOLD)}
+  </div>`;
+}
+
+function page10(data: ProjectData, template: string, imgSrc: string): string {
+  const isDark = template === "dark";
+  const isMag = template === "magazine";
+  const overlayColor = isDark ? "rgba(10,20,40,0.88)" : isMag ? "rgba(26,43,74,0.82)" : "rgba(13,35,64,0.85)";
+
+  return `
+  <div class="page" style="position:relative;overflow:hidden">
+    <img src="${imgSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0">
+    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:${overlayColor};z-index:1"></div>
+    <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,${GOLD} 0%,#8B6914 50%,${GOLD} 100%);z-index:3"></div>
+    <div style="position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 40px;border-bottom:1px solid rgba(201,168,76,0.3)">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:1px">${data.projectType || "مشروع تجاري"} | ${data.city || ""}</div>
+        <img src="${DEFAULT_LOGO_IMG}" style="height:44px;object-fit:contain;filter:brightness(0) invert(1)">
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 80px;text-align:center">
+        <div style="width:60px;height:3px;background:${GOLD};margin-bottom:20px"></div>
+        <div style="font-size:13px;font-weight:700;color:${GOLD};letter-spacing:2px;margin-bottom:14px">شكراً لاهتمامكم</div>
+        <div style="font-size:44px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:16px">${data.projectName || "مشروع دلمون"}</div>
+        <div style="width:100px;height:1px;background:rgba(201,168,76,0.5);margin-bottom:20px"></div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.9;max-width:600px">
+          فريق التأجير في شركة دلمون للاستثمار يرحب بكم ويسعد بخدمتكم<br>
+          <span style="font-size:10px;color:rgba(255,255,255,0.6)">نسعى لتقديم أفضل الحلول التجارية التي تلبي احتياجاتكم وتحقق أهدافكم الاستثمارية</span>
+        </div>
+        <div style="width:60px;height:3px;background:${GOLD};margin-top:20px"></div>
+      </div>
+      <div style="background:rgba(0,0,0,0.5);border-top:1px solid rgba(201,168,76,0.3);padding:0 40px">
+        <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr 1px 1fr;height:80px">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+            <div style="font-size:9px;color:rgba(255,255,255,0.5)">الهاتف</div>
+            <div style="font-size:13px;font-weight:900;color:${GOLD}">${data.contactPhone || "011-2080129"}</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.15)"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+            <div style="font-size:9px;color:rgba(255,255,255,0.5)">البريد الإلكتروني</div>
+            <div style="font-size:11px;font-weight:700;color:#fff">${data.contactEmail || "info@delmoninvest.com"}</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.15)"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+            <div style="font-size:9px;color:rgba(255,255,255,0.5)">الموقع الإلكتروني</div>
+            <div style="font-size:11px;font-weight:700;color:#fff">www.delmoninvest.com</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.15)"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+            <div style="font-size:9px;color:rgba(255,255,255,0.5)">المقر الرئيسي</div>
+            <div style="font-size:11px;font-weight:700;color:#fff">الرياض، المملكة العربية السعودية</div>
+          </div>
+        </div>
+        <div style="text-align:center;padding:8px 0;border-top:1px solid rgba(255,255,255,0.1)">
+          <span style="font-size:8px;color:rgba(255,255,255,0.4)">شركة دلمون للاستثمار — DELMON INVESTMENT COMPANY جميع الحقوق محفوظة</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
 function buildBrochureHTML(data: ProjectData, template: string): string {
   const amenitiesList = data.amenities
     ? data.amenities.split(/[,،\n]/).map((s: string) => s.trim()).filter(Boolean)
@@ -1649,9 +2031,12 @@ function buildBrochureHTML(data: ProjectData, template: string): string {
   const p2 = page2(normalizedData, template, finalAmenitiesList);
   const p3 = page3(normalizedData, template);
   const p4 = page4(normalizedData, template);
-  // Page 5: photo gallery — only when a project image is provided
   const p5 = page5(normalizedData, template, imgSrc, finalAmenitiesList);
   const p6 = page6(normalizedData, template, imgSrc);
+  const p7 = page7(normalizedData, template);
+  const p8 = page8(normalizedData, template);
+  const p9 = page9(normalizedData, template);
+  const p10 = page10(normalizedData, template, imgSrc);
 
   return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
@@ -1697,6 +2082,10 @@ ${p3}
 ${p4}
 ${p5}
 ${p6}
+${p7}
+${p8}
+${p9}
+${p10}
 </body>
 </html>`;
 }
