@@ -1,3 +1,4 @@
+import { formatNumber } from "@/lib/formatNumber";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
@@ -666,9 +667,9 @@ export default function Home() {
         {/* ===== STATS BAR ===== */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
-            { label: "إجمالي الوحدات", value: String(projectData.units.length), icon: Building2 },
-            { label: "إجمالي المساحة", value: `${totalArea.toLocaleString("en-US")} م²`, icon: MapPin },
-            { label: "المشروع المحدد", value: projectData.projectName || "—", icon: Building2 },
+           { label: "إجمالي الوحدات", value: String(projectData.units.length), icon: Building2 },
+            { label: "إجمالي المساحة", value: totalArea > 0 ? `${formatNumber(totalArea)} م²` : projectData.totalArea ? `${formatNumber(parseFloat(projectData.totalArea))} م²` : "٠ م²", icon: MapPin },
+           { label: "المشروع المحدد", value: projectData.projectName || "—", icon: Building2 },
             { label: "اكتمال البيانات", value: `${completionPct}%`, icon: LayoutList },
           ].map((stat, i) => (
             <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-[#D0D0D0] flex items-center gap-3 relative overflow-hidden group hover:border-[#949437]/40 hover:shadow-md transition-all">
@@ -808,7 +809,7 @@ export default function Home() {
                   {unitsWithArea}/{projectData.units.length} وحدة مكتملة البيانات
                 </span>
                 <span className="text-xs font-bold text-[#2C2C2C]">
-                  {totalArea > 0 ? `${totalArea.toLocaleString("en-US")} م²` : "أدخل المساحات"}
+                  {totalArea > 0 ? `${formatNumber(totalArea)} م²` : "أدخل المساحات"}
                 </span>
               </div>
             </div>
@@ -854,4 +855,3 @@ export default function Home() {
     </div>
   );
 }
-
