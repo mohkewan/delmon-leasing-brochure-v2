@@ -4,7 +4,7 @@ import * as os from "os";
 import * as path from "path";
 import * as fsSync from "fs";
 import { fileURLToPath } from "url";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
