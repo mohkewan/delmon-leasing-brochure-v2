@@ -98,7 +98,7 @@ export default function BrochurePreview({ data }: Props) {
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
                 {[
                   { v: String(data.units.length), l: "وحدة شاغرة", primary: true },
-                  { v: `${formatNumber(totalArea)} م²`, l: "إجمالي المساحة", primary: false },
+                  { v: `${formatNumber(totalArea)} م²`, l: "إجمالي مساحة الوحدات الشاغرة", primary: false },
                   ...(data.floors ? [{ v: data.floors, l: "طابق", primary: false }] : []),
                   ...(data.completionYear ? [{ v: data.completionYear, l: "سنة الإنجاز", primary: false }] : []),
                 ].map((s, i) => (
@@ -197,7 +197,7 @@ export default function BrochurePreview({ data }: Props) {
                 { label: "عدد الطوابق", value: data.floors },
                 { label: "سنة الإنجاز", value: data.completionYear },
                 { label: "الوحدات الشاغرة", value: String(data.units.length) },
-                { label: "إجمالي مساحة الشاغر", value: totalArea > 0 ? `${formatNumber(totalArea)} م²` : "" },
+                { label: "إجمالي مساحة الوحدات الشاغرة", value: totalArea > 0 ? `${formatNumber(totalArea)} م²` : "" },
               ].filter((x) => x.value).map((item, i) => (
                 <div key={i} style={{ background: BG_SECTION, borderRadius: 8, padding: "10px 14px", border: `1px solid ${BORDER_LIGHT}`, borderTop: `3px solid ${i % 2 === 0 ? GOLD : CYAN}` }}>
                   <div style={{ fontSize: 9, color: LIGHT_TEXT, marginBottom: 3 }}>{item.label}</div>
@@ -268,7 +268,7 @@ export default function BrochurePreview({ data }: Props) {
           <div style={{ display: "flex", gap: 14 }}>
             {[
               { label: "إجمالي الوحدات الشاغرة", value: String(data.units.length), sub: "وحدة", accent: GOLD },
-              { label: "إجمالي المساحة الشاغرة", value: formatNumber(totalArea), sub: "م²", accent: CYAN },
+              { label: "إجمالي مساحة الوحدات الشاغرة", value: formatNumber(totalArea), sub: "م²", accent: CYAN },
               { label: "متوسط مساحة الوحدة", value: data.units.length ? Math.round(totalArea / data.units.length) : "—", sub: "م²", accent: GOLD_80 },
             ].map((c, i) => (
               <div key={i} style={{ flex: 1, background: BG_SECTION, border: `1px solid ${BORDER_LIGHT}`, borderTop: `4px solid ${c.accent}`, borderRadius: 10, padding: "14px 18px", textAlign: "center" }}>

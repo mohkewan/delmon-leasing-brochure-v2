@@ -69,7 +69,7 @@ export default function BrochurePreviewModern({ data }: Props) {
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
                 {[
                   { v: String(data.units.length), l: "وحدة شاغرة", primary: true },
-                  { v: `${formatNumber(totalArea)} م²`, l: "إجمالي المساحة", primary: false },
+                  { v: `${formatNumber(totalArea)} م²`, l: "إجمالي مساحة الوحدات الشاغرة", primary: false },
                   ...(data.floors ? [{ v: data.floors, l: "طابق", primary: false }] : []),
                   ...(data.completionYear ? [{ v: data.completionYear, l: "سنة الإنجاز", primary: false }] : []),
                 ].map((s, i) => (
@@ -209,7 +209,7 @@ export default function BrochurePreviewModern({ data }: Props) {
           <div style={{ display: "flex", gap: 14 }}>
             {[
               { label: "إجمالي الوحدات الشاغرة", value: String(data.units.length), sub: "وحدة", accent: GREEN },
-              { label: "إجمالي المساحة الشاغرة", value: formatNumber(totalArea), sub: "م²", accent: GREEN_LIGHT },
+              { label: "إجمالي مساحة الوحدات الشاغرة", value: formatNumber(totalArea), sub: "م²", accent: GREEN_LIGHT },
               { label: "متوسط مساحة الوحدة", value: data.units.length ? Math.round(totalArea / data.units.length) : "—", sub: "م²", accent: GREEN },
             ].map((c, i) => (
               <div key={i} style={{ flex: 1, background: WHITE, border: `1px solid ${GREEN_BORDER}`, borderTop: `4px solid ${c.accent}`, borderRadius: 10, padding: "14px 18px", textAlign: "center", boxShadow: "0 1px 4px rgba(26,107,74,0.08)" }}>

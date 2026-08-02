@@ -74,7 +74,7 @@ export default function BrochurePreviewDark({ data }: Props) {
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
                 {[
                   { v: String(data.units.length), l: "وحدة شاغرة", primary: true },
-                  { v: `${totalArea.toLocaleString("en-US")} م²`, l: "إجمالي المساحة", primary: false },
+                  { v: `${totalArea.toLocaleString("en-US")} م²`, l: "إجمالي مساحة الوحدات الشاغرة", primary: false },
                   ...(data.floors ? [{ v: data.floors, l: "طابق", primary: false }] : []),
                   ...(data.completionYear ? [{ v: data.completionYear, l: "سنة الإنجاز", primary: false }] : []),
                 ].map((s, i) => (
@@ -214,7 +214,7 @@ export default function BrochurePreviewDark({ data }: Props) {
           <div style={{ display: "flex", gap: 14 }}>
             {[
               { label: "إجمالي الوحدات الشاغرة", value: String(data.units.length), sub: "وحدة", accent: GOLD },
-              { label: "إجمالي المساحة الشاغرة", value: totalArea.toLocaleString("en-US"), sub: "م²", accent: GOLD_LIGHT },
+              { label: "إجمالي مساحة الوحدات الشاغرة", value: totalArea.toLocaleString("en-US"), sub: "م²", accent: GOLD_LIGHT },
               { label: "متوسط مساحة الوحدة", value: data.units.length ? Math.round(totalArea / data.units.length).toLocaleString("en-US") : "—", sub: "م²", accent: GOLD },
             ].map((c, i) => (
               <div key={i} style={{ flex: 1, background: BG_CARD, border: `1px solid ${GOLD_BORDER}`, borderTop: `4px solid ${c.accent}`, borderRadius: 10, padding: "14px 18px", textAlign: "center" }}>

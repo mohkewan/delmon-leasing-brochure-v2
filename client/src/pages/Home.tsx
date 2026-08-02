@@ -783,7 +783,7 @@ export default function Home() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
            { label: "إجمالي الوحدات", value: String(projectData.units.length), icon: Building2 },
-            { label: "إجمالي المساحة", value: totalArea > 0 ? `${formatNumber(totalArea)} م²` : projectData.totalArea ? `${formatNumber(parseFloat(projectData.totalArea))} م²` : "٠ م²", icon: MapPin },
+            { label: "إجمالي مساحة الوحدات الشاغرة", value: totalArea > 0 ? `${formatNumber(totalArea)} م²` : "٠ م²", icon: MapPin },
            { label: "المشروع المحدد", value: projectData.projectName || "—", icon: Building2 },
             { label: "اكتمال البيانات", value: `${completionPct}%`, icon: LayoutList },
           ].map((stat, i) => (

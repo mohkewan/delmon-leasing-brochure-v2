@@ -456,7 +456,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
         </div>
         <div style="text-align:center;padding:0 10px">
           <div style="font-size:24px;font-weight:900;color:${C.gold};line-height:1">${totalAreaFmt}</div>
-          <div style="font-size:7px;color:rgba(255,255,255,0.6);margin-top:3px">إجمالي المساحة م²</div>
+          <div style="font-size:7px;color:rgba(255,255,255,0.6);margin-top:3px">إجمالي مساحة الوحدات الشاغرة م²</div>
         </div>
       </div>
       <!-- المحتوى الرئيسي: عمودان -->
@@ -482,7 +482,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
                 {icon:"🏙️",label:"المدينة",value:data.city},
                 {icon:"📍",label:"الموقع / الحي",value:data.district},
                 {icon:"🏗️",label:"نوع المشروع",value:data.projectType},
-                {icon:"📐",label:"إجمالي المساحة",value:totalAreaFmt},
+                {icon:"📐",label:"إجمالي مساحة الوحدات الشاغرة",value:totalAreaFmt},
                 {icon:"🏢",label:"عدد الطوابق",value:data.floors||"—"},
                 {icon:"📅",label:"سنة الإنجاز",value:data.completionYear||"—"},
               ].map(c => `
@@ -640,7 +640,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
           {v:occupancyFmt,l:"نسبة الإشغال"},
           {v:annualRentFmt,l:"الإيجار السنوي"},
           {v:totalUnitsCount>0?String(totalUnitsCount):"—",l:"عدد الوحدات"},
-          {v:totalAreaFmt,l:"إجمالي المساحة"},
+          {v:totalAreaFmt,l:"إجمالي مساحة الوحدات الشاغرة"},
         ].map((k,i) => `
         <div style="text-align:center;${i>0?`border-right:1px solid ${C.darkBorder}`:''}">
           <div style="font-size:22px;font-weight:900;color:${C.gold};line-height:1">${k.v}</div>
@@ -800,7 +800,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
         {v:occupancyFmt,l:"نسبة الإشغال"},
         {v:annualRentFmt,l:"الإيجار السنوي"},
         {v:totalUnitsCount>0?String(totalUnitsCount):"—",l:"عدد الوحدات"},
-        {v:totalAreaFmt,l:"إجمالي المساحة"},
+        {v:totalAreaFmt,l:"إجمالي مساحة الوحدات الشاغرة"},
       ].map((k,i) => `
       <div style="text-align:center;${i>0?`border-right:1px solid ${C.borderGray}`:''}">
         <div style="font-size:20px;font-weight:900;color:${C.black};line-height:1">${k.v}</div>
@@ -1106,7 +1106,7 @@ function page3(data: ProjectData, template: string) {
             </div>
             <div style="background:${panelBg};padding:12px;text-align:center;border-top:3px solid ${GOLD}">
               <div style="font-size:22px;font-weight:900;color:${GOLD};line-height:1">${totalArea > 0 ? totalArea.toLocaleString("en-US") : "—"}</div>
-              <div style="font-size:8px;color:${subColor};margin-top:4px">إجمالي المساحة م²</div>
+              <div style="font-size:8px;color:${subColor};margin-top:4px">إجمالي مساحة الوحدات الشاغرة م²</div>
             </div>
             <div style="background:${panelBg};padding:12px;text-align:center;border-top:3px solid ${GOLD}">
               <div style="font-size:22px;font-weight:900;color:${GOLD};line-height:1">${avgRent > 0 ? avgRent.toLocaleString("en-US") : "—"}</div>
@@ -1796,7 +1796,7 @@ function page8(data: ProjectData, template: string): string {
         </div>
         <div style="background:${panelBg};padding:10px;text-align:center;border-radius:6px;border-top:3px solid ${GOLD}">
           <div style="font-size:20px;font-weight:900;color:${GOLD}">${totalArea > 0 ? totalArea.toLocaleString("en-US") : "—"}</div>
-          <div style="font-size:7.5px;color:${subColor};margin-top:2px">إجمالي المساحة م²</div>
+          <div style="font-size:7.5px;color:${subColor};margin-top:2px">إجمالي مساحة الوحدات الشاغرة م²</div>
         </div>
         <div style="background:${panelBg};padding:10px;text-align:center;border-radius:6px;border-top:3px solid ${DELMON_BLUE}">
           <div style="font-size:20px;font-weight:900;color:${DELMON_BLUE}">${totalMonthly > 0 ? totalMonthly.toLocaleString("en-US") : "—"}</div>
