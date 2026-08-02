@@ -681,22 +681,9 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
               </div>`).join("")}
             </div>
           </div>
-          <!-- محفظة مشاريع دلمون -->
-          <div>
-            <div style="font-size:8px;font-weight:900;color:${C.darkBlue};margin-bottom:6px;display:flex;align-items:center;gap:6px;justify-content:flex-end">
-              <span>محفظة مشاريع دلمون</span>
-              <div style="width:30px;height:2px;background:${C.gold}"></div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
-              ${["مولات تجارية","مكاتب ومجمعات","معارض تجارية","فنادق وضيافة"].map((p: string) => `
-              <div style="background:${C.offWhite};border-right:3px solid ${C.cornBlue};padding:7px 12px;text-align:right">
-                <div style="font-size:8px;font-weight:700;color:${C.darkBlue}">${p}</div>
-              </div>`).join("")}
-            </div>
-          </div>
         </div>
         <!-- العمود الأيمن: شروط التأجير + إحصائيات -->
-        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px;overflow:hidden">
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px;overflow:hidden;justify-content:space-between">
           <!-- شروط التأجير -->
           <div>
             <div style="font-size:8px;font-weight:900;color:${C.darkBlue};margin-bottom:6px;display:flex;align-items:center;gap:6px;justify-content:flex-end">
@@ -759,6 +746,19 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
               <div style="font-size:7px;color:rgba(255,255,255,0.5)">${data.contactEmail||"leasing@delmoninvest.com"}</div>
               <div style="font-size:13px;font-weight:900;color:${C.gold}">${data.contactPhone||"011-2080129"}</div>
               <div style="font-size:7px;color:rgba(255,255,255,0.5)">للتواصل والاستفسار</div>
+            </div>
+          </div>
+          <!-- محفظة مشاريع دلمون -->
+          <div>
+            <div style="font-size:8px;font-weight:900;color:${C.darkBlue};margin-bottom:6px;display:flex;align-items:center;gap:6px;justify-content:flex-end">
+              <span>محفظة مشاريع دلمون</span>
+              <div style="width:30px;height:2px;background:${C.gold}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+              ${["مولات تجارية","مكاتب ومجمعات","معارض تجارية","فنادق وضيافة"].map((p: string) => `
+              <div style="background:${C.offWhite};border-right:3px solid ${C.cornBlue};padding:7px 12px;text-align:right">
+                <div style="font-size:8px;font-weight:700;color:${C.darkBlue}">${p}</div>
+              </div>`).join("")}
             </div>
           </div>
         </div>
@@ -1014,16 +1014,6 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
             </div>`).join("")}
           </div>
         </div>
-        <!-- محفظة مشاريع editorial -->
-        <div>
-          <div style="font-size:8px;font-weight:900;color:${C.black};margin-bottom:5px;text-align:right">محفظة مشاريع دلمون</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
-            ${["مولات تجارية","مكاتب ومجمعات","معارض تجارية","فنادق وضيافة"].map((p: string) => `
-            <div style="background:${C.white};border:1px solid ${C.borderGray};border-right:3px solid ${C.black};padding:6px 10px;text-align:right">
-              <div style="font-size:7.5px;font-weight:700;color:${C.black}">${p}</div>
-            </div>`).join("")}
-          </div>
-        </div>
       </div>
       <!-- العمود الأيمن editorial -->
       <div style="padding:14px 20px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
@@ -1078,6 +1068,16 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
           <div style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:8px;text-align:center">
             <div style="font-size:14px;font-weight:900;color:${C.gold}">${data.contactPhone||"011-2080129"}</div>
             <div style="font-size:7px;color:#555;margin-top:2px">${data.contactEmail||"leasing@delmoninvest.com"}</div>
+          </div>
+        </div>
+        <!-- محفظة مشاريع editorial -->
+        <div>
+          <div style="font-size:8px;font-weight:900;color:${C.black};margin-bottom:5px;text-align:right">محفظة مشاريع دلمون</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+            ${["مولات تجارية","مكاتب ومجمعات","معارض تجارية","فنادق وضيافة"].map((p: string) => `
+            <div style="background:${C.white};border:1px solid ${C.borderGray};border-right:3px solid ${C.black};padding:6px 10px;text-align:right">
+              <div style="font-size:7.5px;font-weight:700;color:${C.black}">${p}</div>
+            </div>`).join("")}
           </div>
         </div>
       </div>
