@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import puppeteer from "puppeteer-core";
+import { spawn } from "child_process";
+import * as os from "os";
+import * as path from "path";
+import * as fsSync from "fs";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Unit {
@@ -2138,38 +2144,8 @@ export async function pdfRouteHandler(req: Request, res: Response) {
     }
     const html = buildBrochureHTML(resolvedData, template);
 
-    const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/chromium",
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--font-render-hinting=none",
-      ],
-    });
-
-    const page = await browser.newPage();
-    await page.setViewport({ width: 1123, height: 794, deviceScaleFactor: 1 });
-    await page.emulateMediaType("screen");
-    await page.setContent(html, {
-      waitUntil: ["load", "domcontentloaded"],
-      timeout: 30000,
-    });
-
-    await page.evaluate(() => (document as any).fonts.ready);
-    await new Promise((r) => setTimeout(r, 2000));
-
-    const pdfBuffer = await page.pdf({
-      width: "297mm",
-      height: "210mm",
-      preferCSSPageSize: true,
-      printBackground: true,
-      margin: { top: "0", right: "0", bottom: "0", left: "0" },
-    });
-
-    await browser.close();
+    // ── WeasyPrint PDF generation (serverless-safe, no Chromium OOM) ──
+    const pdfBuffer = await generatePDFWithWeasyPrint(html);
 
     const projectName = data.projectName || "بروشور-دلمون";
     const city = data.city ? `-${data.city}` : "";
@@ -2185,4 +2161,87 @@ export async function pdfRouteHandler(req: Request, res: Response) {
     console.error("[PDF Route Error]", err);
     res.status(500).json({ error: "فشل توليد PDF", details: String(err) });
   }
+}
+
+// ── WeasyPrint helper ─────────────────────────────────────────────────────────
+async function generatePDFWithWeasyPrint(html: string): Promise<Buffer> {
+  const tmpDir = os.tmpdir();
+  const tmpId = `delmon_pdf_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const htmlPath = path.join(tmpDir, `${tmpId}.html`);
+  const pdfPath = path.join(tmpDir, `${tmpId}.pdf`);
+
+  // Locate font directory (works locally and in Docker /app)
+  const fontDirs = [
+    path.join(__dirname, "fonts"),
+    path.join(process.cwd(), "server", "fonts"),
+    "/app/server/fonts",
+    "/usr/share/fonts/truetype/cairo",
+  ];
+  const fontDir =
+    fontDirs.find((d) => {
+      try {
+        return fsSync.existsSync(path.join(d, "Cairo-Regular.ttf"));
+      } catch {
+        return false;
+      }
+    }) || "/usr/share/fonts/truetype/cairo";
+
+  const cairoRegular = path.join(fontDir, "Cairo-Regular.ttf");
+  const cairoBold = path.join(fontDir, "Cairo-Bold.ttf");
+  const cairoSemiBold = path.join(fontDir, "Cairo-SemiBold.ttf");
+
+  // Inject @font-face so WeasyPrint uses local Cairo fonts
+  const fontFaceCSS = `
+@font-face { font-family: Cairo; src: url("file://${cairoRegular}") format("truetype"); font-weight: 400; }
+@font-face { font-family: Cairo; src: url("file://${cairoBold}") format("truetype"); font-weight: 700; }
+@font-face { font-family: Cairo; src: url("file://${cairoSemiBold}") format("truetype"); font-weight: 600; }
+`;
+  const htmlWithFonts = html.replace(/<style>/, `<style>\n${fontFaceCSS}`);
+  fsSync.writeFileSync(htmlPath, htmlWithFonts, "utf8");
+
+  const pythonScript = `
+import sys
+from weasyprint import HTML
+from weasyprint.text.fonts import FontConfiguration
+font_config = FontConfiguration()
+HTML(filename=sys.argv[1]).write_pdf(sys.argv[2], font_config=font_config)
+`;
+
+  return new Promise((resolve, reject) => {
+    const proc = spawn("python3", ["-c", pythonScript, htmlPath, pdfPath], {
+      timeout: 90000,
+    });
+    let stderr = "";
+    proc.stderr.on("data", (d: Buffer) => {
+      stderr += d.toString();
+    });
+    proc.on("close", (code) => {
+      try {
+        fsSync.unlinkSync(htmlPath);
+      } catch {}
+      if (code !== 0) {
+        try {
+          fsSync.unlinkSync(pdfPath);
+        } catch {}
+        reject(new Error(`WeasyPrint exited ${code}: ${stderr.slice(0, 500)}`));
+        return;
+      }
+      try {
+        const buf = fsSync.readFileSync(pdfPath);
+        fsSync.unlinkSync(pdfPath);
+        resolve(buf);
+      } catch (e) {
+        reject(e);
+      }
+    });
+    proc.on("error", (e) => {
+      try {
+        fsSync.unlinkSync(htmlPath);
+      } catch {}
+      try {
+        fsSync.unlinkSync(pdfPath);
+      } catch {}
+      reject(e);
+    });
+  });
 }
