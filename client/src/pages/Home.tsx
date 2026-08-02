@@ -123,8 +123,16 @@ export default function Home() {
     onSuccess: () => {
       toast.success("✅ تم حفظ البروشور في الأرشيف");
     },
-    onError: () => {
-      toast.error("خطأ في الحفظ — تأكد من تسجيل الدخول");
+    onError: (err) => {
+      const msg = err?.message ?? "";
+      if (msg.includes("10001") || msg.toLowerCase().includes("login") || msg.toLowerCase().includes("unauthorized")) {
+        toast.error("يجب تسجيل الدخول أولاً لحفظ البروشور في الأرشيف", {
+          action: { label: "تسجيل الدخول", onClick: () => startLogin() },
+          duration: 6000,
+        });
+      } else {
+        toast.error(`خطأ في الحفظ: ${msg || "حاول مرة أخرى"}`);
+      }
     },
   });
   const trackEventMutation = trpc.analytics.track.useMutation();
@@ -132,6 +140,13 @@ export default function Home() {
   const handleSaveToArchive = async () => {
     if (!projectData.projectName) {
       toast.error("يرجى إدخال اسم المشروع أولاً");
+      return;
+    }
+    if (!isAuthenticated) {
+      toast.error("يجب تسجيل الدخول أولاً لحفظ البروشور في الأرشيف", {
+        action: { label: "تسجيل الدخول", onClick: () => startLogin() },
+        duration: 6000,
+      });
       return;
     }
     saveBrochureMutation.mutate({
