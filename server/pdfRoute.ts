@@ -2136,16 +2136,37 @@ export async function pdfRouteHandler(req: Request, res: Response) {
       return;
     }
 
-    // Pre-fetch project image as base64 so Puppeteer can render it
+    // Pre-fetch project image and save to temp file for WeasyPrint (avoids base64 OOM)
     let resolvedData = { ...data };
     if (data.projectImage && data.projectImage.startsWith("/manus-storage/")) {
       const b64 = await fetchImageAsBase64(data.projectImage);
       if (b64) resolvedData.projectImage = b64;
     }
+    // If image is base64, write to temp file and replace with file:// URL
+    let tmpImagePath: string | null = null;
+      if (resolvedData.projectImage && resolvedData.projectImage.startsWith("data:image")) {
+        try {
+          const sepIdx = resolvedData.projectImage.indexOf(",");
+          const header = sepIdx > 0 ? resolvedData.projectImage.slice(0, sepIdx) : "";
+          const b64Data = sepIdx > 0 ? resolvedData.projectImage.slice(sepIdx + 1) : "";
+          const mimeMatch = header.match(/^data:(image\/[\w]+);base64$/);
+          const match = mimeMatch && b64Data ? [null, mimeMatch[1], b64Data] : null;
+          if (match) {
+            const mimeStr = (match[1] as string) || "image/jpeg";
+            const ext = mimeStr.replace("image/", "").replace("jpeg", "jpg");
+            tmpImagePath = path.join(os.tmpdir(), `delmon_img_${Date.now()}.${ext}`);
+            fsSync.writeFileSync(tmpImagePath, Buffer.from(match[2] as string, "base64"));
+            resolvedData.projectImage = `file://${tmpImagePath}`;
+          }
+        } catch {}
+      }
     const html = buildBrochureHTML(resolvedData, template);
 
     // ── WeasyPrint PDF generation (serverless-safe, no Chromium OOM) ──
     const pdfBuffer = await generatePDFWithWeasyPrint(html);
+
+    // Clean up temp image file
+    if (tmpImagePath) { try { fsSync.unlinkSync(tmpImagePath); } catch {} }
 
     const projectName = data.projectName || "بروشور-دلمون";
     const city = data.city ? `-${data.city}` : "";
