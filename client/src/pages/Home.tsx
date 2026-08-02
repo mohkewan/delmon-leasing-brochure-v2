@@ -449,14 +449,54 @@ export default function Home() {
   const totalArea = projectData.units.reduce((sum, u) => sum + (parseFloat(u.area) || 0), 0);
 
   // Completion percentage for progress indicator
-  const filledFields = [
+  // ── Completion percentage ──────────────────────────────────────────────
+  // حقول المشروع الأساسية (4 حقول)
+  const projectFields = [
     projectData.projectName,
     projectData.projectType,
     projectData.city,
     projectData.description,
   ].filter(Boolean).length;
-  const completionPct = Math.round((filledFields / 4) * 100);
+
+  // حقول الوحدات المالية: كل وحدة يجب أن تحتوي على area > 0 و monthlyRent > 0 و unitType
+  const hasUnits = projectData.units.length > 0;
+  const unitsComplete = hasUnits
+    ? projectData.units.every(
+        (u) =>
+          parseFloat(u.area) > 0 &&
+          parseFloat(String(u.monthlyRent).replace(/,/g, "")) > 0 &&
+          u.unitType
+      )
+    : false;
+
+  // الوزن: 4 حقول مشروع (50%) + وحدات مكتملة (50%)
+  const projectScore = (projectFields / 4) * 50;
+  const unitsScore = hasUnits
+    ? (projectData.units.filter(
+        (u) =>
+          parseFloat(u.area) > 0 &&
+          parseFloat(String(u.monthlyRent).replace(/,/g, "")) > 0 &&
+          u.unitType
+      ).length /
+        projectData.units.length) *
+      50
+    : 0;
+  const completionPct = Math.round(projectScore + unitsScore);
   const unitsWithArea = projectData.units.filter((u) => u.area).length;
+
+  // وحدات ناقصة البيانات المالية (للتمرير إلى UnitsTab)
+  const incompleteUnitIds = new Set(
+    projectData.units
+      .filter(
+        (u) =>
+          !(
+            parseFloat(u.area) > 0 &&
+            parseFloat(String(u.monthlyRent).replace(/,/g, "")) > 0 &&
+            u.unitType
+          )
+      )
+      .map((u) => u.id)
+  );
 
   return (
     <div className="min-h-screen bg-[#F0F0F0]" dir="rtl">
@@ -751,6 +791,7 @@ export default function Home() {
                   addUnit={addUnit}
                   removeUnit={removeUnit}
                   updateUnit={updateUnit}
+                  incompleteUnitIds={incompleteUnitIds}
                 />
               )}
               {/* ---- CONTACT TAB ---- */}

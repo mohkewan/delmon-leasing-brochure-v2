@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Unit, UnitType, ProjectData } from "@/pages/Home";
 
 interface UnitsTabProps {
@@ -11,11 +12,12 @@ interface UnitsTabProps {
   addUnit: () => void;
   removeUnit: (id: string) => void;
   updateUnit: (id: string, field: keyof Unit, value: string) => void;
+  incompleteUnitIds?: Set<string>;
 }
 
 const UNIT_TYPES: UnitType[] = ["مكتب", "معرض", "محل تجاري", "مستودع", "وحدة سكنية", "فندق", "أخرى"];
 
-export default function UnitsTab({ units, addUnit, removeUnit, updateUnit }: UnitsTabProps) {
+export default function UnitsTab({ units, addUnit, removeUnit, updateUnit, incompleteUnitIds }: UnitsTabProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -35,9 +37,17 @@ export default function UnitsTab({ units, addUnit, removeUnit, updateUnit }: Uni
           className="border border-[#D0D0D0] rounded-xl p-4 bg-[#F8F9FD] relative"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-bold text-[#2C2C2C] bg-[#949437]/10 px-3 py-1 rounded-full">
-              وحدة {idx + 1}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-[#2C2C2C] bg-[#949437]/10 px-3 py-1 rounded-full">
+                وحدة {idx + 1}
+              </span>
+              {incompleteUnitIds?.has(unit.id) && (
+                <span className="flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
+                  <AlertTriangle className="w-3 h-3" />
+                  بيانات ناقصة
+                </span>
+              )}
+            </div>
             {units.length > 1 && (
               <button
                 onClick={() => removeUnit(unit.id)}
