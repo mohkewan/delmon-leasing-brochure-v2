@@ -117,9 +117,9 @@ async function fetchImageAsBase64(url: string): Promise<string> {
 // ── الألوان الرسمية ────────────────────────────────────────────────────────
 const C = {
   white:    "#FFFFFF",
-  offWhite: "#F8F7F4",
-  lightGray:"#F0EDE6",
-  borderGray:"#E0DDD5",
+  offWhite: "#FFFFFF",
+  lightGray:"#F5F5F3",
+  borderGray:"#E0E0E0",
   cornBlue: "#6B8EC2",
   darkBlue: "#1A3A5C",
   navyBlue: "#0D2340",

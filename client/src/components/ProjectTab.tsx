@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ProjectData } from "@/pages/Home";
 
 interface ProjectTabProps {
@@ -14,12 +14,40 @@ const PROJECT_TYPES = ["مجمع تجاري", "مول تجاري", "مكاتب �
 
 export default function ProjectTab({ projectData, updateProject }: ProjectTabProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isEnhancing, setIsEnhancing] = useState(false);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // قراءة الصورة كـ base64 أولاً
     const reader = new FileReader();
-    reader.onload = (ev) => updateProject("projectImage", ev.target?.result as string);
+    reader.onload = async (ev) => {
+      const rawDataUrl = ev.target?.result as string;
+      if (!rawDataUrl) return;
+
+      // محاولة تحسين الصورة عبر السيرفر
+      setIsEnhancing(true);
+      try {
+        const resp = await fetch("/api/enhance-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageDataUrl: rawDataUrl }),
+        });
+        if (resp.ok) {
+          const { enhancedDataUrl } = await resp.json();
+          updateProject("projectImage", enhancedDataUrl);
+        } else {
+          // fallback: استخدام الصورة الأصلية بدون تحسين
+          updateProject("projectImage", rawDataUrl);
+        }
+      } catch {
+        // fallback: استخدام الصورة الأصلية بدون تحسين
+        updateProject("projectImage", rawDataUrl);
+      } finally {
+        setIsEnhancing(false);
+      }
+    };
     reader.readAsDataURL(file);
   };
 
@@ -124,7 +152,12 @@ export default function ProjectTab({ projectData, updateProject }: ProjectTabPro
           onClick={() => fileInputRef.current?.click()}
           className="border-2 border-dashed border-[#949437]/40 rounded-xl p-4 text-center cursor-pointer hover:border-[#949437] hover:bg-[#949437]/5 transition-all"
         >
-          {projectData.projectImage ? (
+          {isEnhancing ? (
+            <div className="text-[#949437] text-sm py-4">
+              <div className="text-2xl mb-2 animate-spin inline-block">⚙️</div>
+              <div>جاري تحسين جودة الصورة...</div>
+            </div>
+          ) : projectData.projectImage ? (
             <img
               src={projectData.projectImage}
               alt="صورة المشروع"
@@ -133,7 +166,7 @@ export default function ProjectTab({ projectData, updateProject }: ProjectTabPro
           ) : (
             <div className="text-gray-400 text-sm">
               <div className="text-2xl mb-1">🖼️</div>
-              انقر لرفع صورة المشروع
+              انقر لرفع صورة المشروع (يتم تحسين الجودة تلقائياً)
             </div>
           )}
         </div>
