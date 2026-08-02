@@ -1,5 +1,5 @@
 import { formatNumber } from "@/lib/formatNumber";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
 import { Button } from "@/components/ui/button";
@@ -198,6 +198,15 @@ export default function Home() {
     units: [emptyUnit()],
     };
   });
+  // ─── debounce: لا نُعيد توليد المعاينة إلا بعد 400ms من توقف المستخدم عن الكتابة ───
+  const [debouncedProjectData, setDebouncedProjectData] = useState(projectData);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedProjectData(projectData);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [projectData]);
+
   const [showPreview, setShowPreview] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState<"project" | "units" | "contact">("project");
@@ -916,7 +925,7 @@ export default function Home() {
                   className="origin-top-right scale-[0.45] w-[222%] pointer-events-none"
                   style={{ transformOrigin: "top right" }}
                 >
-                  <ActivePreview data={projectData} />
+                  <ActivePreview data={debouncedProjectData} />
                 </div>
               </div>
               {/* Units counter */}
@@ -962,7 +971,7 @@ export default function Home() {
             </div>
               <div className="overflow-y-auto max-h-[82vh] bg-gray-100 p-4">
                 <div className="shadow-xl">
-              <ActivePreview data={projectData} />
+              <ActivePreview data={debouncedProjectData} />
             </div>
           </div>
           </div>

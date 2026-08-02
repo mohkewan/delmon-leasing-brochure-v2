@@ -1986,7 +1986,34 @@ function page10(data: ProjectData, template: string, imgSrc: string): string {
     </div>
   </div>`;
 }
+
+// ─── تصحيح إملائي تلقائي للأخطاء الشائعة في النصوص العربية ───
+function autoCorrectArabic(text: string): string {
+  if (!text) return text;
+  const corrections: [RegExp, string][] = [
+    [/حرعسات\s*امنية/g, "حراسات أمنية"],
+    [/حرعسات\s*أمنية/g, "حراسات أمنية"],
+    [/حراسات\s*امنية/g, "حراسات أمنية"],
+    [/نماص\s*ليلي/g, "إنارة ليلية"],
+    [/نماص\s*لليلي/g, "إنارة ليلية"],
+    [/نماص/g, "إنارة"],
+    [/\s*\.\.\.\s*يتميز\s*لب\s*\.\.\.\s*$/g, ""],
+    [/\s*يتميز\s*لب\s*\.\.\.\s*$/g, ""],
+    [/\s*\.\.\.\s*$/g, ""],
+    [/مواقف\s*سياره/g, "مواقف سيارات"],
+    [/كهرباء\s*احتياطيه/g, "كهرباء احتياطية"],
+    [/مصعد\s*بانورامى/g, "مصعد بانورامي"],
+  ];
+  let result = text;
+  for (const [pattern, replacement] of corrections) {
+    result = result.replace(pattern, replacement);
+  }
+  return result.trim();
+}
+
 function buildBrochureHTML(data: ProjectData, template: string): string {
+  // تطبيق التصحيح الإملائي التلقائي على النصوص قبل التوليد
+  data = { ...data, description: autoCorrectArabic(data.description || ""), amenities: autoCorrectArabic(data.amenities || ""), projectName: autoCorrectArabic(data.projectName || "") };
   const amenitiesList = data.amenities
     ? data.amenities.split(/[,،\n]/).map((s: string) => s.trim()).filter(Boolean)
     : [];
