@@ -2187,37 +2187,37 @@ export async function pdfRouteHandler(req: Request, res: Response) {
 
 // ── WeasyPrint helper ─────────────────────────────────────────────────────────
 async function generatePDFWithPuppeteer(html: string): Promise<Buffer> {
-  // Serverless-safe Chromium launch (works in Docker containers with limited /dev/shm)
+  // Container-safe Chromium launch flags
+  // NOTE: --single-process causes TargetCloseError in some container environments
+  // Use --no-zygote without --single-process for stability
   const browser = await puppeteer.launch({
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
     headless: true,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
+      "--disable-dev-shm-usage",   // Use /tmp instead of /dev/shm
       "--disable-gpu",
-      "--disable-software-rasterizer",
-      "--single-process",
-      "--no-zygote",
+      "--no-zygote",               // Prevents zygote process (reduces memory)
       "--disable-extensions",
       "--disable-background-networking",
       "--disable-default-apps",
       "--disable-sync",
-      "--disable-translate",
       "--hide-scrollbars",
       "--mute-audio",
       "--no-first-run",
-      "--safebrowsing-disable-auto-update",
+      "--disable-features=TranslateUI",
+      "--disable-ipc-flooding-protection",
     ],
   });
   try {
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "domcontentloaded", timeout: 60000 });
-    // Wait for fonts (with timeout fallback to avoid hanging)
-    await Promise.race([
-      page.evaluate(() => document.fonts.ready),
-      new Promise(r => setTimeout(r, 3000)),
-    ]);
+    // Use networkidle0 to ensure all resources (fonts, CSS) are loaded
+    // Avoid document.fonts.ready which causes TargetCloseError in containers
+    // Use "load" to wait for all resources; networkidle0 not supported in puppeteer-core v25
+    await page.setContent(html, { waitUntil: "load", timeout: 60000 });
+    // Extra wait for fonts/CSS rendering
+    await new Promise(r => setTimeout(r, 1500));
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
