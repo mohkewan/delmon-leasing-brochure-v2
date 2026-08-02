@@ -2219,7 +2219,9 @@ HTML(filename=sys.argv[1]).write_pdf(sys.argv[2], font_config=font_config)
       try {
         fsSync.unlinkSync(htmlPath);
       } catch {}
-      if (code !== 0) {
+      // code=null means process ended by signal (common in container envs); treat as success if PDF exists
+      const failed = code !== null && code !== 0;
+      if (failed) {
         try {
           fsSync.unlinkSync(pdfPath);
         } catch {}
@@ -2231,7 +2233,8 @@ HTML(filename=sys.argv[1]).write_pdf(sys.argv[2], font_config=font_config)
         fsSync.unlinkSync(pdfPath);
         resolve(buf);
       } catch (e) {
-        reject(e);
+        // PDF file not found even though exit code was 0/null — real failure
+        reject(new Error(`WeasyPrint produced no output (code=${code}): ${stderr.slice(0, 500)}`));
       }
     });
     proc.on("error", (e) => {
