@@ -94,17 +94,23 @@ export interface ProjectData {
 }
 
 const PROJECTS = [
-  { id: "1", name: "بارك فيو - محايل عسير", type: "مول تجاري", city: "محايل عسير" },
-  { id: "2", name: "دلمون مكتبي 2", type: "مبنى مكتبي", city: "جازان" },
-  { id: "3", name: "معارض جازان 1", type: "معارض", city: "جازان" },
-  { id: "4", name: "رفالا الأولى", type: "سترب مول", city: "أبها" },
-  { id: "5", name: "فندق لؤلؤة جازان", type: "فندق", city: "جازان" },
-  { id: "6", name: "دلمون مكتبي 1", type: "مبنى مكتبي", city: "جازان" },
-  { id: "7", name: "معارض جازان 2", type: "معارض", city: "جازان" },
-  { id: "8", name: "رفالا الثانية", type: "سترب مول", city: "خميس مشيط" },
-  { id: "9", name: "دلمون 3", type: "مبنى مكتبي", city: "الرياض" },
-  { id: "10", name: "فندق جيزان", type: "فندق", city: "جازان" },
-  { id: "custom", name: "مشروع آخر (إدخال يدوي)", type: "", city: "" },
+  {
+    id: "1", name: "بارك فيو - محايل عسير", type: "مول تجاري", city: "محايل عسير",
+    district: "طريق الخالدية", totalArea: "12800", floors: "2",
+    completionYear: "2025",
+    description: "بارك فيو مول وجهة تجارية وترفيهية متكاملة في قلب محايل عسير، يضم هايبر ماركت بمساحة 2,800 م²، هايبر ماركت ملابس وكماليات بأكثر من 5,000 م²، 60 محلاً تجارياً على الخط الرئيسي، ردهة مطاعم تضم 10 وحدات متنوعة، منطقة ترفيهية عائلية متكاملة، وحديقة مائية عائلية على مساحة تزيد عن 4,000 م².",
+    amenities: "200 موقف سيارات — مركز صحي حكومي داخل المول — مجاور لمستشفى الحياة الوطني (أكثر من 300 سرير) — منصة فعاليات رئيسية — أمن 24 ساعة — مصاعد — تكييف مركزي",
+  },
+  { id: "2", name: "دلمون مكتبي 2", type: "مبنى مكتبي", city: "جازان", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
+  { id: "3", name: "معارض جازان 1", type: "معارض", city: "جازان", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
+  { id: "4", name: "رفالا الأولى", type: "سترب مول", city: "أبها", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
+  { id: "5", name: "فندق لؤلؤة جازان", type: "فندق", city: "جازان", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
+  { id: "6", name: "دلمون مكتبي 1", type: "مبنى مكتبي", city: "جازان", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
+  { id: "7", name: "معارض جازان 2", type: "معارض", city: "جازان", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
+  { id: "8", name: "رفالا الثانية", type: "سترب مول", city: "خميس مشيط", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
+  { id: "9", name: "دلمون 3", type: "مبنى مكتبي", city: "الرياض", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
+  { id: "10", name: "فندق جيزان", type: "فندق", city: "جازان", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
+  { id: "custom", name: "مشروع آخر (إدخال يدوي)", type: "", city: "", district: "", totalArea: "", floors: "", completionYear: "", description: "", amenities: "" },
 ];
 
 const UNIT_TYPES: UnitType[] = ["مكتب", "معرض", "محل تجاري", "مستودع", "وحدة سكنية", "فندق", "أخرى"];
@@ -130,9 +136,11 @@ export default function Home() {
   let { user, loading, error, isAuthenticated, logout } = useAuth();
 
   const [, setLocation] = useLocation();
+  const utils = trpc.useUtils();
   const saveBrochureMutation = trpc.brochures.save.useMutation({
     onSuccess: () => {
       toast.success("✅ تم حفظ البروشور في الأرشيف");
+      utils.brochures.list.invalidate();
     },
     onError: (err) => {
       const msg = err?.message ?? "";
@@ -281,7 +289,9 @@ export default function Home() {
   // ── Auto-save to localStorage ──────────────────────────────────────────────
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData));
+      // استثناء projectImage من الحفظ التلقائي لتجنب تجميد الواجهة عند وجود صورة base64 ضخمة
+      const { projectImage: _img, ...dataWithoutImage } = projectData;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...dataWithoutImage, projectImage: "" }));
     } catch {}
   }, [projectData]);
 
@@ -294,6 +304,12 @@ export default function Home() {
         projectName: proj.name,
         projectType: proj.type,
         city: proj.city,
+        district: proj.district ?? prev.district,
+        totalArea: proj.totalArea ?? prev.totalArea,
+        floors: proj.floors ?? prev.floors,
+        completionYear: proj.completionYear ?? prev.completionYear,
+        description: proj.description ?? prev.description,
+        amenities: proj.amenities ?? prev.amenities,
         projectImage: PROJECT_IMAGES[id] || prev.projectImage,
       }));
     } else if (id === "custom") {
