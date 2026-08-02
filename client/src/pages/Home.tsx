@@ -3,6 +3,17 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { AlertTriangle } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
@@ -215,6 +226,48 @@ export default function Home() {
   const [exportStep, setExportStep] = useState<string>("");
   const [exportDone, setExportDone] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
+  const [showValidationDialog, setShowValidationDialog] = useState(false);
+  const [validationWarnings, setValidationWarnings] = useState<string[]>([]);
+
+  // ── بناء قائمة التحذيرات قبل التصدير ──────────────────────────────────
+  const buildValidationWarnings = (): string[] => {
+    const warnings: string[] = [];
+
+    // 1. وصف المشروع ينتهي بـ "..."
+    if (projectData.description && /\.{2,}$/.test(projectData.description.trim())) {
+      warnings.push("وصف المشروع يبدو غير مكتمل (ينتهي بـ \"...\")");
+    }
+
+    // 2. وحدات بلا إيجار شهري
+    const unitsNoRent = projectData.units.filter(
+      (u) => !u.monthlyRent || parseFloat(String(u.monthlyRent).replace(/,/g, "")) <= 0
+    );
+    if (unitsNoRent.length > 0) {
+      warnings.push(
+        `${unitsNoRent.length} ${unitsNoRent.length === 1 ? "وحدة" : "وحدات"} بلا إيجار شهري — ستظهر "—" في البروشور`
+      );
+    }
+
+    // 3. وحدات بلا سعر متر
+    const unitsNoPrice = projectData.units.filter(
+      (u) => !u.pricePerMeter || parseFloat(String(u.pricePerMeter).replace(/,/g, "")) <= 0
+    );
+    if (unitsNoPrice.length > 0) {
+      warnings.push(
+        `${unitsNoPrice.length} ${unitsNoPrice.length === 1 ? "وحدة" : "وحدات"} بلا سعر متر مربع — ستظهر "—" في البروشور`
+      );
+    }
+
+    // 4. وحدات بلا مساحة
+    const unitsNoArea = projectData.units.filter((u) => !u.area || parseFloat(u.area) <= 0);
+    if (unitsNoArea.length > 0) {
+      warnings.push(
+        `${unitsNoArea.length} ${unitsNoArea.length === 1 ? "وحدة" : "وحدات"} بلا مساحة محددة`
+      );
+    }
+
+    return warnings;
+  };
 
   // ── Auto-save to localStorage ──────────────────────────────────────────────
   useEffect(() => {
@@ -392,10 +445,17 @@ export default function Home() {
       toast.error("يرجى إدخال اسم المشروع أولاً");
       return;
     }
-    if (projectData.units.some((u) => !u.area)) {
-      toast.warning("يرجى إدخال مساحة جميع الوحدات");
+    // التحقق من البيانات وعرض التحذيرات إذا وجدت
+    const warnings = buildValidationWarnings();
+    if (warnings.length > 0) {
+      setValidationWarnings(warnings);
+      setShowValidationDialog(true);
       return;
     }
+    await doExportPDF();
+  };
+
+  const doExportPDF = async () => {
     setIsGenerating(true);
     setExportDone(false);
     setExportStep("جاري تجهيز البروشور...");
@@ -908,6 +968,46 @@ export default function Home() {
           </div>
         </div>
       )}
+      {/* ===== VALIDATION WARNING DIALOG ===== */}
+      <AlertDialog open={showValidationDialog} onOpenChange={setShowValidationDialog}>
+        <AlertDialogContent dir="rtl" className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-amber-700">
+              <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+              تنبيه: بيانات غير مكتملة
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="text-right">
+                <p className="text-sm text-gray-600 mb-3">
+                  تم اكتشاف المشاكل التالية في البروشور. يمكنك المتابعة والتصدير على أي حال، أو العودة لتصحيح البيانات:
+                </p>
+                <ul className="space-y-2">
+                  {validationWarnings.map((w: string, i: number) => (
+                    <li key={i} className="flex items-start gap-2 text-sm bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-amber-800">
+                      <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                      {w}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row-reverse gap-2 sm:flex-row-reverse">
+            <AlertDialogCancel className="flex-1 border-[#949437] text-[#949437] hover:bg-[#949437]/10">
+              إلغاء وتصحيح البيانات
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
+              onClick={() => {
+                setShowValidationDialog(false);
+                doExportPDF();
+              }}
+            >
+              متابعة التصدير على أي حال
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
