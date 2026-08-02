@@ -5,8 +5,73 @@ import * as path from "path";
 import * as fsSync from "fs";
 import { fileURLToPath } from "url";
 import puppeteer from "puppeteer-core";
+import type { Browser } from "puppeteer-core";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// ── Browser Singleton ─────────────────────────────────────────────────────────
+// Reuse a single Chromium instance across requests to avoid OOM in Cloud Run.
+// Each request opens/closes its own page; the browser process stays alive.
+let _browserPromise: Promise<Browser> | null = null;
+let _pdfMutex = false;
+const _pdfQueue: Array<() => void> = [];
+
+function acquirePdfMutex(): Promise<void> {
+  return new Promise(resolve => {
+    if (!_pdfMutex) {
+      _pdfMutex = true;
+      resolve();
+    } else {
+      _pdfQueue.push(resolve);
+    }
+  });
+}
+
+function releasePdfMutex() {
+  const next = _pdfQueue.shift();
+  if (next) {
+    next();
+  } else {
+    _pdfMutex = false;
+  }
+}
+
+async function getBrowser(): Promise<Browser> {
+  if (!_browserPromise) {
+    _browserPromise = puppeteer.launch({
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--no-zygote",
+        "--disable-extensions",
+        "--disable-background-networking",
+        "--disable-default-apps",
+        "--disable-sync",
+        "--hide-scrollbars",
+        "--mute-audio",
+        "--no-first-run",
+        "--disable-features=TranslateUI",
+        "--disable-ipc-flooding-protection",
+        "--memory-pressure-off",
+      ],
+      protocolTimeout: 120000,
+    }).then(browser => {
+      // Reset singleton on unexpected disconnect
+      browser.on("disconnected", () => {
+        _browserPromise = null;
+      });
+      return browser;
+    }).catch(err => {
+      _browserPromise = null;
+      throw err;
+    });
+  }
+  return _browserPromise;
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Unit {
@@ -2185,46 +2250,27 @@ export async function pdfRouteHandler(req: Request, res: Response) {
   }
 }
 
-// ── WeasyPrint helper ─────────────────────────────────────────────────────────
+// ── Puppeteer PDF helper ──────────────────────────────────────────────────────
 async function generatePDFWithPuppeteer(html: string): Promise<Buffer> {
-  // Container-safe Chromium launch flags
-  // NOTE: --single-process causes TargetCloseError in some container environments
-  // Use --no-zygote without --single-process for stability
-  const browser = await puppeteer.launch({
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",   // Use /tmp instead of /dev/shm
-      "--disable-gpu",
-      "--no-zygote",               // Prevents zygote process (reduces memory)
-      "--disable-extensions",
-      "--disable-background-networking",
-      "--disable-default-apps",
-      "--disable-sync",
-      "--hide-scrollbars",
-      "--mute-audio",
-      "--no-first-run",
-      "--disable-features=TranslateUI",
-      "--disable-ipc-flooding-protection",
-    ],
-  });
+  // Serialize PDF generation to avoid concurrent Chromium memory spikes
+  await acquirePdfMutex();
   try {
+    const browser = await getBrowser();
     const page = await browser.newPage();
-    // Use networkidle0 to ensure all resources (fonts, CSS) are loaded
-    // Avoid document.fonts.ready which causes TargetCloseError in containers
-    // Use "load" to wait for all resources; networkidle0 not supported in puppeteer-core v25
-    await page.setContent(html, { waitUntil: "load", timeout: 60000 });
-    // Extra wait for fonts/CSS rendering
-    await new Promise(r => setTimeout(r, 1500));
-    const pdf = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: { top: 0, right: 0, bottom: 0, left: 0 },
-    });
-    return Buffer.from(pdf);
+    try {
+      await page.setContent(html, { waitUntil: "load", timeout: 90000 });
+      await new Promise(r => setTimeout(r, 1000));
+      const pdf = await page.pdf({
+        format: "A4",
+        printBackground: true,
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        timeout: 90000,
+      });
+      return Buffer.from(pdf);
+    } finally {
+      await page.close().catch(() => {});
+    }
   } finally {
-    await browser.close();
+    releasePdfMutex();
   }
 }
