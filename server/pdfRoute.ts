@@ -297,7 +297,6 @@ function svgIcon(name: string, color: string = "#C9A84C", size: number = 16): st
     // عداد / متر مربع
     ruler: `<svg ${base}><path d="M3 3l18 18"/><path d="M3 3v10"/><path d="M3 3h10"/></svg>`,
     check: `<svg ${base}><polyline points="20 6 9 17 4 12"/></svg>`,
-    heart: `<svg ${base}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
   };
   return icons[name] || icons["unit"] || `<svg ${base}><circle cx="12" cy="12" r="4"/></svg>`;
 }
