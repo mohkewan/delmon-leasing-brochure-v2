@@ -144,7 +144,8 @@ export default function Home() {
   const [pendingProjectSwitch, setPendingProjectSwitch] = useState<string | null>(null);
   const getOrCreateMutation = trpc.units.getOrCreate.useMutation({
     onSuccess: (data) => {
-      setActiveBrochureId(data.brochureId);
+      const newBrochureId = data.brochureId;
+      setActiveBrochureId(newBrochureId);
     },
   });
   const saveUnitsMutation = trpc.units.saveAll.useMutation({
@@ -225,8 +226,40 @@ export default function Home() {
   });
   // ── جلب الوحدات من DB عند توفر brochureId ──────────────────────────────────
   const dbUnitsLoadedRef = useRef(false);
+  // ref لحفظ الوحدات الحالية بدون إعادة تسجيل useEffect
+  const currentUnitsRef = useRef<Unit[]>([]);
+  useEffect(() => {
+    currentUnitsRef.current = projectData.units;
+  }, [projectData.units]);
   const unitsAutosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // autosave للوحدات في DB بعد 1500ms من توقف التعديل
+  // إرسال saveAll فوراً عند ضبط activeBrochureId لأول مرة (بعد getOrCreate)
+  const prevBrochureIdRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (!activeBrochureId || !isAuthenticated) return;
+    if (prevBrochureIdRef.current === activeBrochureId) return; // لم يتغير
+    prevBrochureIdRef.current = activeBrochureId;
+    // إرسال الوحدات الحالية فوراً
+    const units = currentUnitsRef.current;
+    if (units.length > 0) {
+      saveUnitsMutation.mutate({
+        brochureId: activeBrochureId,
+        units: units.map((u: Unit) => ({
+          unitKey: u.id,
+          unitNumber: u.unitNumber,
+          floor: u.floor,
+          area: u.area,
+          unitType: u.unitType,
+          description: u.description,
+          features: u.features,
+          pricePerMeter: u.pricePerMeter,
+          monthlyRent: u.monthlyRent,
+        })),
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeBrochureId, isAuthenticated]);
   // autosave للوحدات في DB بعد 1500ms من توقف التعديل
   useEffect(() => {
     if (!activeBrochureId || !isAuthenticated) return;
@@ -278,6 +311,27 @@ export default function Home() {
       }));
     }
   }, [dbUnits]);
+
+  // ── getOrCreate تلقائي عند كتابة اسم المشروع (يدوي أو من قائمة) ─────────────
+  const getOrCreateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!isAuthenticated || !projectData.projectName) return;
+    if (activeBrochureId) return; // لا داعي إذا كان لدينا ID بالفعل
+    if (getOrCreateTimerRef.current) clearTimeout(getOrCreateTimerRef.current);
+    getOrCreateTimerRef.current = setTimeout(() => {
+      getOrCreateMutation.mutate({
+        projectName: projectData.projectName,
+        projectType: projectData.projectType || undefined,
+        city: projectData.city || undefined,
+        data: projectData as unknown as Record<string, unknown>,
+      });
+    }, 2000);
+    return () => {
+      if (getOrCreateTimerRef.current) clearTimeout(getOrCreateTimerRef.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectData.projectName, isAuthenticated, activeBrochureId]);
+
 
 
   // ─── debounce: لا نُعيد توليد المعاينة إلا بعد 400ms من توقف المستخدم عن الكتابة ───
@@ -956,9 +1010,21 @@ export default function Home() {
           <button onClick={() => setLocation("/ai-generator")} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-[#1a2744] hover:bg-[#2a3a6a] text-white text-xs transition-all font-bold shadow-sm border border-[#c9a84c]/40"><Sparkles className="w-4 h-4 text-[#c9a84c] flex-shrink-0" /><span>توليد AI</span></button>
         </nav>
         <div className="px-3 py-2 border-t border-[#949437]/10 bg-[#949437]/5 flex items-center gap-1.5"><Save className="w-3 h-3 text-[#949437] flex-shrink-0" /><span className="text-[9px] text-[#949437]/80 leading-tight">حفظ تلقائي</span></div>
-          {activeBrochureId && (
-            <div className={`text-xs text-center px-2 mt-1 py-1 rounded ${unitsSavedToDb ? "text-green-500" : "text-amber-400"}`}>
-              {unitsSavedToDb ? "✓ وحدات محفوظة في DB" : "⏳ جاري الحفظ..."}
+          {!isAuthenticated ? (
+            <div className="text-[9px] text-center px-2 py-1 text-amber-500 leading-tight">
+              ⚠️ سجّل دخولك لتفعيل الحفظ الدائم
+            </div>
+          ) : activeBrochureId ? (
+            <div className={`text-[9px] text-center px-2 py-1 rounded leading-tight ${unitsSavedToDb ? "text-green-500" : "text-amber-400"}`}>
+              {unitsSavedToDb ? "✓ محفوظ في قاعدة البيانات" : "⏳ جاري الحفظ..."}
+            </div>
+          ) : isAuthenticated && projectData.projectName ? (
+            <div className="text-[9px] text-center px-2 py-1 text-blue-400 leading-tight">
+              🔄 جاري ربط المشروع...
+            </div>
+          ) : (
+            <div className="text-[9px] text-center px-2 py-1 text-[#949437]/50 leading-tight">
+              أدخل اسم المشروع للبدء
             </div>
           )}
       </aside>
