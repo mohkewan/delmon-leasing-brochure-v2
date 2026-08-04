@@ -762,7 +762,7 @@ export default function Home() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-    <div className="min-h-screen bg-[#F0F0F0] flex flex-row-reverse" dir="rtl">
+    <div className="min-h-screen bg-[#F0F0F0] flex flex-col md:flex-row-reverse" dir="rtl">
       {/* ===== MOBILE HEADER (visible only on small screens) ===== */}
       <header className="md:hidden bg-white shadow-md sticky top-0 z-50 border-b-2 border-[#949437]/40 w-full">
         <div className="px-4 flex items-center justify-between py-3">
@@ -816,7 +816,7 @@ export default function Home() {
       </header>
 
       {/* ===== MAIN CONTENT (offset for sidebar on desktop) ===== */}
-      <div className="flex-1 md:mr-44 min-w-0">
+      <div className="flex-1 w-full md:mr-44 min-w-0">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* ===== STATS BAR ===== */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
