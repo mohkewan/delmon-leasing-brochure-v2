@@ -2396,8 +2396,8 @@ function buildBrochureHTML(data: ProjectData, template: string): string {
   --radius-lg: 12px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Cairo', sans-serif; direction: rtl; unicode-bidi: bidi-override; text-align: right; }
-[dir="rtl"], .page, .page * { direction: rtl; unicode-bidi: plaintext; text-align: right; }
+body { font-family: 'Cairo', sans-serif; direction: rtl; unicode-bidi: bidi-override; text-align: right; font-feature-settings: "liga" 0, "rlig" 0, "calt" 0; font-variant-ligatures: none; }
+[dir="rtl"], .page, .page * { direction: rtl; unicode-bidi: plaintext; text-align: right; font-feature-settings: "liga" 0, "rlig" 0, "calt" 0; font-variant-ligatures: none; }
 .page {
   width: 1123px;
   min-height: 794px;
