@@ -56,7 +56,7 @@ export default function BrochurePreviewMagazine({ data }: Props) {
             )}
             {(data.city || data.district) && (
               <div style={{ color: TEXT_MID, fontSize: 10, textAlign: "right" }}>
-                📍 {[data.district, data.city].filter(Boolean).join(" — ")}
+                <SvgPin color={GOLD} size={11} /> {[data.district, data.city].filter(Boolean).join(" — ")}
               </div>
             )}
             {data.description && (
@@ -71,14 +71,14 @@ export default function BrochurePreviewMagazine({ data }: Props) {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
               {[
-                { t: "موقع استراتيجي", i: "📍" },
-                { t: "مواقف سيارات", i: "🅿️" },
-                { t: "أنظمة أمن 24 ساعة", i: "🔒" },
-                { t: "تشطيب عالي الجودة", i: "✨" },
+                { t: "موقع استراتيجي", icon: <SvgPin color={CYAN} size={13} /> },
+                { t: "مواقف سيارات", icon: <SvgParking color={CYAN} size={13} /> },
+                { t: "أنظمة أمن 24 ساعة", icon: <SvgLock color={CYAN} size={13} /> },
+                { t: "تشطيب عالي الجودة", icon: <SvgStar color={CYAN} size={13} /> },
               ].map((f, i) => (
                 <div key={i} style={{ background: BG_SECTION, borderRadius: 5, padding: "5px 9px", display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end", borderRight: `3px solid ${CYAN}` }}>
                   <span style={{ fontSize: 9.5, fontWeight: 600, color: TEXT_DARK }}>{f.t}</span>
-                  <span style={{ fontSize: 13 }}>{f.i}</span>
+                  {(f as any).icon}
                 </div>
               ))}
             </div>
@@ -117,7 +117,7 @@ export default function BrochurePreviewMagazine({ data }: Props) {
           <div style={{ borderTop: `1px solid ${GOLD_BORDER}`, padding: "5px 22px", display: "flex", gap: 12, justifyContent: "flex-end", alignItems: "center", background: BG_SECTION, flexShrink: 0 }}>
             {["عقد 5 سنوات", "دفع ربع سنوي", "ضمان بنكي", "لا معسلات"].map((t, i) => (
               <span key={i} style={{ fontSize: 8, color: TEXT_MID, display: "flex", alignItems: "center", gap: 3 }}>
-                <span style={{ color: GOLD, fontWeight: 700 }}>✓</span>{t}
+                <SvgCheck color={GOLD} size={11} />{t}
               </span>
             ))}
           </div>
@@ -140,7 +140,7 @@ export default function BrochurePreviewMagazine({ data }: Props) {
             </>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", background: "#e8e7e3", gap: 12 }}>
-              <div style={{ fontSize: 60, color: "#ccc" }}>🏢</div>
+              <SvgBuilding color="#ccc" size={64} />
               <div style={{ color: TEXT_LIGHT, fontWeight: 700, fontSize: 14 }}>صورة المشروع</div>
             </div>
           )}
@@ -161,7 +161,7 @@ export default function BrochurePreviewMagazine({ data }: Props) {
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {data.amenities.split(/[,،]/).map((item, i) => (
                   <span key={i} style={{ background: i % 2 === 0 ? GOLD_PALE : CYAN_PALE, color: i % 2 === 0 ? GOLD : CYAN, padding: "5px 14px", borderRadius: 20, fontSize: 11, fontWeight: 700, border: `1px solid ${i % 2 === 0 ? GOLD_BORDER : "rgba(143,169,220,0.3)"}` }}>
-                    ✓ {item.trim()}
+                    <SvgCheck color={i % 2 === 0 ? GOLD : CYAN} size={11} /> {item.trim()}
                   </span>
                 ))}
               </div>

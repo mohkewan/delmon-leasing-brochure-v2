@@ -1,8 +1,28 @@
-import { ProjectData } from "@/lib/brochureTypes";
-
 // ===== DELMON INVESTMENT — DARK LUXURY TEMPLATE =====
 // Dark premium design: deep navy + gold accents
 // A4 Landscape 1123×794px — RTL, print-ready
+
+import type { ProjectData } from "@/pages/Home";
+import { formatNumber } from "@/lib/formatNumber";
+
+const SvgPin = ({ color, size = 14 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+    <circle cx="12" cy="9" r="2.5"/>
+  </svg>
+);
+const SvgBuilding = ({ color, size = 56 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }}>
+    <rect x="3" y="3" width="18" height="18" rx="2"/>
+    <path d="M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1"/>
+    <path d="M10 21v-4h4v4"/>
+  </svg>
+);
+const SvgCheck = ({ color, size = 12 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
 
 const LOGO = "/manus-storage/delmon_logo_19a2386c.png";
 const GOLD = "#c9a84c";
@@ -67,7 +87,7 @@ export default function BrochurePreviewDark({ data }: Props) {
               )}
               {(data.city || data.district) && (
                 <div style={{ display: "flex", alignItems: "center", gap: 6, color: TEXT_MID, fontSize: 13, marginBottom: 22 }}>
-                  <span style={{ color: GOLD, fontWeight: 700 }}>📍</span>
+                  <SvgPin color={GOLD} size={14} />
                   {[data.district, data.city].filter(Boolean).join(" — ")}
                 </div>
               )}
@@ -88,7 +108,7 @@ export default function BrochurePreviewDark({ data }: Props) {
                 <div style={{ padding: "12px 16px", background: BG_CARD, borderRadius: 6, border: `1px solid ${GOLD_BORDER}`, borderRight: `4px solid ${GOLD}`, display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {data.amenities.split(/[,،]/).slice(0, 5).map((item, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 5, color: TEXT_LIGHT, fontSize: 11, fontWeight: 600 }}>
-                      <span style={{ color: GOLD, fontWeight: 900 }}>✓</span>
+                      <SvgCheck color={GOLD} size={11} />
                       {item.trim()}
                     </div>
                   ))}
@@ -114,7 +134,7 @@ export default function BrochurePreviewDark({ data }: Props) {
               </>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 12 }}>
-                <div style={{ fontSize: 60, color: GOLD_BORDER }}>🏢</div>
+                <SvgBuilding color={GOLD_BORDER} size={64} />
                 <div style={{ color: TEXT_MID, fontWeight: 700, fontSize: 14 }}>صورة المشروع</div>
               </div>
             )}
@@ -137,7 +157,7 @@ export default function BrochurePreviewDark({ data }: Props) {
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {data.amenities.split(/[,،]/).map((item, i) => (
                   <span key={i} style={{ background: i % 2 === 0 ? GOLD_PALE : BG_CARD, color: i % 2 === 0 ? GOLD : GOLD_LIGHT, padding: "5px 14px", borderRadius: 20, fontSize: 11, fontWeight: 700, border: `1px solid ${GOLD_BORDER}` }}>
-                    ✓ {item.trim()}
+                    <SvgCheck color={GOLD} size={11} /> {item.trim()}
                   </span>
                 ))}
               </div>

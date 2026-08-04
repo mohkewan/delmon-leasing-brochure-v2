@@ -1,6 +1,26 @@
 import type { ProjectData } from "@/pages/Home";
 import { formatNumber } from "@/lib/formatNumber";
 
+// SVG أيقونات خطية موحدة بلون الهوية — تحل محل إيموجي نظام التشغيل
+const SvgPin = ({ color, size = 14 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+    <circle cx="12" cy="9" r="2.5"/>
+  </svg>
+);
+const SvgBuilding = ({ color, size = 56 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }}>
+    <rect x="3" y="3" width="18" height="18" rx="2"/>
+    <path d="M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1"/>
+    <path d="M10 21v-4h4v4"/>
+  </svg>
+);
+const SvgCheck = ({ color, size = 12 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
 // ===== DELMON INVESTMENT — LEASING BROCHURE PREVIEW =====
 // Official Brand Identity from DELMON1PPTtemplatev1.pptx
 // Deep GOLD: #949437 | Cyan: #8fa9dc | BG: White / #F5F5F3
@@ -72,7 +92,7 @@ export default function BrochurePreview({ data }: Props) {
         <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
 
           {/* RIGHT column — text content */}
-          <div style={{ width: 480, padding: "28px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between", flexShrink: 0 }}>
+          <div style={{ width: 480, padding: "28px 40px", display: "flex", flexDirection: "column", flexShrink: 0 }}>
             <div>
               {/* Badge */}
               <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: BG_ACCENT, color: GOLD, padding: "4px 16px", borderRadius: 20, fontSize: 11, fontWeight: 800, border: `1px solid ${BORDER_GOLD}`, marginBottom: 14 }}>
@@ -88,10 +108,10 @@ export default function BrochurePreview({ data }: Props) {
               )}
 
               {(data.city || data.district) && (
-                <div style={{ display: "flex", alignItems: "center", gap: 6, color: MID_TEXT, fontSize: 13, marginBottom: 20 }}>
-                  <span style={{ color: CYAN, fontWeight: 700 }}>📍</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, color: MID_TEXT, fontSize: 13, marginBottom: 20 }}>
+                  <SvgPin color={CYAN} size={14} />
                   {[data.district, data.city].filter(Boolean).join(" — ")}
-                </div>
+              </div>
               )}
 
               {/* Stats cards */}
@@ -111,17 +131,19 @@ export default function BrochurePreview({ data }: Props) {
 
               {/* Amenities */}
               {data.amenities && (
-                <div style={{ padding: "12px 16px", background: BG_SECTION, borderRadius: 8, border: `1px solid ${BORDER_LIGHT}`, borderRight: `4px solid ${CYAN}`, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <div style={{ padding: "12px 16px", background: BG_SECTION, borderRadius: 8, border: `1px solid ${BORDER_LIGHT}`, borderRight: `4px solid ${CYAN}`, display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {data.amenities.split(/[,،]/).slice(0, 5).map((item, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 5, color: DARK_TEXT, fontSize: 11, fontWeight: 600 }}>
-                      <span style={{ color: GOLD, fontWeight: 900 }}>✓</span>
+                      <SvgCheck color={GOLD} size={11} />
                       {item.trim()}
                     </div>
                   ))}
-                </div>
+              </div>
               )}
             </div>
 
+            {/* Spacer fills gap between amenities and tagline */}
+            <div style={{ flex: 1 }} />
             {/* Bottom tagline */}
             <div style={{ padding: "14px 0 0", borderTop: `1px solid ${BORDER_GOLD}` }}>
               <div style={{ color: GOLD, fontSize: 12, fontWeight: 800 }}>فرصة استثمارية مميزة</div>
@@ -143,7 +165,7 @@ export default function BrochurePreview({ data }: Props) {
               </>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 12 }}>
-                <div style={{ fontSize: 60, color: GOLD_40 }}>🏢</div>
+                <SvgBuilding color={GOLD_40} size={64} />
                 <div style={{ color: MID_TEXT, fontWeight: 700, fontSize: 14 }}>صورة المشروع</div>
                 <div style={{ color: LIGHT_TEXT, fontSize: 11 }}>أضف صورة من نموذج الإدخال</div>
               </div>
@@ -164,7 +186,7 @@ export default function BrochurePreview({ data }: Props) {
 
         <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
           {/* RIGHT column */}
-          <div style={{ width: 520, padding: "20px 40px", borderLeft: `1px solid ${BORDER_LIGHT}`, overflowY: "hidden" }}>
+          <div style={{ width: 520, padding: "20px 40px", borderLeft: `1px solid ${BORDER_LIGHT}`, overflowY: "hidden", display: "flex", flexDirection: "column" }}>
             <SectionTitle title="نبذة عن المشروع" />
             <div style={{ background: BG_SECTION, borderRadius: 8, padding: "14px 18px", borderRight: `5px solid ${GOLD}`, color: DARK_TEXT, fontSize: 13, lineHeight: 2.0, marginBottom: 20 }}>
               {data.description || "يرجى إضافة وصف للمشروع من نموذج الإدخال"}
@@ -172,10 +194,10 @@ export default function BrochurePreview({ data }: Props) {
 
             <SectionTitle title="المرافق والخدمات" />
             {data.amenities ? (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, flex: 1, alignContent: "flex-start" }}>
                 {data.amenities.split(/[,،]/).map((item, i) => (
                   <span key={i} style={{ background: i % 2 === 0 ? BG_ACCENT : "#EEF3FA", color: i % 2 === 0 ? GOLD : CYAN, padding: "5px 14px", borderRadius: 20, fontSize: 11, fontWeight: 700, border: `1px solid ${i % 2 === 0 ? BORDER_GOLD : CYAN_40}` }}>
-                    ✓ {item.trim()}
+                    <SvgCheck color={i % 2 === 0 ? GOLD : CYAN} size={11} /> {item.trim()}
                   </span>
                 ))}
               </div>
@@ -185,7 +207,7 @@ export default function BrochurePreview({ data }: Props) {
           </div>
 
           {/* LEFT column — specs grid */}
-          <div style={{ flex: 1, padding: "20px 32px" }}>
+          <div style={{ flex: 1, padding: "20px 32px", display: "flex", flexDirection: "column" }}>
             <SectionTitle title="مواصفات المشروع" />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               {[
