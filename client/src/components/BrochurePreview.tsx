@@ -142,8 +142,27 @@ export default function BrochurePreview({ data }: Props) {
               )}
             </div>
 
-            {/* Spacer fills gap between amenities and tagline */}
-            <div style={{ flex: 1 }} />
+            {/* Why Choose — 6 highlight cards filling the gap */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: 12 }}>
+              <div style={{ color: GOLD, fontSize: 11, fontWeight: 800, marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${BORDER_GOLD}` }}>
+                لماذا تختار هذا المشروع؟
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
+                {[
+                  "موقع استراتيجي مميز",
+                  "أمن وحراسة 24 ساعة",
+                  "مواقف سيارات مجانية",
+                  "إنترنت فايبر عالي السرعة",
+                  "تكييف مركزي متكامل",
+                  "مصاعد حديثة",
+                ].map((text, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 7, background: BG_SECTION, borderRadius: 7, padding: "7px 10px", border: `1px solid ${BORDER_LIGHT}`, borderRight: `3px solid ${i % 2 === 0 ? GOLD : CYAN}` }}>
+                    <SvgCheck color={i % 2 === 0 ? GOLD : CYAN} size={11} />
+                    <span style={{ color: DARK_TEXT, fontSize: 10, fontWeight: 600 }}>{text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
             {/* Bottom tagline */}
             <div style={{ padding: "14px 0 0", borderTop: `1px solid ${BORDER_GOLD}` }}>
               <div style={{ color: GOLD, fontSize: 12, fontWeight: 800 }}>فرصة استثمارية مميزة</div>
@@ -186,7 +205,7 @@ export default function BrochurePreview({ data }: Props) {
 
         <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
           {/* RIGHT column */}
-          <div style={{ width: 520, padding: "20px 40px", borderLeft: `1px solid ${BORDER_LIGHT}`, overflowY: "hidden", display: "flex", flexDirection: "column" }}>
+          <div style={{ width: 520, padding: "20px 40px", borderLeft: `1px solid ${BORDER_LIGHT}`, overflowY: "hidden", display: "flex", flexDirection: "column", alignSelf: "stretch" }}>
             <SectionTitle title="نبذة عن المشروع" />
             <div style={{ background: BG_SECTION, borderRadius: 8, padding: "14px 18px", borderRight: `5px solid ${GOLD}`, color: DARK_TEXT, fontSize: 13, lineHeight: 2.0, marginBottom: 20 }}>
               {data.description || "يرجى إضافة وصف للمشروع من نموذج الإدخال"}
@@ -209,7 +228,7 @@ export default function BrochurePreview({ data }: Props) {
           {/* LEFT column — specs grid */}
           <div style={{ flex: 1, padding: "20px 32px", display: "flex", flexDirection: "column" }}>
             <SectionTitle title="مواصفات المشروع" />
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, alignContent: "start" }}>
               {[
                 { label: "اسم المشروع", value: data.projectName },
                 { label: "نوع المشروع", value: data.projectType },
@@ -224,6 +243,21 @@ export default function BrochurePreview({ data }: Props) {
                 <div key={i} style={{ background: BG_SECTION, borderRadius: 8, padding: "10px 14px", border: `1px solid ${BORDER_LIGHT}`, borderTop: `3px solid ${i % 2 === 0 ? GOLD : CYAN}` }}>
                   <div style={{ fontSize: 9, color: LIGHT_TEXT, marginBottom: 3 }}>{item.label}</div>
                   <div style={{ color: DARK_TEXT, fontWeight: 800, fontSize: 13 }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+            {/* Decorative filler — fills remaining height when specs are few */}
+            <div style={{ flex: 1, marginTop: 16, background: `linear-gradient(135deg, ${BG_ACCENT} 0%, #EEF3FA 100%)`, borderRadius: 10, padding: "16px 18px", border: `1px solid ${BORDER_GOLD}`, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <div style={{ color: GOLD, fontWeight: 800, fontSize: 13, marginBottom: 10, borderBottom: `1px solid ${BORDER_GOLD}`, paddingBottom: 8 }}>لماذا دلمون للاستثمار؟</div>
+              {[
+                { icon: "★", text: "خبرة تزيد عن 15 عاماً في السوق العقاري" },
+                { icon: "✦", text: "محفظة متنوعة من المشاريع التجارية والمكتبية" },
+                { icon: "◆", text: "إدارة متكاملة للأصول العقارية" },
+                { icon: "●", text: "فريق متخصص في خدمة المستأجرين" },
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 7, fontSize: 11, color: DARK_TEXT }}>
+                  <span style={{ color: i % 2 === 0 ? GOLD : CYAN, fontSize: 10, minWidth: 14 }}>{item.icon}</span>
+                  <span>{item.text}</span>
                 </div>
               ))}
             </div>
