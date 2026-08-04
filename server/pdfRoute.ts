@@ -749,7 +749,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
             </div>
           </div>
           <!-- محفظة مشاريع دلمون -->
-          <div>
+          <div style="break-inside:avoid-page;page-break-inside:avoid">
             <div style="font-size:8px;font-weight:900;color:${C.darkBlue};margin-bottom:6px;display:flex;align-items:center;gap:6px;justify-content:flex-end">
               <span>محفظة مشاريع دلمون</span>
               <div style="width:30px;height:2px;background:${C.gold}"></div>
@@ -911,7 +911,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
             </div>
           </div>
           <!-- مشاريع دلمون -->
-          <div style="background:${C.darkCard};border:1px solid ${C.darkBorder};padding:10px 14px">
+          <div style="background:${C.darkCard};border:1px solid ${C.darkBorder};padding:10px 14px;break-inside:avoid-page;page-break-inside:avoid">
             <div style="font-size:7px;font-weight:900;color:${C.gold};margin-bottom:8px;text-align:right;letter-spacing:1px">محفظة مشاريع دلمون</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
               ${["مولات تجارية","مكاتب ومجمعات","معارض تجارية","فنادق وضيافة"].map((p: string) => `
@@ -1071,7 +1071,7 @@ function page2(data: ProjectData, template: string, amenitiesList: string[]) {
           </div>
         </div>
         <!-- محفظة مشاريع editorial -->
-        <div>
+        <div style="break-inside:avoid-page;page-break-inside:avoid">
           <div style="font-size:8px;font-weight:900;color:${C.black};margin-bottom:5px;text-align:right">محفظة مشاريع دلمون</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
             ${["مولات تجارية","مكاتب ومجمعات","معارض تجارية","فنادق وضيافة"].map((p: string) => `
