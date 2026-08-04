@@ -1,5 +1,42 @@
 import type { ProjectData } from "@/lib/brochureTypes";
 
+// SVG أيقونات خطية موحدة بلون الهوية
+const SvgPin = ({ color, size = 14 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+    <circle cx="12" cy="9" r="2.5"/>
+  </svg>
+);
+const SvgBuilding = ({ color, size = 56 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }}>
+    <rect x="3" y="3" width="18" height="18" rx="2"/>
+    <path d="M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1"/>
+    <path d="M10 21v-4h4v4"/>
+  </svg>
+);
+const SvgCheck = ({ color, size = 12 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+const SvgLock = ({ color, size = 14 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </svg>
+);
+const SvgParking = ({ color, size = 14 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <rect x="3" y="3" width="18" height="18" rx="2"/>
+    <path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>
+  </svg>
+);
+const SvgStar = ({ color, size = 14 }: { color: string; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </svg>
+);
+
 // ===== DELMON INVESTMENT — BOLD MAGAZINE TEMPLATE =====
 // Modern magazine layout: diagonal panel + gold accent bar
 // A4 Landscape 1123×794px — RTL, print-ready
