@@ -584,159 +584,22 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F0F0F0]" dir="rtl">
-      {/* ===== HEADER ===== */}
-      <header className="bg-white shadow-md sticky top-0 z-50 border-b-2 border-[#949437]/40">
-        <div className="max-w-7xl mx-auto px-5 flex items-stretch justify-between">
-          {/* Brand lockup */}
-          <div className="flex items-center gap-4 py-3">
-            <img
-              src="/manus-storage/delmon_logo_official_81df30cc.png"
-              alt="دلمون للاستثمار"
-              className="h-11 w-auto object-contain"
-            />
-            <div className="border-r border-white/25 pr-4 mr-1">
-              <div
-                className="text-[#2C2C2C] font-black text-lg leading-tight tracking-wide"
-                style={{ fontFamily: "'Noto Kufi Arabic', 'Cairo', sans-serif" }}
-              >
-                شركة دلمون للاستثمار
-              </div>
-              <div className="text-[#949437] text-[10px] font-semibold tracking-[0.14em] uppercase">
-                DELMON INVESTMENT COMPANY
-              </div>
-            </div>
-          </div>
-          {/* Center system label */}
-          <div className="hidden md:flex items-center">
-              <div className="border border-[#949437]/30 rounded-md px-4 py-1.5 bg-[#949437]/5">
-                <span className="text-[#555555] text-sm font-medium">نظام بروشور التأجير</span>
-            </div>
-          </div>
-          {/* Actions */}
-          <div className="flex items-center gap-1.5 py-3 overflow-x-auto max-w-full scrollbar-hide">
-            {/* User info / login */}
-            {isAuthenticated && user ? (
-              <div className="hidden md:flex items-center gap-2 border border-[#D0D0D0] rounded-lg px-3 py-1.5 bg-[#F8F9FD]">
-                <User className="w-4 h-4 text-[#949437]" />
-                <span className="text-xs text-[#2C2C2C] font-medium">{user.name || user.email || "مستخدم"}</span>
-                <button onClick={() => logout()} className="text-gray-400 hover:text-red-500 transition-colors mr-1">
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ) : !loading ? (
-              <Button onClick={() => startLogin()} variant="outline" size="sm"
-                className="border-[#949437]/50 text-[#949437] hover:bg-[#949437]/10 bg-transparent hidden md:flex">
-                <LogIn className="w-4 h-4 ml-1" />
-                تسجيل الدخول
-              </Button>
-            ) : null}
-            <Button
-              onClick={() => setLocation("/archive")}
-              variant="outline"
-              size="sm"
-              className="border-[#8fa9dc]/60 text-[#555555] hover:border-[#949437] hover:text-[#949437] bg-transparent transition-all hidden md:flex"
-            >
-              <Archive className="w-4 h-4 ml-1" />
-              الأرشيف
+    <div className="min-h-screen bg-[#F0F0F0] flex flex-row-reverse" dir="rtl">
+      {/* ===== MOBILE HEADER (visible only on small screens) ===== */}
+      <header className="md:hidden bg-white shadow-md sticky top-0 z-50 border-b-2 border-[#949437]/40 w-full">
+        <div className="px-4 flex items-center justify-between py-3">
+          <img src="/manus-storage/delmon_logo_official_81df30cc.png" alt="دلمون للاستثمار" className="h-9 w-auto object-contain" />
+          <div className="text-[#2C2C2C] font-bold text-sm">نظام بروشور التأجير</div>
+          <div className="flex items-center gap-2">
+            <Button onClick={() => setShowPreview(true)} variant="outline" size="sm" className="border-[#8fa9dc]/60 text-[#555555] px-2">
+              <Eye className="w-4 h-4" />
             </Button>
-            <Button
-              onClick={handleSaveToArchive}
-              disabled={saveBrochureMutation.isPending || !isAuthenticated}
-              variant="outline"
-              size="sm"
-              className="border-green-400/60 text-green-600 hover:border-green-500 hover:bg-green-50 bg-transparent transition-all hidden md:flex"
-            >
-              {saveBrochureMutation.isPending ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <Save className="w-4 h-4 ml-1" />}
-              حفظ في الأرشيف
+            <Button onClick={handleExportPDF} disabled={isGenerating} size="sm" className="bg-[#949437] hover:bg-[#7a7a2e] text-white font-bold px-2">
+              {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
             </Button>
-            <Button
-              onClick={handleClearDraft}
-            variant="outline"
-            size="sm"
-            className="border-red-200 text-red-400 hover:border-red-400 hover:text-red-600 bg-transparent transition-all hidden md:flex"
-          >
-            <RotateCcw className="w-4 h-4 ml-1" />
-            مسح
-          </Button>
-            {/* Desktop-only buttons */}
-            <Button
-              onClick={() => setShowPreview(true)}
-              variant="outline"
-              size="sm"
-              className="hidden md:flex border-[#8fa9dc]/60 text-[#555555] hover:border-[#949437] hover:text-[#949437] bg-transparent transition-all"
-            >
-              <Eye className="w-4 h-4 ml-1" />
-              معاينة
-            </Button>
-            <Button
-              onClick={handleExportPDF}
-              disabled={isGenerating}
-              size="sm"
-              className="hidden md:flex bg-[#949437] hover:bg-[#7a7a2e] text-white font-bold transition-all shadow-md"
-            >
-              {isGenerating ? <Loader2 className="w-4 h-4 ml-1 animate-spin" /> : <FileDown className="w-4 h-4 ml-1" />}
-              {isGenerating ? exportStep : "تصدير PDF"}
-            </Button>
-            <Button
-              onClick={handleExportExcel}
-              size="sm"
-              variant="outline"
-              className="hidden md:flex border-[#2e7d32] text-[#2e7d32] hover:bg-[#2e7d32] hover:text-white font-bold transition-all"
-            >
-              <TableProperties className="w-4 h-4 ml-1" />
-              Excel
-            </Button>
-            <Button
-              onClick={handleExportJSON}
-              size="sm"
-              variant="outline"
-              className="hidden md:flex border-[#5c6bc0] text-[#5c6bc0] hover:bg-[#5c6bc0] hover:text-white font-bold transition-all"
-            >
-              <Download className="w-4 h-4 ml-1" />
-              JSON
-            </Button>
-            <Button
-              onClick={handleWhatsApp}
-              size="sm"
-              variant="outline"
-              className="hidden md:flex border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white font-bold transition-all"
-            >
-              <MessageCircle className="w-4 h-4 ml-1" />
-              واتساب
-            </Button>
-            {/* AI Generator button */}
-            <Button
-              onClick={() => setLocation("/ai-generator")}
-              size="sm"
-              className="hidden md:flex bg-[#1a2744] hover:bg-[#2a3a6a] text-white font-bold transition-all shadow-md border border-[#c9a84c]/40"
-            >
-              <Sparkles className="w-4 h-4 ml-1 text-[#c9a84c]" />
-              توليد AI
-            </Button>
-            {/* Mobile: compact action buttons */}
-            <div className="flex md:hidden items-center gap-1.5">
-              <Button
-                onClick={() => setShowPreview(true)}
-                variant="outline"
-                size="sm"
-                className="border-[#8fa9dc]/60 text-[#555555] px-2"
-              >
-                <Eye className="w-4 h-4" />
-              </Button>
-              <Button
-                onClick={handleExportPDF}
-                disabled={isGenerating}
-                size="sm"
-                className="bg-[#949437] hover:bg-[#7a7a2e] text-white font-bold px-2"
-              >
-                {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
-              </Button>
-            </div>
-            {/* Mobile menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="md:hidden border-[#D0D0D0]">
+                <Button variant="outline" size="sm" className="border-[#D0D0D0]">
                   <Menu className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -744,65 +607,38 @@ export default function Home() {
                 {isAuthenticated && user ? (
                   <>
                     <DropdownMenuItem className="text-xs text-[#949437] font-medium cursor-default">
-                      <User className="w-3.5 h-3.5 ml-1" />
-                      {user.name || user.email || "مستخدم"}
+                      <User className="w-3.5 h-3.5 ml-1" />{user.name || user.email || "مستخدم"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
                 ) : !loading ? (
                   <>
                     <DropdownMenuItem onClick={() => startLogin()}>
-                      <LogIn className="w-3.5 h-3.5 ml-1" />
-                      تسجيل الدخول
+                      <LogIn className="w-3.5 h-3.5 ml-1" />تسجيل الدخول
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                   </>
                 ) : null}
-                <DropdownMenuItem onClick={() => setLocation("/archive")}>
-                  <Archive className="w-3.5 h-3.5 ml-1" />
-                  الأرشيف
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSaveToArchive} disabled={saveBrochureMutation.isPending || !isAuthenticated}>
-                  <Save className="w-3.5 h-3.5 ml-1" />
-                  حفظ في الأرشيف
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLocation("/archive")}><Archive className="w-3.5 h-3.5 ml-1" />الأرشيف</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSaveToArchive} disabled={saveBrochureMutation.isPending || !isAuthenticated}><Save className="w-3.5 h-3.5 ml-1" />حفظ في الأرشيف</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleClearDraft}>
-                  <RotateCcw className="w-3.5 h-3.5 ml-1" />
-                  مسح البيانات
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleExportExcel}>
-                  <TableProperties className="w-3.5 h-3.5 ml-1" />
-                  تصدير Excel
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleExportJSON}>
-                  <Download className="w-3.5 h-3.5 ml-1" />
-                  نسخ احتياطي JSON
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleWhatsApp}>
-                  <MessageCircle className="w-3.5 h-3.5 ml-1" />
-                  إرسال عبر واتساب
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleClearDraft}><RotateCcw className="w-3.5 h-3.5 ml-1" />مسح البيانات</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportExcel}><TableProperties className="w-3.5 h-3.5 ml-1" />تصدير Excel</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportJSON}><Download className="w-3.5 h-3.5 ml-1" />نسخ احتياطي JSON</DropdownMenuItem>
                 {isAuthenticated && user && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => logout()} className="text-red-500">
-                      <LogOut className="w-3.5 h-3.5 ml-1" />
-                      تسجيل الخروج
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => logout()} className="text-red-500"><LogOut className="w-3.5 h-3.5 ml-1" />تسجيل الخروج</DropdownMenuItem>
                   </>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
-        {/* Auto-save indicator */}
-        <div className="bg-[#949437]/5 border-t border-[#949437]/10 px-5 py-1 flex items-center gap-2">
-          <Save className="w-3 h-3 text-[#949437]" />
-          <span className="text-[10px] text-[#949437]/80">يتم حفظ بياناتك تلقائياً في المتصفح</span>
-        </div>
       </header>
 
+      {/* ===== MAIN CONTENT (offset for sidebar on desktop) ===== */}
+      <div className="flex-1 md:mr-44 min-w-0">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* ===== STATS BAR ===== */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
@@ -957,6 +793,46 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      </div>{/* end flex-1 wrapper */}
+
+      {/* ===== RIGHT SIDEBAR (desktop only) ===== */}
+      <aside className="hidden md:flex flex-col w-44 bg-white border-l-2 border-[#949437]/30 shadow-lg fixed right-0 top-0 bottom-0 z-40 overflow-y-auto">
+        <div className="flex flex-col items-center gap-1 py-4 px-3 border-b border-[#949437]/20 bg-[#FAFAF8]">
+          <img src="/manus-storage/delmon_logo_official_81df30cc.png" alt="دلمون للاستثمار" className="h-9 w-auto object-contain" />
+          <div className="text-[9px] text-[#949437] font-semibold tracking-wider text-center leading-tight mt-1">نظام بروشور التأجير</div>
+        </div>
+        <div className="px-3 py-2 border-b border-[#E8E8E4]">
+          {isAuthenticated && user ? (
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1.5"><User className="w-3.5 h-3.5 text-[#949437] flex-shrink-0" /><span className="text-[10px] text-[#2C2C2C] font-medium truncate">{user.name || user.email || "مستخدم"}</span></div>
+              <button onClick={() => logout()} className="flex items-center gap-1.5 text-[10px] text-red-400 hover:text-red-600 transition-colors w-full text-right"><LogOut className="w-3 h-3 flex-shrink-0" />تسجيل الخروج</button>
+            </div>
+          ) : !loading ? (
+            <button onClick={() => startLogin()} className="flex items-center gap-1.5 text-[11px] text-[#949437] hover:text-[#7a7a2e] font-semibold transition-colors w-full"><LogIn className="w-3.5 h-3.5 flex-shrink-0" />تسجيل الدخول</button>
+          ) : null}
+        </div>
+        <nav className="flex flex-col gap-1 p-2 flex-1">
+          <button onClick={handleExportPDF} disabled={isGenerating} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg bg-[#949437] hover:bg-[#7a7a2e] text-white font-bold text-xs transition-all shadow-sm disabled:opacity-60">
+            {isGenerating ? <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" /> : <FileDown className="w-4 h-4 flex-shrink-0" />}
+            <span className="truncate">{isGenerating ? exportStep : "تصدير PDF"}</span>
+          </button>
+          <button onClick={() => setShowPreview(true)} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-[#8fa9dc]/60 text-[#555555] hover:border-[#949437] hover:text-[#949437] text-xs transition-all bg-transparent"><Eye className="w-4 h-4 flex-shrink-0" /><span>معاينة</span></button>
+          <div className="h-px bg-[#E8E8E4] my-1" />
+          <button onClick={() => setLocation("/archive")} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-[#8fa9dc]/40 text-[#555555] hover:border-[#949437] hover:text-[#949437] text-xs transition-all bg-transparent"><Archive className="w-4 h-4 flex-shrink-0" /><span>الأرشيف</span></button>
+          <button onClick={handleSaveToArchive} disabled={saveBrochureMutation.isPending || !isAuthenticated} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-green-300/60 text-green-600 hover:border-green-500 hover:bg-green-50 text-xs transition-all bg-transparent disabled:opacity-50">
+            {saveBrochureMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" /> : <Save className="w-4 h-4 flex-shrink-0" />}
+            <span>حفظ في الأرشيف</span>
+          </button>
+          <button onClick={handleClearDraft} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-red-200 text-red-400 hover:border-red-400 hover:text-red-600 text-xs transition-all bg-transparent"><RotateCcw className="w-4 h-4 flex-shrink-0" /><span>مسح</span></button>
+          <div className="h-px bg-[#E8E8E4] my-1" />
+          <button onClick={handleExportExcel} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-[#2e7d32]/40 text-[#2e7d32] hover:bg-[#2e7d32] hover:text-white text-xs transition-all font-bold"><TableProperties className="w-4 h-4 flex-shrink-0" /><span>Excel</span></button>
+          <button onClick={handleExportJSON} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-[#5c6bc0]/40 text-[#5c6bc0] hover:bg-[#5c6bc0] hover:text-white text-xs transition-all font-bold"><Download className="w-4 h-4 flex-shrink-0" /><span>JSON</span></button>
+          <button onClick={handleWhatsApp} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366] hover:text-white text-xs transition-all font-bold"><MessageCircle className="w-4 h-4 flex-shrink-0" /><span>واتساب</span></button>
+          <button onClick={() => setLocation("/ai-generator")} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-[#1a2744] hover:bg-[#2a3a6a] text-white text-xs transition-all font-bold shadow-sm border border-[#c9a84c]/40"><Sparkles className="w-4 h-4 text-[#c9a84c] flex-shrink-0" /><span>توليد AI</span></button>
+        </nav>
+        <div className="px-3 py-2 border-t border-[#949437]/10 bg-[#949437]/5 flex items-center gap-1.5"><Save className="w-3 h-3 text-[#949437] flex-shrink-0" /><span className="text-[9px] text-[#949437]/80 leading-tight">حفظ تلقائي</span></div>
+      </aside>
 
       {/* ===== FULL PREVIEW MODAL ===== */}
       {showPreview && (
