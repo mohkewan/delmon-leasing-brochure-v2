@@ -1243,7 +1243,7 @@ function page3(data: ProjectData, template: string) {
       <div style="font-size:9px;color:${headerSub}">${data.projectName}</div>
     </div>
     <!-- Body: table layout to fill 682px -->
-    <table style="width:1123px;height:682px;border-collapse:collapse;table-layout:fixed">
+    <table style="width:1123px;min-height:682px;border-collapse:collapse;table-layout:fixed">
       <tr>
         <td style="vertical-align:top;padding:16px 24px;background:${bg}">
           <!-- KPI summary row -->
