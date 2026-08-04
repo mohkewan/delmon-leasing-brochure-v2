@@ -1,6 +1,6 @@
 import { eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, brochures, InsertBrochure, brochureJobs, InsertBrochureJob, BrochureJob, analytics, InsertAnalytics } from "../drizzle/schema";
+import { InsertUser, users, brochures, InsertBrochure, brochureJobs, InsertBrochureJob, BrochureJob, analytics, InsertAnalytics, projectUnits, InsertProjectUnit, ProjectUnit } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -199,4 +199,59 @@ export async function getAnalyticsSummary() {
     cityCounts,
     recentExports: allEvents.slice(-10).reverse(),
   };
+}
+
+// ===== Project Units =====
+export async function getUnitsByBrochureId(brochureId: number): Promise<ProjectUnit[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db
+    .select()
+    .from(projectUnits)
+    .where(eq(projectUnits.brochureId, brochureId))
+    .orderBy(projectUnits.sortOrder, projectUnits.createdAt);
+}
+
+export async function replaceAllUnits(brochureId: number, units: Omit<InsertProjectUnit, "brochureId">[]): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(projectUnits).where(eq(projectUnits.brochureId, brochureId));
+  if (units.length > 0) {
+    await db.insert(projectUnits).values(
+      units.map((u, i) => ({ ...u, brochureId, sortOrder: i }))
+    );
+  }
+}
+
+export async function getOrCreateBrochure(
+  userId: number,
+  projectName: string,
+  projectType: string | undefined,
+  city: string | undefined,
+  data: Record<string, unknown>
+): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const existing = await db
+    .select({ id: brochures.id })
+    .from(brochures)
+    .where(and(eq(brochures.userId, userId), eq(brochures.projectName, projectName)))
+    .limit(1);
+  if (existing.length > 0) return existing[0].id;
+  const result = await db.insert(brochures).values({
+    userId,
+    projectName,
+    projectType: projectType ?? null,
+    city: city ?? null,
+    data,
+  });
+  return (result as any)[0]?.insertId ?? 0;
+}
+
+export async function updateBrochureData(id: number, userId: number, data: Record<string, unknown>): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(brochures)
+    .set({ data, updatedAt: new Date() })
+    .where(and(eq(brochures.id, id), eq(brochures.userId, userId)));
 }

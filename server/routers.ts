@@ -2,7 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
-import { saveBrochure, getBrochuresByUser, getBrochureById, deleteBrochure, trackEvent, getAnalyticsSummary } from "./db";
+import { saveBrochure, getBrochuresByUser, getBrochureById, deleteBrochure, trackEvent, getAnalyticsSummary, getUnitsByBrochureId, replaceAllUnits, getOrCreateBrochure, updateBrochureData } from "./db";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -88,6 +88,74 @@ export const appRouter = router({
       if (ctx.user.role !== "admin") return null;
       return getAnalyticsSummary();
     }),
+  }),
+
+  units: router({
+    // جلب الوحدات لمشروع معين (بـ brochureId)
+    list: protectedProcedure
+      .input(z.object({ brochureId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        // التحقق من أن البروشور يخص المستخدم الحالي
+        const brochure = await getBrochureById(input.brochureId);
+        if (!brochure || brochure.userId !== ctx.user.id) return [];
+        return getUnitsByBrochureId(input.brochureId);
+      }),
+
+    // حفظ كل الوحدات دفعة واحدة (replace all) مع autosave
+    saveAll: protectedProcedure
+      .input(z.object({
+        brochureId: z.number(),
+        units: z.array(z.object({
+          unitKey: z.string(),
+          unitNumber: z.string().optional(),
+          floor: z.string().optional(),
+          area: z.string().optional(),
+          unitType: z.string().optional(),
+          description: z.string().optional(),
+          features: z.string().optional(),
+          pricePerMeter: z.string().optional(),
+          monthlyRent: z.string().optional(),
+        })),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // التحقق من أن البروشور يخص المستخدم الحالي
+        const brochure = await getBrochureById(input.brochureId);
+        if (!brochure || brochure.userId !== ctx.user.id) {
+          throw new Error("Unauthorized");
+        }
+        await replaceAllUnits(input.brochureId, input.units);
+        return { success: true, count: input.units.length };
+      }),
+
+    // إنشاء أو جلب brochureId لمشروع معين (للاستخدام قبل autosave)
+    getOrCreate: protectedProcedure
+      .input(z.object({
+        projectName: z.string(),
+        projectType: z.string().optional(),
+        city: z.string().optional(),
+        data: z.any(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const brochureId = await getOrCreateBrochure(
+          ctx.user.id,
+          input.projectName,
+          input.projectType,
+          input.city,
+          input.data,
+        );
+        return { brochureId };
+      }),
+
+    // تحديث بيانات البروشور الأساسية (بدون الوحدات)
+    updateData: protectedProcedure
+      .input(z.object({
+        brochureId: z.number(),
+        data: z.any(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await updateBrochureData(input.brochureId, ctx.user.id, input.data);
+        return { success: true };
+      }),
   }),
 });
 

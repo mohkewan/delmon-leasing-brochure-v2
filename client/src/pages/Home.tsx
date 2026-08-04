@@ -137,6 +137,22 @@ export default function Home() {
 
   const [, setLocation] = useLocation();
   const utils = trpc.useUtils();
+
+  // ── DB units autosave ──────────────────────────────────────────────────────
+  const [activeBrochureId, setActiveBrochureId] = useState<number | null>(null);
+  const [unitsSavedToDb, setUnitsSavedToDb] = useState(false);
+  const [pendingProjectSwitch, setPendingProjectSwitch] = useState<string | null>(null);
+  const getOrCreateMutation = trpc.units.getOrCreate.useMutation({
+    onSuccess: (data) => {
+      setActiveBrochureId(data.brochureId);
+    },
+  });
+  const saveUnitsMutation = trpc.units.saveAll.useMutation({
+    onSuccess: () => {
+      setUnitsSavedToDb(true);
+    },
+  });
+
   const saveBrochureMutation = trpc.brochures.save.useMutation({
     onSuccess: () => {
       toast.success("✅ تم حفظ البروشور في الأرشيف");
@@ -155,6 +171,7 @@ export default function Home() {
     },
   });
   const trackEventMutation = trpc.analytics.track.useMutation();
+
 
   const handleSaveToArchive = async () => {
     if (!projectData.projectName) {
@@ -206,6 +223,63 @@ export default function Home() {
     units: [emptyUnit()],
     };
   });
+  // ── جلب الوحدات من DB عند توفر brochureId ──────────────────────────────────
+  const dbUnitsLoadedRef = useRef(false);
+  const unitsAutosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // autosave للوحدات في DB بعد 1500ms من توقف التعديل
+  useEffect(() => {
+    if (!activeBrochureId || !isAuthenticated) return;
+    setUnitsSavedToDb(false);
+    if (unitsAutosaveTimerRef.current) clearTimeout(unitsAutosaveTimerRef.current);
+    unitsAutosaveTimerRef.current = setTimeout(() => {
+      saveUnitsMutation.mutate({
+        brochureId: activeBrochureId,
+        units: projectData.units.map((u) => ({
+          unitKey: u.id,
+          unitNumber: u.unitNumber,
+          floor: u.floor,
+          area: u.area,
+          unitType: u.unitType,
+          description: u.description,
+          features: u.features,
+          pricePerMeter: u.pricePerMeter,
+          monthlyRent: u.monthlyRent,
+        })),
+      });
+    }, 1500);
+    return () => {
+      if (unitsAutosaveTimerRef.current) clearTimeout(unitsAutosaveTimerRef.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectData.units, activeBrochureId, isAuthenticated]);
+
+  // تحميل الوحدات من DB عند أول جلب ناجح (عبر query في JSX)
+  const { data: dbUnits } = trpc.units.list.useQuery(
+    { brochureId: activeBrochureId ?? 0 },
+    { enabled: !!activeBrochureId && isAuthenticated }
+  );
+  useEffect(() => {
+    if (dbUnits && dbUnits.length > 0 && !dbUnitsLoadedRef.current) {
+      dbUnitsLoadedRef.current = true;
+      setProjectData((prev) => ({
+        ...prev,
+        units: dbUnits.map((u) => ({
+          id: u.unitKey,
+          unitNumber: u.unitNumber ?? "",
+          floor: u.floor ?? "",
+          area: u.area ?? "",
+          unitType: (u.unitType as any) ?? "مكتب",
+          description: u.description ?? "",
+          features: u.features ?? "",
+          pricePerMeter: u.pricePerMeter ?? "",
+          monthlyRent: u.monthlyRent ?? "",
+        })),
+      }));
+    }
+  }, [dbUnits]);
+
+
   // ─── debounce: لا نُعيد توليد المعاينة إلا بعد 400ms من توقف المستخدم عن الكتابة ───
   const [debouncedProjectData, setDebouncedProjectData] = useState(projectData);
   useEffect(() => {
@@ -295,26 +369,45 @@ export default function Home() {
     } catch {}
   }, [projectData]);
 
-  const handleProjectSelect = (id: string) => {
+  const doProjectSelect = (id: string) => {
+    dbUnitsLoadedRef.current = false;
+    setActiveBrochureId(null);
     setSelectedProjectId(id);
     const proj = PROJECTS.find((p) => p.id === id);
     if (proj && id !== "custom") {
-      setProjectData((prev) => ({
-        ...prev,
+      const newData = {
         projectName: proj.name,
         projectType: proj.type,
         city: proj.city,
-        district: proj.district ?? prev.district,
-        totalArea: proj.totalArea ?? prev.totalArea,
-        floors: proj.floors ?? prev.floors,
-        completionYear: proj.completionYear ?? prev.completionYear,
-        description: proj.description ?? prev.description,
-        amenities: proj.amenities ?? prev.amenities,
-        projectImage: PROJECT_IMAGES[id] || prev.projectImage,
-      }));
+        district: proj.district ?? "",
+        totalArea: proj.totalArea ?? "",
+        floors: proj.floors ?? "",
+        completionYear: proj.completionYear ?? "",
+        description: proj.description ?? "",
+        amenities: proj.amenities ?? "",
+        projectImage: PROJECT_IMAGES[id] || "",
+      };
+      setProjectData((prev) => ({ ...prev, ...newData, units: [emptyUnit()] }));
+      // إنشاء أو جلب brochureId من DB إذا كان المستخدم مسجل الدخول
+      if (isAuthenticated) {
+        getOrCreateMutation.mutate({
+          projectName: proj.name,
+          projectType: proj.type,
+          city: proj.city,
+          data: newData,
+        });
+      }
     } else if (id === "custom") {
-      setProjectData((prev) => ({ ...prev, projectName: "", projectType: "", city: "", projectImage: "" }));
+      setProjectData((prev) => ({ ...prev, projectName: "", projectType: "", city: "", projectImage: "", units: [emptyUnit()] }));
     }
+  };
+  const handleProjectSelect = (id: string) => {
+    // تحذير عند التبديل إذا كانت هناك وحدات غير محفوظة
+    if (activeBrochureId && !unitsSavedToDb && projectData.units.some(u => u.unitNumber || u.area || u.monthlyRent)) {
+      setPendingProjectSwitch(id);
+      return;
+    }
+    doProjectSelect(id);
   };
 
   const handleClearDraft = () => {
@@ -584,6 +677,37 @@ export default function Home() {
   );
 
   return (
+    <>
+    {/* حوار التحذير عند التبديل بين المشاريع مع وجود وحدات غير محفوظة */}
+    <AlertDialog open={!!pendingProjectSwitch} onOpenChange={(open) => { if (!open) setPendingProjectSwitch(null); }}>
+      <AlertDialogContent dir="rtl">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="flex items-center gap-2 text-amber-600">
+            <AlertTriangle className="w-5 h-5" />
+            تعديلات غير محفوظة
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            لديك وحدات لم تُحفظ بعد في قاعدة البيانات. إذا انتقلت الآن ستفقد هذه التعديلات.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="flex-row-reverse gap-2">
+          <AlertDialogAction
+            className="bg-amber-600 hover:bg-amber-700 text-white"
+            onClick={() => {
+              if (pendingProjectSwitch) {
+                doProjectSelect(pendingProjectSwitch);
+                setPendingProjectSwitch(null);
+              }
+            }}
+          >
+            انتقل بدون حفظ
+          </AlertDialogAction>
+          <AlertDialogCancel onClick={() => setPendingProjectSwitch(null)}>
+            ابقَ وأكمل التعديل
+          </AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     <div className="min-h-screen bg-[#F0F0F0] flex flex-row-reverse" dir="rtl">
       {/* ===== MOBILE HEADER (visible only on small screens) ===== */}
       <header className="md:hidden bg-white shadow-md sticky top-0 z-50 border-b-2 border-[#949437]/40 w-full">
@@ -832,6 +956,11 @@ export default function Home() {
           <button onClick={() => setLocation("/ai-generator")} className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-[#1a2744] hover:bg-[#2a3a6a] text-white text-xs transition-all font-bold shadow-sm border border-[#c9a84c]/40"><Sparkles className="w-4 h-4 text-[#c9a84c] flex-shrink-0" /><span>توليد AI</span></button>
         </nav>
         <div className="px-3 py-2 border-t border-[#949437]/10 bg-[#949437]/5 flex items-center gap-1.5"><Save className="w-3 h-3 text-[#949437] flex-shrink-0" /><span className="text-[9px] text-[#949437]/80 leading-tight">حفظ تلقائي</span></div>
+          {activeBrochureId && (
+            <div className={`text-xs text-center px-2 mt-1 py-1 rounded ${unitsSavedToDb ? "text-green-500" : "text-amber-400"}`}>
+              {unitsSavedToDb ? "✓ وحدات محفوظة في DB" : "⏳ جاري الحفظ..."}
+            </div>
+          )}
       </aside>
 
       {/* ===== FULL PREVIEW MODAL ===== */}
@@ -910,5 +1039,6 @@ export default function Home() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+    </>
   );
 }

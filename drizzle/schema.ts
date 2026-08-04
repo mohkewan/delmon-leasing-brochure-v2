@@ -81,3 +81,23 @@ export const analytics = mysqlTable("analytics", {
 });
 export type Analytics = typeof analytics.$inferSelect;
 export type InsertAnalytics = typeof analytics.$inferInsert;
+
+// جدول الوحدات المستقل - مرتبط بـ brochure_id كمفتاح خارجي
+export const projectUnits = mysqlTable("project_units", {
+  id: int("id").autoincrement().primaryKey(),
+  brochureId: int("brochureId").notNull(), // مفتاح خارجي → brochures.id
+  unitKey: varchar("unitKey", { length: 64 }).notNull(), // UUID فريد للوحدة (client-side id)
+  unitNumber: varchar("unitNumber", { length: 64 }),
+  floor: varchar("floor", { length: 32 }),
+  area: varchar("area", { length: 32 }),
+  unitType: varchar("unitType", { length: 64 }),
+  description: text("description"),
+  features: text("features"),
+  pricePerMeter: varchar("pricePerMeter", { length: 32 }),
+  monthlyRent: varchar("monthlyRent", { length: 32 }),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ProjectUnit = typeof projectUnits.$inferSelect;
+export type InsertProjectUnit = typeof projectUnits.$inferInsert;
