@@ -226,6 +226,8 @@ export default function Home() {
   });
   // ── جلب الوحدات من DB عند توفر brochureId ──────────────────────────────────
   const dbUnitsLoadedRef = useRef(false);
+  // يمنع autosave حتى يكتمل أول units.list (لمنع race condition)
+  const dbUnitsReadyRef = useRef(false);
   // ref لحفظ الوحدات الحالية بدون إعادة تسجيل useEffect
   const currentUnitsRef = useRef<Unit[]>([]);
   useEffect(() => {
@@ -240,29 +242,14 @@ export default function Home() {
     if (!activeBrochureId || !isAuthenticated) return;
     if (prevBrochureIdRef.current === activeBrochureId) return; // لم يتغير
     prevBrochureIdRef.current = activeBrochureId;
-    // إرسال الوحدات الحالية فوراً
-    const units = currentUnitsRef.current;
-    if (units.length > 0) {
-      saveUnitsMutation.mutate({
-        brochureId: activeBrochureId,
-        units: units.map((u: Unit) => ({
-          unitKey: u.id,
-          unitNumber: u.unitNumber,
-          floor: u.floor,
-          area: u.area,
-          unitType: u.unitType,
-          description: u.description,
-          features: u.features,
-          pricePerMeter: u.pricePerMeter,
-          monthlyRent: u.monthlyRent,
-        })),
-      });
-    }
+    // لا نحفظ هنا — ننتظر units.list أولاً قبل أي autosave
+    dbUnitsReadyRef.current = false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeBrochureId, isAuthenticated]);
   // autosave للوحدات في DB بعد 1500ms من توقف التعديل
   useEffect(() => {
-    if (!activeBrochureId || !isAuthenticated) return;
+    // لا تحفظ حتى يكتمل units.list (لمنع مسح البيانات الحقيقية بوحدة فارغة مؤقتة)
+    if (!activeBrochureId || !isAuthenticated || !dbUnitsReadyRef.current) return;
     setUnitsSavedToDb(false);
     if (unitsAutosaveTimerRef.current) clearTimeout(unitsAutosaveTimerRef.current);
     unitsAutosaveTimerRef.current = setTimeout(() => {
@@ -288,29 +275,36 @@ export default function Home() {
   }, [projectData.units, activeBrochureId, isAuthenticated]);
 
   // تحميل الوحدات من DB عند أول جلب ناجح (عبر query في JSX)
-  const { data: dbUnits } = trpc.units.list.useQuery(
+  const { data: dbUnits, isFetched: dbUnitsFetched } = trpc.units.list.useQuery(
     { brochureId: activeBrochureId ?? 0 },
     { enabled: !!activeBrochureId && isAuthenticated }
   );
   useEffect(() => {
-    if (dbUnits && dbUnits.length > 0 && !dbUnitsLoadedRef.current) {
+    if (!dbUnitsFetched || !activeBrochureId) return;
+    // units.list اكتمل — سواء بنتائج أو فارغاً
+    if (!dbUnitsLoadedRef.current) {
       dbUnitsLoadedRef.current = true;
-      setProjectData((prev) => ({
-        ...prev,
-        units: dbUnits.map((u) => ({
-          id: u.unitKey,
-          unitNumber: u.unitNumber ?? "",
-          floor: u.floor ?? "",
-          area: u.area ?? "",
-          unitType: (u.unitType as any) ?? "مكتب",
-          description: u.description ?? "",
-          features: u.features ?? "",
-          pricePerMeter: u.pricePerMeter ?? "",
-          monthlyRent: u.monthlyRent ?? "",
-        })),
-      }));
+      if (dbUnits && dbUnits.length > 0) {
+        // وجدت وحدات محفوظة → استبدل الوحدة الفارغة المؤقتة بها
+        setProjectData((prev) => ({
+          ...prev,
+          units: dbUnits.map((u) => ({
+            id: u.unitKey,
+            unitNumber: u.unitNumber ?? "",
+            floor: u.floor ?? "",
+            area: u.area ?? "",
+            unitType: (u.unitType as any) ?? "مكتب",
+            description: u.description ?? "",
+            features: u.features ?? "",
+            pricePerMeter: u.pricePerMeter ?? "",
+            monthlyRent: u.monthlyRent ?? "",
+          })),
+        }));
+      }
+      // في كلا الحالتين (وحدات موجودة أو لا) — فعّل autosave الآن
+      dbUnitsReadyRef.current = true;
     }
-  }, [dbUnits]);
+  }, [dbUnits, dbUnitsFetched, activeBrochureId]);
 
   // ── getOrCreate تلقائي عند كتابة اسم المشروع (يدوي أو من قائمة) ─────────────
   const getOrCreateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -425,6 +419,7 @@ export default function Home() {
 
   const doProjectSelect = (id: string) => {
     dbUnitsLoadedRef.current = false;
+    dbUnitsReadyRef.current = false;
     setActiveBrochureId(null);
     setSelectedProjectId(id);
     const proj = PROJECTS.find((p) => p.id === id);
