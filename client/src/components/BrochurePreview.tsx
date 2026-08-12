@@ -23,7 +23,7 @@ const SvgCheck = ({ color, size = 12 }: { color: string; size?: number }) => (
 
 // ===== DELMON INVESTMENT — LEASING BROCHURE PREVIEW =====
 // Official Brand Identity from DELMON1PPTtemplatev1.pptx
-// Deep GOLD: #949437 | Cyan: #8fa9dc | BG: White / #F5F5F3
+// Olive: #949437 | Blue accent: #94B6D2 | Charcoal: #262626
 // Layout: A4 LANDSCAPE 1123×794px — matches reference brochure format
 // NO dark navy — light background system throughout
 // RTL, print-ready
@@ -36,16 +36,16 @@ const LOGO = "/manus-storage/delmon_logo_19a2386c.png";
 const GOLD = "#949437";
 const GOLD_80 = "#b8b55a";
 const GOLD_40 = "#d4d2a0";
-const CYAN = "#8fa9dc";
-const CYAN_40 = "#c7d6ee";
-const DARK_TEXT = "#2d2d2d";
+const CYAN = "#94B6D2";
+const CYAN_40 = "#DDEBF5";
+const DARK_TEXT = "#262626";
 const MID_TEXT = "#5a5a5a";
 const LIGHT_TEXT = "#8a8a8a";
 const BG_PAGE = "#FFFFFF";
-const BG_SECTION = "#F5F5F3";
-const BG_ACCENT = "#F0EFE8";
-const BORDER_LIGHT = "#E0DDD0";
-const BORDER_GOLD = "#C8C580";
+const BG_SECTION = "#F7F7F4";
+const BG_ACCENT = "#EEF0DC";
+const BORDER_LIGHT = "#E2E5E3";
+const BORDER_GOLD = "#C7CB99";
 
 // Page dimensions — A4 Landscape
 const W = 1123;
@@ -53,6 +53,13 @@ const H = 794;
 
 export default function BrochurePreview({ data }: Props) {
   const totalArea = data.units.reduce((s, u) => s + (parseFloat(u.area) || 0), 0);
+  const projectLocation = [data.district, data.city].filter(Boolean).join(" — ");
+  const marketingHighlights = [
+    data.city ? `موقع في ${data.city}` : "",
+    data.district ? `ضمن ${data.district}` : "",
+    data.units.length > 1 ? `${data.units.length} فرص تأجير متاحة` : "",
+    ...data.amenities.split(/[,،]/).map((item) => item.trim()).filter(Boolean),
+  ].filter(Boolean).slice(0, 6);
   const today = new Date().toLocaleDateString("ar-SA", {
     year: "numeric",
     month: "long",
@@ -63,15 +70,14 @@ export default function BrochurePreview({ data }: Props) {
     <div
       id="brochure-content"
       dir="rtl"
-      style={{ fontFamily: "'Cairo','Noto Kufi Arabic',sans-serif", background: BG_PAGE, width: W }}
+      style={{ fontFamily: "'Cocon Next Arabic','Cairo','Noto Kufi Arabic',sans-serif", background: BG_PAGE, width: W }}
     >
 
       {/* ══════════════════════════════════════════════
           PAGE 1 — COVER (Landscape split: right=text, left=image)
       ══════════════════════════════════════════════ */}
       <div style={{ width: W, height: H, background: BG_PAGE, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", pageBreakAfter: "always" }}>
-        {/* Gold top bar */}
-        <div style={{ height: 7, background: GOLD, flexShrink: 0 }} />
+        <div style={{ height: 4, background: GOLD, flexShrink: 0 }} />
 
         {/* Header */}
         <div style={{ padding: "14px 40px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${BORDER_GOLD}`, background: BG_PAGE, flexShrink: 0 }}>
@@ -85,8 +91,7 @@ export default function BrochurePreview({ data }: Props) {
             <div style={{ color: LIGHT_TEXT, fontSize: 10 }}>011-2080129</div>
           </div>
         </div>
-        {/* Cyan accent line */}
-        <div style={{ height: 3, background: CYAN, flexShrink: 0 }} />
+        <div style={{ height: 2, background: CYAN, flexShrink: 0 }} />
 
         {/* Main body — two columns */}
         <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
@@ -110,7 +115,7 @@ export default function BrochurePreview({ data }: Props) {
               {(data.city || data.district) && (
               <div style={{ display: "flex", alignItems: "center", gap: 6, color: MID_TEXT, fontSize: 13, marginBottom: 20 }}>
                   <SvgPin color={CYAN} size={14} />
-                  {[data.district, data.city].filter(Boolean).join(" — ")}
+                  {projectLocation}
               </div>
               )}
 
@@ -142,31 +147,23 @@ export default function BrochurePreview({ data }: Props) {
               )}
             </div>
 
-            {/* Why Choose — 6 highlight cards filling the gap */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: 12 }}>
-              <div style={{ color: GOLD, fontSize: 11, fontWeight: 800, marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${BORDER_GOLD}` }}>
-                لماذا تختار هذا المشروع؟
+            {marketingHighlights.length > 0 && (
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: 12 }}>
+                <div style={{ color: GOLD, fontSize: 11, fontWeight: 800, marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${BORDER_GOLD}` }}>أبرز عناصر الفرصة</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
+                  {marketingHighlights.map((text, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 7, background: BG_SECTION, borderRadius: 0, padding: "7px 10px", border: `1px solid ${BORDER_LIGHT}`, borderRight: `3px solid ${i % 2 === 0 ? GOLD : CYAN}` }}>
+                      <SvgCheck color={i % 2 === 0 ? GOLD : CYAN} size={11} />
+                      <span style={{ color: DARK_TEXT, fontSize: 10, fontWeight: 600 }}>{text}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
-                {[
-                  "موقع استراتيجي مميز",
-                  "أمن وحراسة 24 ساعة",
-                  "مواقف سيارات مجانية",
-                  "إنترنت فايبر عالي السرعة",
-                  "تكييف مركزي متكامل",
-                  "مصاعد حديثة",
-                ].map((text, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 7, background: BG_SECTION, borderRadius: 7, padding: "7px 10px", border: `1px solid ${BORDER_LIGHT}`, borderRight: `3px solid ${i % 2 === 0 ? GOLD : CYAN}` }}>
-                    <SvgCheck color={i % 2 === 0 ? GOLD : CYAN} size={11} />
-                    <span style={{ color: DARK_TEXT, fontSize: 10, fontWeight: 600 }}>{text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Bottom tagline */}
+            )}
+            {/* Bottom call to action */}
             <div style={{ padding: "14px 0 0", borderTop: `1px solid ${BORDER_GOLD}` }}>
-              <div style={{ color: GOLD, fontSize: 12, fontWeight: 800 }}>فرصة استثمارية مميزة</div>
-              <div style={{ color: LIGHT_TEXT, fontSize: 10, marginTop: 3 }}>تواصل معنا للحصول على مزيد من التفاصيل والعروض</div>
+              <div style={{ color: GOLD, fontSize: 12, fontWeight: 800 }}>احجز معاينتك الآن</div>
+              <div style={{ color: LIGHT_TEXT, fontSize: 10, marginTop: 3 }}>تواصل مع فريق التأجير للحصول على التفاصيل المتاحة</div>
             </div>
           </div>
 
@@ -246,20 +243,21 @@ export default function BrochurePreview({ data }: Props) {
                 </div>
               ))}
             </div>
-            {/* Decorative filler — fills remaining height when specs are few */}
-            <div style={{ flex: 1, marginTop: 16, background: `linear-gradient(135deg, ${BG_ACCENT} 0%, #EEF3FA 100%)`, borderRadius: 10, padding: "16px 18px", border: `1px solid ${BORDER_GOLD}`, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              <div style={{ color: GOLD, fontWeight: 800, fontSize: 13, marginBottom: 10, borderBottom: `1px solid ${BORDER_GOLD}`, paddingBottom: 8 }}>لماذا دلمون للاستثمار؟</div>
-              {[
-                { icon: "★", text: "خبرة تزيد عن 15 عاماً في السوق العقاري" },
-                { icon: "✦", text: "محفظة متنوعة من المشاريع التجارية والمكتبية" },
-                { icon: "◆", text: "إدارة متكاملة للأصول العقارية" },
-                { icon: "●", text: "فريق متخصص في خدمة المستأجرين" },
-              ].map((item, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 7, fontSize: 11, color: DARK_TEXT }}>
-                  <span style={{ color: i % 2 === 0 ? GOLD : CYAN, fontSize: 10, minWidth: 14 }}>{item.icon}</span>
-                  <span>{item.text}</span>
-                </div>
-              ))}
+            <div style={{ flex: 1, marginTop: 16, background: `linear-gradient(135deg, ${BG_ACCENT} 0%, #EEF3FA 100%)`, padding: "16px 18px", border: `1px solid ${BORDER_GOLD}`, borderRight: `4px solid ${CYAN}`, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <div style={{ color: GOLD, fontWeight: 800, fontSize: 13, marginBottom: 10, borderBottom: `1px solid ${BORDER_GOLD}`, paddingBottom: 8 }}>ملخص الإتاحة</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {[
+                  { label: "فرص متاحة", value: `${data.units.length} وحدة` },
+                  { label: "المساحة المتاحة", value: totalArea > 0 ? `${formatNumber(totalArea)} م²` : "تُستكمل" },
+                  { label: "الموقع", value: projectLocation || "تُستكمل بيانات الموقع" },
+                  { label: "التواصل", value: data.contactName || "فريق التأجير" },
+                ].map((item, i) => (
+                  <div key={i} style={{ background: "rgba(255,255,255,.72)", padding: "8px 10px", borderTop: `2px solid ${i % 2 === 0 ? GOLD : CYAN}` }}>
+                    <div style={{ color: LIGHT_TEXT, fontSize: 9, marginBottom: 3 }}>{item.label}</div>
+                    <div style={{ color: DARK_TEXT, fontSize: 11, fontWeight: 800, lineHeight: 1.45 }}>{item.value}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -359,7 +357,7 @@ export default function BrochurePreview({ data }: Props) {
           <img src={LOGO} alt="دلمون" style={{ height: 64, objectFit: "contain", marginBottom: 12 }} />
           <div style={{ width: 80, height: 3, background: GOLD, margin: "0 auto 16px", borderRadius: 2 }} />
 
-          <h2 style={{ color: DARK_TEXT, fontSize: 26, fontWeight: 900, margin: "0 0 6px", textAlign: "center" }}>للاستفسار والحجز</h2>
+          <h2 style={{ color: DARK_TEXT, fontSize: 26, fontWeight: 900, margin: "0 0 6px", textAlign: "center" }}>احجز معاينتك</h2>
           <p style={{ color: MID_TEXT, fontSize: 12, margin: "0 0 32px", textAlign: "center" }}>
             فريقنا جاهز لمساعدتك في اختيار الوحدة المناسبة لنشاطك التجاري
           </p>

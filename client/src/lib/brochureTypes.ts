@@ -49,13 +49,13 @@ export interface BrochureTheme {
 export const BROCHURE_THEMES: BrochureTheme[] = [
   {
     id: "classic",
-    nameAr: "Classic",
-    nameEn: "Classic",
-    description: "الهوية الرسمية — فاتح ذهبي",
+    nameAr: "هوية دلمون للتأجير",
+    nameEn: "Delmon Leasing Identity",
+    description: "القالب التسويقي الرسمي المستمد من عرض هوية دلمون",
     primaryColor: "#949437",
-    accentColor: "#8fa9dc",
+    accentColor: "#94B6D2",
     bgColor: "#FFFFFF",
-    textColor: "#2d2d2d",
+    textColor: "#262626",
   },
   {
     id: "dark",

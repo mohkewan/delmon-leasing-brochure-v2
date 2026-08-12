@@ -30,9 +30,6 @@ import {
 import { toast } from "sonner";
 import { FileDown, Eye, Building2, MapPin, Loader2, CheckCircle2, LayoutList, Save, RotateCcw, Archive, LogOut, LogIn, User, TableProperties, Download, MessageCircle, Sparkles, Menu } from "lucide-react";
 import BrochurePreview from "@/components/BrochurePreview";
-import BrochurePreviewModern from "@/components/BrochurePreviewModern";
-import BrochurePreviewDark from "@/components/BrochurePreviewDark";
-import BrochurePreviewMagazine from "@/components/BrochurePreviewMagazine";
 import TemplateSelector from "@/components/TemplateSelector";
 import { BrochureTemplate } from "@/lib/brochureTypes";
 import ProjectTab from "@/components/ProjectTab";
@@ -41,8 +38,8 @@ import ContactTab from "@/components/ContactTab";
 // generateBrochurePDF removed; using server-side PDF via /api/generate-pdf
 
 // ===== DELMON INVESTMENT BRAND IDENTITY =====
-// Primary: Deep GOLD #949437 | Cyan: #8fa9dc | Background: #F0F0F0 | Font: Cairo
-// Layout: RTL sidebar form + live preview panel
+// Primary: Olive #949437 | Blue accent #94B6D2 | Canvas #F7F7F4
+// Layout: RTL marketer workspace + live corporate brochure preview
 
 // ===== PROJECT IMAGES MAP =====
 // صور ثابتة لكل مشروع من مشاريع دلمون
@@ -340,27 +337,17 @@ export default function Home() {
   const [showPreview, setShowPreview] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState<"project" | "units" | "contact">("project");
-  const [selectedTemplate, setSelectedTemplate] = useState<BrochureTemplate>(() => {
-    try {
-      const saved = localStorage.getItem("delmon_selected_template");
-      if (saved === "classic" || saved === "dark" || saved === "magazine") return saved;
-    } catch {}
-    return "classic";
-  });
+  const [selectedTemplate, setSelectedTemplate] = useState<BrochureTemplate>("classic");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // persist template selection
-  const handleTemplateChange = (t: BrochureTemplate) => {
-    setSelectedTemplate(t);
-    try { localStorage.setItem("delmon_selected_template", t); } catch {}
+  // قالب دلمون الرسمي هو خيار الإخراج الوحيد حتى لا تتفاوت هوية المخرجات التسويقية.
+  const handleTemplateChange = () => {
+    setSelectedTemplate("classic");
+    try { localStorage.setItem("delmon_selected_template", "classic"); } catch {}
   };
 
   // helper: render the correct preview component
-  const ActivePreview = selectedTemplate === "dark"
-    ? BrochurePreviewDark
-    : selectedTemplate === "magazine"
-    ? BrochurePreviewMagazine
-    : BrochurePreview;
+  const ActivePreview = BrochurePreview;
 
   const [exportStep, setExportStep] = useState<string>("");
   const [exportDone, setExportDone] = useState(false);
@@ -711,15 +698,16 @@ export default function Home() {
   const completionPct = Math.round(projectScore + unitsScore);
   const unitsWithArea = projectData.units.filter((u) => u.area).length;
 
-  // وحدات ناقصة البيانات المالية (للتمرير إلى UnitsTab)
+  // حقول الجاهزية الأساسية للبروشور التسويقي؛ التسعير اختياري في العرض
   const incompleteUnitIds = new Set(
     projectData.units
       .filter(
         (u) =>
           !(
+            u.unitNumber &&
             parseFloat(u.area) > 0 &&
-            parseFloat(String(u.monthlyRent).replace(/,/g, "")) > 0 &&
-            u.unitType
+            u.unitType &&
+            u.description
           )
       )
       .map((u) => u.id)
@@ -757,7 +745,7 @@ export default function Home() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-    <div className="min-h-screen bg-[#F0F0F0] flex flex-col md:flex-row-reverse" dir="rtl">
+    <div className="min-h-screen bg-[#F7F7F4] flex flex-col md:flex-row-reverse" dir="rtl">
       {/* ===== MOBILE HEADER (visible only on small screens) ===== */}
       <header className="md:hidden bg-white shadow-md sticky top-0 z-50 border-b-2 border-[#949437]/40 w-full">
         <div className="px-4 flex items-center justify-between py-3">
@@ -811,20 +799,35 @@ export default function Home() {
       </header>
 
       {/* ===== MAIN CONTENT (offset for sidebar on desktop) ===== */}
-      <div className="flex-1 w-full md:mr-44 min-w-0">
+      <div className="delmon-workspace flex-1 w-full md:mr-44 min-w-0">
       <div className="max-w-7xl mx-auto px-4 py-6">
+        <section className="relative mb-5 overflow-hidden border border-[#262626] bg-[#262626] px-5 py-5 text-white md:px-7 md:py-6">
+          <div className="absolute -left-10 -top-12 h-40 w-40 border border-[#94B6D2]/45" />
+          <div className="absolute bottom-4 left-4 h-20 w-20 border border-[#949437]/75" />
+          <div className="relative flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div className="max-w-2xl">
+              <div className="mb-2 text-[11px] font-extrabold tracking-[0.16em] text-[#B2CBE0]">DELMON LEASING STUDIO</div>
+              <h1 className="text-xl font-black leading-tight md:text-2xl">حوّل بيانات الوحدة إلى بروشور تأجيري جاهز للمشاركة</h1>
+              <p className="mt-2 text-xs leading-6 text-white/70 md:text-sm">أدخل حقائق المشروع والوحدة، راجع المعاينة، ثم أرسل ملفاً تسويقياً متسقاً مع هوية دلمون.</p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-[10px] font-bold">
+              <span className="border border-[#94B6D2]/70 bg-white/5 px-3 py-1.5 text-[#dcebf5]">هوية دلمون المعتمدة</span>
+              <span className="border border-[#949437]/80 bg-[#949437]/10 px-3 py-1.5 text-[#eef0dc]">معاينة قبل الإرسال</span>
+              <span className="border border-white/20 bg-white/5 px-3 py-1.5 text-white/75">PDF جاهز للتسويق</span>
+            </div>
+          </div>
+        </section>
         {/* ===== STATS BAR ===== */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
-           { label: "إجمالي الوحدات", value: String(projectData.units.length), icon: Building2 },
-            { label: "إجمالي مساحة الوحدات الشاغرة", value: totalArea > 0 ? `${formatNumber(totalArea)} م²` : "٠ م²", icon: MapPin },
-           { label: "المشروع المحدد", value: projectData.projectName || "—", icon: Building2 },
-            { label: "اكتمال البيانات", value: `${completionPct}%`, icon: LayoutList },
+           { label: "الفرص المتاحة", value: String(projectData.units.length), icon: Building2 },
+            { label: "المساحة المتاحة", value: totalArea > 0 ? `${formatNumber(totalArea)} م²` : "0 م²", icon: MapPin },
+           { label: "المشروع", value: projectData.projectName || "—", icon: Building2 },
+            { label: "جاهزية البروشور", value: `${completionPct}%`, icon: LayoutList },
           ].map((stat, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-[#D0D0D0] flex items-center gap-3 relative overflow-hidden group hover:border-[#949437]/40 hover:shadow-md transition-all">
-              <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#949437] rounded-r-xl" />
-              <div className="w-10 h-10 rounded-lg bg-[#949437]/10 border border-[#949437]/20 flex items-center justify-center flex-shrink-0">
-                <stat.icon className="w-5 h-5 text-[#949437]" />
+            <div key={i} className="delmon-panel flex items-center gap-3 overflow-hidden p-4 transition-all hover:-translate-y-0.5 hover:border-[#94B6D2]">
+              <div className="h-10 w-10 flex-shrink-0 border border-[#94B6D2]/70 bg-[#edf4fa] flex items-center justify-center">
+                <stat.icon className="w-5 h-5 text-[#6f96b8]" />
               </div>
               <div className="min-w-0">
                 <div className="text-[11px] text-gray-500 font-medium">{stat.label}</div>
@@ -836,9 +839,9 @@ export default function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* ===== FORM PANEL ===== */}
-          <div className="lg:col-span-3 order-2 lg:order-1 bg-white rounded-2xl shadow-sm border border-[#D0D0D0] overflow-hidden">
+          <div className="delmon-panel lg:col-span-3 order-2 lg:order-1 overflow-hidden">
             {/* Tabs */}
-            <div className="flex border-b-2 border-[#D0D0D0] bg-[#F8F9FD]">
+            <div className="flex border-b border-[#E2E5E3] bg-[#F7F7F4]">
               {[
                 { id: "project", label: "بيانات المشروع" },
                 { id: "units", label: `الوحدات (${projectData.units.length})` },
@@ -849,8 +852,8 @@ export default function Home() {
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
                   className={`flex-1 py-3.5 text-sm font-semibold transition-all border-b-2 ${
                     activeTab === tab.id
-                      ? "text-[#949437] border-[#949437] bg-white font-bold"
-                      : "text-gray-400 border-transparent hover:text-[#2C2C2C] hover:bg-white/60"
+                      ? "text-[#262626] border-[#949437] bg-white font-extrabold"
+                      : "text-gray-400 border-transparent hover:text-[#262626] hover:bg-white/60"
                   }`}
                 >
                   {tab.label}
@@ -895,7 +898,7 @@ export default function Home() {
             </div>
 
             {/* Action Buttons */}
-            <div className="px-6 py-4 bg-[#F8F9FD] border-t border-[#D0D0D0] flex gap-3">
+            <div className="flex gap-3 border-t border-[#E2E5E3] bg-[#F7F7F4] px-6 py-4">
               <Button
                 onClick={handleExportPDF}
                 disabled={isGenerating}
@@ -908,7 +911,7 @@ export default function Home() {
                 ) : (
                   <FileDown className="w-4 h-4 ml-2" />
                 )}
-                {isGenerating ? exportStep : exportDone ? "تم التصدير!" : "تصدير البروشور PDF"}
+                {isGenerating ? exportStep : exportDone ? "تم تجهيز البروشور" : "تصدير بروشور تسويقي PDF"}
               </Button>
               <Button
                 onClick={() => setShowPreview(true)}
